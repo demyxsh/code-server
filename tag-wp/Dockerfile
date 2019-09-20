@@ -29,7 +29,7 @@ RUN set -ex; \
     sed -i "s|/home/www-data:/bin/sh|/home/www-data:/bin/zsh|g" /etc/passwd; \
     echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd; \
     mkdir -p /home/www-data/.code/data/User; \
-    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n    \"terminal.integrated.rendererType\": \"dom\"}" > /home/www-data/.code/data/User/settings.json; \
+    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\",\n    \"terminal.integrated.rendererType\": \"dom\"\n}" > /home/www-data/.code/data/User/settings.json; \
     chown -R www-data:www-data /home/www-data
 
 RUN set -ex; \
