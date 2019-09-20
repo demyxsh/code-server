@@ -1,0 +1,31 @@
+notifications:
+  email:
+    on_success: never
+    on_failure: never
+
+services:
+  - docker
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.24.1 DEMYX_USERNAME=demyx DEMYX_REPOSITORY=code-server
+
+before_install:
+  - sudo apt-get install jq
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker pull codercom/code-server:v2
+
+script:
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest/.
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp/.
+  - docker-compose up -d code_server
+  - sleep 5
+  - docker exec -t demyx_cs code-server --version
+
+after_success:
+  - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
+  - docker push demyx/"$DEMYX_REPOSITORY"
+  - docker push demyx/"$DEMYX_REPOSITORY":wp
+  - bash travis.sh

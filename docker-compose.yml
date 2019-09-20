@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: traefik:v1.7.16
+    container_name: demyx_traefik
+    restart: unless-stopped
+    command: 
+      - --api
+      - --api.statistics.recenterrors=100
+      - --docker
+      - --docker.watch=true
+      - --docker.exposedbydefault=false
+      - "--entrypoints=Name:http Address::80"
+      #- "--entrypoints=Name:https Address::443 TLS"
+      - --defaultentrypoints=http
+      #- --defaultentrypoints=http,https
+      #- --acme
+      #- --acme.email=info@domain.tld
+      #- --acme.storage=/demyx/acme.json
+      #- --acme.entrypoint=https
+      #- --acme.onhostrule=true
+      #- --acme.httpchallenge.entrypoint=http
+      - --logLevel=INFO
+      - --accessLog.filePath=/demyx/access.log
+      - --traefikLog.filePath=/demyx/traefik.log
+    networks:
+      - demyx
+    ports:
+      - 80:80
+      #- 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      #- demyx_traefik:/demyx/acme.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:traefik.domain.tld"
+      #- "traefik.frontend.redirect.entryPoint=https"
+      #- "traefik.frontend.auth.basic.users=${DEMYX_STACK_AUTH}"
+      #- "traefik.frontend.headers.forceSTSHeader=true"
+      #- "traefik.frontend.headers.STSSeconds=315360000"
+      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
+      #- "traefik.frontend.headers.STSPreload=true"  
+  code_server:
+    container_name: demyx_cs
+    image: demyx/code-server
+    restart: unless-stopped
+    networks:
+      - demyx
+    volumes:
+      - demyx_cs:/home/coder
+    environment:
+      - CODER_AUTH=true
+      - PASSWORD=demyx
+      - TZ=America/Los_Angeles
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:domain.tld"
+      #- "traefik.frontend.redirect.entryPoint=https"
+      #- "traefik.frontend.headers.forceSTSHeader=true"
+      #- "traefik.frontend.headers.STSSeconds=315360000"
+      #- "traefik.frontend.headers.STSIncludeSubdomains=true"
+      #- "traefik.frontend.headers.STSPreload=true"
+volumes:
+  demyx_cs:
+    name: demyx_cs
+  demyx_traefik:
+    name: demyx_traefik
+networks:
+  demyx:
+    name: demyx
