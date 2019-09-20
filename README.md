@@ -20,7 +20,7 @@ SHELL | zsh | zsh
 SHELL THEME | Oh My Zsh "ys" | Oh My Zsh "ys"
 PACKAGES | zsh jq htop nano tzdata | zsh jq htop nano tzdata composer nvm npm browser-sync wp-cli
 
-## Updates
+## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
 [![Repository Size](https://img.shields.io/github/repo-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
 [![Watches](https://img.shields.io/github/watchers/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
@@ -29,6 +29,7 @@ PACKAGES | zsh jq htop nano tzdata | zsh jq htop nano tzdata composer nvm npm br
 
 * Auto built weekly on Sundays (America/Los_Angeles)
 * Rolling release updates
+* For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
 
 ## Environment Variables
 
@@ -102,9 +103,9 @@ services:
     volumes:
       - demyx_cs:/home/coder
     environment:
-      CODER_AUTH: true
-      PASSWORD: demyx
-      TZ: America/Los_Angeles
+      - CODER_AUTH=true
+      - PASSWORD=demyx
+      - TZ=America/Los_Angeles
     labels:
       - "traefik.enable=true"
       - "traefik.port=8080"
@@ -123,7 +124,3 @@ networks:
   demyx:
     name: demyx
 ```
-
-## Support
-
-* [#demyx](https://webchat.freenode.net/?channel=#demyx)
