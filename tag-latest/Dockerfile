@@ -20,7 +20,7 @@ RUN set -ex; \
 RUN set -ex; \
     sed -i "s|/home/coder:/bin/bash|/home/coder:/bin/zsh|g" /etc/passwd; \
     mkdir -p /home/coder/.code/data/User; \
-    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\",\n    \"terminal.integrated.rendererType\": \"dom\"\n}" > /home/coder/.code/data/User/settings.json; \
+    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/coder/.code/data/User/settings.json; \
     chown -R coder:coder /home/coder
 
 RUN set -ex; \
