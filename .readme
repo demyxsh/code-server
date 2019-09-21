@@ -42,8 +42,7 @@ PASSWORD | demyx | demyx
 TZ | America/Los_Angeles | America/Los_Angeles
 
 ## Usage
-This config requires no .toml for Traefik and is ready to go when running: 
-`docker-compose up -d`. 
+This config requires no .toml for Traefik and is ready to go when running: `docker-compose up -d`. 
 
 SSL/TLS
 * Remove the comments (#)
@@ -93,7 +92,7 @@ services:
       #- "traefik.frontend.headers.forceSTSHeader=true"
       #- "traefik.frontend.headers.STSSeconds=315360000"
       #- "traefik.frontend.headers.STSIncludeSubdomains=true"
-      #- "traefik.frontend.headers.STSPreload=true"  
+      #- "traefik.frontend.headers.STSPreload=true"
   code_server:
     container_name: demyx_cs
     image: demyx/code-server
