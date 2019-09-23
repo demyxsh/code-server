@@ -16,7 +16,8 @@ USER root
 RUN set -ex; \
     apt-get update && apt-get install -y software-properties-common; \
     add-apt-repository ppa:ondrej/php; \
-    apt-get update && apt-get install -y php7.3 php7.3-mysqli zsh jq htop nano tzdata composer
+    apt-get update && apt-get install -y php7.3 php7.3-mysqli zsh jq htop nano tzdata composer supervisor npm; \
+    npm install -g browser-sync
 
 # Oh My Zsh
 RUN set -ex; \
@@ -44,14 +45,6 @@ RUN set -ex; \
     sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/www-data/.zshrc; \
     sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/www-data/.zshrc; \
     ln -s /home/www-data/.zsh_history /root
-
-# nvm npm browser-sync
-RUN set -ex; \
-    su -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | zsh" -s /bin/zsh www-data; \
-    su -c "source ~/.zshrc; nvm install --lts; npm -g install browser-sync" -s /bin/zsh www-data; \
-    # BrowserSync shortcut command
-    echo "#!/bin/bash\nbrowser-sync start --config=/home/www-data/bs.js" > /usr/local/bin/demyx-bs; \
-    chmod +x /usr/local/bin/demyx-bs
 
 # wp-cli
 RUN set -ex; \

@@ -30,8 +30,25 @@ if [[ "$DEMYX" = true ]]; then
         socket: {
             domain: '\"$DEMYX_APP_DOMAIN\"'
         }
-    };' > /home/www-data/bs.js
+    };' > /tmp/bs.js
     CODER_BASE_PATH="--base-path=/demyx-cs"
 fi
 
-code-server /var/www/html --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry "$CODER_AUTH_FLAG" "$CODER_BASE_PATH"
+echo "
+[supervisord]
+nodaemon=true
+
+[program:code]
+command=code-server /var/www/html --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry "$CODER_AUTH_FLAG" "$CODER_BASE_PATH"
+stdout_logfile=/dev/fd/1
+stdout_logfile_maxbytes=0
+redirect_stderr=true
+
+[program:bs]
+command=browser-sync start --config=/tmp/bs.js
+stdout_logfile=/dev/fd/1
+stdout_logfile_maxbytes=0
+redirect_stderr=true
+" > /tmp/supervisord.conf
+
+supervisord -c /tmp/supervisord.conf -j /tmp/supervisord.pid -l /tmp/supervisord.log
