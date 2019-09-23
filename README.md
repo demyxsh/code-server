@@ -8,6 +8,8 @@
 
 code-server is VS Code running on a remote server, accessible through the browser.
 
+<p align="center"><img src="https://i.imgur.com/93QZgnG.png"></p>
+
 DEMYX | LATEST | WP
 --- | --- | ---
 TAG | latest | wp
