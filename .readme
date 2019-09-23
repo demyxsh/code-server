@@ -20,7 +20,7 @@ DEFAULT PASSWORD | demyx | demyx
 TIMEZONE | America/Los_Angeles | America/Los_Angeles
 SHELL | zsh | zsh
 SHELL THEME | Oh My Zsh "ys" | Oh My Zsh "ys"
-PACKAGES | zsh jq htop nano tzdata | zsh jq htop nano tzdata composer nvm npm browser-sync wp-cli
+PACKAGES | zsh jq htop nano tzdata | zsh jq htop nano tzdata composer npm browser-sync wp-cli
 
 ## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
