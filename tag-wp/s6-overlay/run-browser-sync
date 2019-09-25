@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+# Demyx
+# https://demyx.sh
+
+browser-sync start --config=/tmp/bs.js

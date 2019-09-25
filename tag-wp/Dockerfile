@@ -16,7 +16,7 @@ USER root
 RUN set -ex; \
     apt-get update && apt-get install -y software-properties-common; \
     add-apt-repository ppa:ondrej/php; \
-    apt-get update && apt-get install -y php7.3 php7.3-mysqli zsh jq htop nano tzdata composer supervisor npm; \
+    apt-get update && apt-get install -y php7.3 php7.3-mysqli zsh jq htop nano tzdata composer npm; \
     npm install -g browser-sync
 
 # Oh My Zsh
@@ -52,12 +52,17 @@ RUN set -ex; \
     chmod +x wp-cli.phar; \
     mv wp-cli.phar /usr/local/bin/wp
 
-COPY demyx-entrypoint.sh /usr/local/bin/demyx-entrypoint
+# s6 overlay
+RUN set -ex; \
+    export DEMYX_S6_VERSION=$(curl -sL https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    wget https://github.com/just-containers/s6-overlay/releases/download/${DEMYX_S6_VERSION}/s6-overlay-amd64.tar.gz -qO /tmp/s6-overlay-amd64.tar.gz; \
+    tar xzf /tmp/s6-overlay-amd64.tar.gz -C /; \
+    rm -rf /tmp/*
 
-RUN chmod +x /usr/local/bin/demyx-entrypoint
-
-USER www-data
+COPY s6-overlay/00-init /etc/cont-init.d/00-init
+COPY s6-overlay/run-code-server /etc/services.d/code-server/run
+COPY s6-overlay/run-browser-sync /etc/services.d/browser-sync/run
 
 WORKDIR /var/www/html
 
-ENTRYPOINT ["dumb-init", "demyx-entrypoint"]
+ENTRYPOINT ["/init"]

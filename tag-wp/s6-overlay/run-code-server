@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+# Demyx
+# https://demyx.sh
+
+su -c "code-server /var/www/html --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry $CODER_AUTH_FLAG $CODER_BASE_PATH" -s /bin/sh www-data
