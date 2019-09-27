@@ -63,6 +63,8 @@ COPY s6-overlay/00-init /etc/cont-init.d/00-init
 COPY s6-overlay/run-code-server /etc/services.d/code-server/run
 COPY s6-overlay/run-browser-sync /etc/services.d/browser-sync/run
 
+EXPOSE 8080 3000
+
 WORKDIR /var/www/html
 
 ENTRYPOINT ["/init"]
