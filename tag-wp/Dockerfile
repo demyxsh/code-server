@@ -52,7 +52,7 @@ RUN set -ex; \
     chmod +x wp-cli.phar; \
     mv wp-cli.phar /usr/local/bin/wp
 
-# s6 overlay
+# s6-overlay
 RUN set -ex; \
     export DEMYX_S6_VERSION=$(curl -sL https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
     wget https://github.com/just-containers/s6-overlay/releases/download/${DEMYX_S6_VERSION}/s6-overlay-amd64.tar.gz -qO /tmp/s6-overlay-amd64.tar.gz; \
