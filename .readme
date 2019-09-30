@@ -17,8 +17,6 @@ USER<br />GROUP | coder (1000)<br />coder (1000)  | www-data (82)<br />www-data 
 WORKDIR | /home/demyx | /var/www/html
 PORT | 8080 | 8080 3000
 ENTRYPOINT | dumb-init | s6-overlay
-DEFAULT PASSWORD | demyx | demyx
-TIMEZONE | America/Los_Angeles | America/Los_Angeles
 SHELL | zsh | zsh
 SHELL THEME | Oh My Zsh "ys" | Oh My Zsh "ys"
 PACKAGES | docker (binary) zsh jq htop nano tzdata | zsh jq htop nano tzdata composer npm browser-sync wp-cli
