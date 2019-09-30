@@ -34,3 +34,5 @@ module.exports={
         domain: '\"$CODER_BS_DOMAIN\"'
     }
 };' > /tmp/bs.js
+
+[[ "$CODER_BS_FILES" = off ]] && sed -i 's|files:|//files:|g' /tmp/bs.js
