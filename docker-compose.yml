@@ -51,9 +51,11 @@ services:
     networks:
       - demyx
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - demyx_cs:/home/coder
     environment:
       - CODER_AUTH=true
+      - CODER_WORKDIR=/home/demyx
       - PASSWORD=demyx
       - TZ=America/Los_Angeles
     labels:
@@ -73,4 +75,3 @@ volumes:
 networks:
   demyx:
     name: demyx
- 

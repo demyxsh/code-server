@@ -2,34 +2,35 @@
 # Demyx
 # https://demyx.sh
 
-# Enable/disable password authentication
-if [[ "$CODER_AUTH" = false ]]; then
-    CODER_AUTH_FLAG=
-else
-    CODER_AUTH_FLAG="--auth=password"
+# Define default variables
+CODER_BS_FILES='["/var/www/html/wp-content/themes/**/*", "/var/www/html/wp-content/plugins/**/*"]'
+CODER_BS_PROXY=localhost
+CODER_BS_DOMAIN="$CODER_DOMAIN"
+
+# Demyx
+if [[ -n "$DEMYX_APP_WP_CONTAINER" ]]; then
+    CODER_BS_FILES="$DEMYX_BS_FILES"
+    CODER_BS_PROXY="$DEMYX_APP_WP_CONTAINER"
+    CODER_BS_DOMAIN="$DEMYX_APP_DOMAIN"
 fi
 
-# Demyx use
-
-if [[ "$DEMYX" = true ]]; then
-    echo '// AUTO GENERATED
-    module.exports={
-        ui: false,
-        open: false,
-        files: '"$DEMYX_BS_FILES"',
-        proxy: '\"$DEMYX_APP_WP_CONTAINER\"',
-        rewriteRules:[{
-            match: /'$DEMYX_APP_DOMAIN'/g,
-            fn: function (e,r,t) {
-                return '\"$DEMYX_APP_DOMAIN/demyx-bs\"'
-            }
-        }],
-        scriptPath: function (path) {
-            return "/demyx-bs" + path;
-        },
-        socket: {
-            domain: '\"$DEMYX_APP_DOMAIN\"'
+echo '
+// AUTO GENERATED
+module.exports={
+    ui: false,
+    open: false,
+    files: '"$CODER_BS_FILES"',
+    proxy: '\"$CODER_BS_PROXY\"',
+    rewriteRules:[{
+        match: /'$CODER_BS_DOMAIN'/g,
+        fn: function (e,r,t) {
+            return '\"$CODER_BS_DOMAIN/demyx-bs\"'
         }
-    };' > /tmp/bs.js
-    CODER_BASE_PATH="--base-path=/demyx-cs"
-fi
+    }],
+    scriptPath: function (path) {
+        return "/demyx-bs" + path;
+    },
+    socket: {
+        domain: '\"$CODER_BS_DOMAIN\"'
+    }
+};' > /tmp/bs.js

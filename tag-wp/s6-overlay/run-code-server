@@ -2,4 +2,21 @@
 # Demyx
 # https://demyx.sh
 
-su -c "code-server /var/www/html --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry $CODER_AUTH_FLAG $CODER_BASE_PATH" -s /bin/sh www-data
+# Enable/disable password authentication
+if [[ "$CODER_AUTH" = false ]]; then
+    CODER_AUTH_FLAG=
+else
+    CODER_AUTH_FLAG="--auth=password"
+fi
+
+# Set default workdir
+if [[ -z "$CODER_WORKDIR" ]]; then
+    CODER_WORKDIR=/var/www/html
+fi
+
+# Demyx use
+if [[ "$DEMYX" = true ]]; then
+    CODER_BASE_PATH="--base-path=/demyx-cs"
+fi
+
+su -c "code-server $CODER_WORKDIR --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry $CODER_AUTH_FLAG $CODER_BASE_PATH" -s /bin/sh www-data

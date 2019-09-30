@@ -6,7 +6,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Get versions
-DEMYX_UBUNTU_VERSION=$(docker exec -t demyx_cs cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/"//g' | sed -e 's/\r//g')
+DEMYX_ALPINE_VERSION=$(docker exec -t demyx_wp cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed -e 's/\r//g')
 DEMYX_CODE_VERSION=$(docker exec -t demyx_cs code-server --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed -e 's/\r//g')
 
 # Replace the README.md
@@ -14,7 +14,7 @@ DEMYX_CODE_VERSION=$(docker exec -t demyx_cs code-server --version | sed $'s,\x1
 cp .readme README.md
 
 # Replace latest with actual versions
-sed -i "s/ubuntu-latest-informational/ubuntu-${DEMYX_UBUNTU_VERSION}-informational/g" README.md
+sed -i "s/alpine-latest-informational/alpine-${DEMYX_ALPINE_VERSION}-informational/g" README.md
 sed -i "s/code--server-latest-informational/code--server-${DEMYX_CODE_VERSION}-informational/g" README.md
 
 # Push back to GitHub

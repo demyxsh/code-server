@@ -9,4 +9,9 @@ else
     CODER_AUTH_FLAG="--auth=password"
 fi
 
-code-server /home/coder --user-data-dir=/home/coder/.code/data --extensions-dir=/home/coder/.code/extensions --disable-telemetry "$CODER_AUTH_FLAG"
+# Set default workdir
+if [[ -z "$CODER_WORKDIR" ]]; then
+    CODER_WORKDIR=/home/demyx
+fi
+
+code-server $(echo "$CODER_WORKDIR") --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry "$CODER_AUTH_FLAG"
