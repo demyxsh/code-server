@@ -11,7 +11,21 @@ ENV PASSWORD=demyx
 
 # Install custom packages
 RUN set -ex; \
-    apk add --update --no-cache gcc bash zsh jq htop nano tzdata gnupg git sudo curl dumb-init openssh
+    apk add --update --no-cache \
+    gcc \
+    bash \
+    zsh \
+    jq \
+    htop \
+    nano \
+    tzdata \
+    gnupg \
+    git \
+    sudo \
+    curl \
+    openssh \
+    util-linux \
+    dumb-init
 
 # Download Alpine binary of code-server
 RUN set -ex; \
