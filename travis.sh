@@ -17,7 +17,7 @@ sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-info
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
 git remote set-url origin https://${DEMYX_GITHUB_TOKEN}@github.com/demyxco/"$DEMYX_REPOSITORY".git
-git add .; git commit -m "Weekly Travis Build $TRAVIS_BUILD_NUMBER"; git push origin HEAD:master
+git add .; git commit -m "Travis Build $TRAVIS_BUILD_NUMBER"; git push origin HEAD:master
 
 # Set the default path to README.md
 README_FILEPATH="./README.md"
