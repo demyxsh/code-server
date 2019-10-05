@@ -55,7 +55,7 @@ RUN set -ex; \
     echo demyx:demyx | chpasswd; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
     mkdir -p /home/demyx/.code/data/User; \
-    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
+    echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
     echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
 
 # Oh-My-Zsh

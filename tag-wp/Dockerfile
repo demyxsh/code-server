@@ -45,7 +45,7 @@ RUN set -ex; \
     sed -i "s|/home/www-data:/bin/sh|/home/www-data:/bin/zsh|g" /etc/passwd; \
     \
     mkdir -p /home/www-data/.code/data/User; \
-    echo "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/www-data/.code/data/User/settings.json; \
+    echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/www-data/.code/data/User/settings.json; \
     \
     # No password when using sudo
     echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
