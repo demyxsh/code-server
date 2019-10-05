@@ -34,7 +34,7 @@ PACKAGES | docker (binary) zsh jq htop nano tzdata | zsh jq htop nano tzdata com
 
 ## Environment Variables
 
-To disable password authentication, set CODER_AUTH to false.
+* To disable password authentication, set CODER_AUTH to false.
 
 DEMYX | LATEST | WP
 --- | --- | ---
