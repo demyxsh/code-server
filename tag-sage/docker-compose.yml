@@ -86,6 +86,7 @@ services:
       - MARIADB_SORT_BUFFER_SIZE=20M
       - MARIADB_TABLE_OPEN_CACHE=64
       - MARIADB_WRITE_BUFFER=2M
+      - TZ=America/Los_Angeles
   demyx_sage:
     image: demyx/code-server:sage
     container_name: demyx_sage
