@@ -144,7 +144,7 @@ services:
       - TZ=America/Los_Angeles
     labels:
       - "traefik.enable=true"
-      # Traefik dashboard with basic auth https://traefik.domain.tld
+      # Traefik dashboard with basic auth protection https://traefik.domain.tld
       - "traefik.http.routers.traefik-http.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-http.service=api@internal"
       - "traefik.http.routers.traefik-http.entrypoints=http"
@@ -193,6 +193,7 @@ services:
       - MARIADB_SORT_BUFFER_SIZE=20M
       - MARIADB_TABLE_OPEN_CACHE=64
       - MARIADB_WRITE_BUFFER=2M
+      - TZ=America/Los_Angeles
   demyx_sage:
     image: demyx/code-server:sage
     container_name: demyx_sage
@@ -271,20 +272,20 @@ services:
       - "traefik.http.middlewares.sage-webpack-prefix.stripprefix.prefixes=/demyx-bs/__webpack_hmr"
       - "traefik.http.services.sage-webpack.loadbalancer.server.port=3000"
       # hot-update.js
-      - "traefik.http.routers.sage-hotupdate-js.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/sage/dist/{hash:[a-z.0-9]+}.hot-update.js`))"
+      - "traefik.http.routers.sage-hotupdate-js.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z.0-9]+}.hot-update.js`))"
       - "traefik.http.routers.sage-hotupdate-js.middlewares=sage-hotupdate-js-prefix"
       - "traefik.http.routers.sage-hotupdate-js.entrypoints=https"
       - "traefik.http.routers.sage-hotupdate-js.tls.certresolver=demyx"
       - "traefik.http.routers.sage-hotupdate-js.service=sage-hotupdate-js"
-      - "traefik.http.middlewares.sage-hotupdate-js-prefix.stripprefix.prefixes=/demyx-bs/app/themes/sage/dist/[a-z.0-9].hot-update.js"
+      - "traefik.http.middlewares.sage-hotupdate-js-prefix.stripprefix.prefixes=/demyx-bs/app/themes/[a-z0-9]/dist/[a-z.0-9].hot-update.js"
       - "traefik.http.services.sage-hotupdate-js.loadbalancer.server.port=3000"
       # hot-update.json
-      - "traefik.http.routers.sage-hotupdate-json.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/sage/dist/{hash:[a-z0-9]+}.hot-update.json`))"
+      - "traefik.http.routers.sage-hotupdate-json.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z0-9]+}.hot-update.json`))"
       - "traefik.http.routers.sage-hotupdate-json.middlewares=sage-hotupdate-json-prefix"
       - "traefik.http.routers.sage-hotupdate-json.entrypoints=https"
       - "traefik.http.routers.sage-hotupdate-json.tls.certresolver=demyx"
       - "traefik.http.routers.sage-hotupdate-json.service=sage-hotupdate-json"
-      - "traefik.http.middlewares.sage-hotupdate-json-prefix.stripprefix.prefixes=/demyx-bs/app/themes/sage/dist/[a-z0-9].hot-update.json"
+      - "traefik.http.middlewares.sage-hotupdate-json-prefix.stripprefix.prefixes=/demyx-bs/app/themes/[a-z0-9]/dist/[a-z0-9].hot-update.json"
       - "traefik.http.services.sage-hotupdate-json.loadbalancer.server.port=3000"
   demyx_pma:
     image: phpmyadmin/phpmyadmin
