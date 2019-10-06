@@ -43,11 +43,7 @@ RUN set ex; \
         composer clearcache' -s /bin/sh www-data; \
     tar -czf /usr/src/sage.tgz -C /tmp sage; \
     rm -rf /tmp/*; \
-    # Sage helper for yarn
-    echo '#!/bin/bash' >> /usr/local/bin/demyx; \
-    echo 'yarn --cwd=/var/www/html/web/app/themes/sage start' >> /usr/local/bin/sage; \
-    chmod +x /usr/local/bin/sage; \
-    chown -R root:root /usr/src; \
+    chown -R root:root /usr/src
 
 # wp-cli
 RUN set -ex; \
@@ -97,6 +93,10 @@ RUN set -ex; \
 COPY 00-init /etc/cont-init.d/00-init
 COPY run-code-server /etc/services.d/code-server/run
 COPY bs.js /usr/src/bs.js
+# Sage helper for yarn
+COPY sage.sh /usr/local/bin/sage
+
+RUN chmod +x /usr/local/bin/sage
 
 EXPOSE 80 3000 8080 9000
 
