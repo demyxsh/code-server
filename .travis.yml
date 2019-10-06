@@ -4,7 +4,7 @@
 notifications:
   email:
     on_success: never
-    on_failure: never
+    on_failure: always
 
 services:
   - docker
@@ -22,6 +22,7 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest/.
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage/.
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp/.
   - docker-compose up -d code_server
   - sleep 5
@@ -30,5 +31,6 @@ script:
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
   - docker push demyx/"$DEMYX_REPOSITORY"
+  - docker push demyx/"$DEMYX_REPOSITORY":sage
   - docker push demyx/"$DEMYX_REPOSITORY":wp
   - bash travis.sh

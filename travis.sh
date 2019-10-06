@@ -12,6 +12,8 @@ DEMYX_CODE_VERSION=$(docker exec -t demyx_cs code-server --version | sed $'s,\x1
 # Replace versions
 sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" README.md
+sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" tag-sage/README.md
+sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-sage/README.md
 
 # Push back to GitHub
 git config --global user.email "travis@travis-ci.org"
