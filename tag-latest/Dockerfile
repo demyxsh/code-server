@@ -3,7 +3,7 @@ FROM alpine
 LABEL sh.demyx.image demyx/code-server
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
 LABEL sh.demyx.url https://demyx.sh
-LABEL sh.demyx.github https://github.com/demyxco/demyx
+LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
 ENV TZ America/Los_Angeles
