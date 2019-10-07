@@ -28,6 +28,9 @@ if [[ ! -f /var/www/html/.env ]]; then
 			su -c "wp theme activate sage/resources" -s /bin/sh www-data
 			sage init sage
 		fi
+		# A static homepage will redirect BrowserSync, this plugin disables that.
+		echo "[demyx] installing demyx-browsersync mu plugin..."
+		cp /usr/src/demyx-browsersync.php /var/www/html/web/app/mu-plugins
 	else
 		echo "One or more environment variables are missing!"
 		exit 1

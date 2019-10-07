@@ -95,6 +95,8 @@ COPY run-code-server /etc/services.d/code-server/run
 COPY bs.js /usr/src/bs.js
 # Sage helper for yarn
 COPY sage.sh /usr/local/bin/sage
+# A static homepage will redirect BrowserSync, this plugin disables that.
+COPY demyx-browsersync.php /usr/src/demyx-browsersync.php
 
 RUN chmod +x /usr/local/bin/sage
 
