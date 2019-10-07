@@ -36,9 +36,11 @@ PHPMYADMIN | https://domain.tld/demyx-pma/
 * Rolling release updates
 * For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
 
-## Container Environment Variables
+## Environment Variables
 
-DEMYX_SAGE | VALUE 
+### demyx_sage
+
+ENVIRONMENT | VALUE 
 --- | ---
 PASSWORD | demyx
 CODER_BASE_PATH | /demyx-cs
@@ -59,7 +61,9 @@ WORDPRESS_NGINX_RATE_LIMIT | off
 WORDPRESS_NGINX_XMLRPC | off
 TZ | America/Los_Angeles
 
-DEMYX_SAGE_DB | VALUE 
+### demyx_sage_db
+
+ENVIRONMENT | VALUE 
 --- | ---
 MARIADB_DATABASE | demyx
 MARIADB_USERNAME | demyx
@@ -91,7 +95,9 @@ MARIADB_TABLE_OPEN_CACHE | 64
 MARIADB_WRITE_BUFFER | 2M
 TZ | America/Los_Angeles
 
-DEMYX_PMA | VALUE
+### demyx_pma
+
+ENVIRONMENT | VALUE
 --- | ---
 PMA_HOST | demyx_sage_db
 MYSQL_ROOT_PASSWORD | demyx
@@ -99,10 +105,29 @@ PMA_ABSOLUTE_URI | https://domain.tld/demyx-pma/
 
 ## Usage
 
+`code-server:sage` comes with a helper script that wraps yarn commands and also does other things.
+
+```
+sage <arg>        Sage helper script
+
+     init         Initializes fixes for webpack
+                  Ex: sage -t <theme> init
+
+     help         Help menu for sage helper script
+                  Ex: sage help
+
+     new          Executes composer create-project, yarn, and sage -t <theme> init
+                  Ex: sage -t <theme> new
+
+     -t           Set the theme
+                  Ex: sage -t <theme> add <package>
+```
+
+### docker-compose.yml
+
 * Configured for remote VPS
 * Ports 80 and 443 must be open when using Traefik
 * TLS/SSL enabled by default
-* `sage` command is a shortcut for `yarn start` (only works with default sage theme web/app/themes/sage)
 
 ```
 version: "3.7"
