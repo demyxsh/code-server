@@ -22,16 +22,11 @@ if [[ ! -f /var/www/html/.env ]]; then
 		su -c "wp rewrite structure '/%category%/%postname%/'" -s /bin/bash www-data
 		# Sage
 		if [[ ! -d /var/www/html/web/app/themes/sage ]]; then
-			SAGE_WEBPACK_CONFIG=/var/www/html/web/app/themes/sage/resources/assets/build/webpack.config.watch.js
 			echo "[demyx] installing Sage..."
 			tar -xzf /usr/src/sage.tgz -C /var/www/html/web/app/themes
+			rm -rf /var/www/html/web/wp/wp-content/themes/twenty*
 			su -c "wp theme activate sage/resources" -s /bin/sh www-data
-			echo -e "$(cat /usr/src/bs.js)\n$(cat /var/www/html/web/app/themes/sage/resources/assets/build/webpack.config.watch.js)" > "$SAGE_WEBPACK_CONFIG"
-			sed -i "s|delay: 500|delay: 500, advanced: demyxBS|g" "$SAGE_WEBPACK_CONFIG"
-			sed -i "s|config.proxyUrl +|'$WORDPRESS_PROTO' +|g" "$SAGE_WEBPACK_CONFIG"
-			sed -i "s|domain.tld|$WORDPRESS_DOMAIN|g" "$SAGE_WEBPACK_CONFIG"
-			sed -i "s|example.test|$(hostname)|g" /var/www/html/web/app/themes/sage/resources/assets/config.json
-			echo -e "\nmodule.hot.accept();" >> /var/www/html/web/app/themes/sage/resources/assets/scripts/main.js
+			sage init sage
 		fi
 	else
 		echo "One or more environment variables are missing!"

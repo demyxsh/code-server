@@ -1,3 +1,6 @@
+// Demyx
+// https://demyx.sh
+
 const demyxBS = {
   browserSync: {
     open: false,
