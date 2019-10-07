@@ -26,7 +26,7 @@ if [[ ! -f /var/www/html/.env ]]; then
 			tar -xzf /usr/src/sage.tgz -C /var/www/html/web/app/themes
 			rm -rf /var/www/html/web/wp/wp-content/themes/twenty*
 			su -c "wp theme activate sage/resources" -s /bin/sh www-data
-			sage init sage
+			sage init
 		fi
 		# A static homepage will redirect BrowserSync, this plugin disables that.
 		echo "[demyx] installing demyx-browsersync mu plugin..."
