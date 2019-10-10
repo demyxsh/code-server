@@ -8,11 +8,11 @@ const demyxBS = {
     rewriteRules:[{
       match: /domain.tld/g,
       fn: function (e,r,t) {
-        return 'domain.tld/demyx-bs'
+        return 'domain.tld/wp-demyx/bs'
       }
     }],
     scriptPath: function (path) {
-      return '/demyx-bs' + path;
+      return '/wp-demyx/bs' + path;
     },
     socket: {
       domain: 'domain.tld'
