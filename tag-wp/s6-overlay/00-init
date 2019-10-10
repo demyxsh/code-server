@@ -6,12 +6,14 @@
 CODER_BS_FILES='["/var/www/html/wp-content/themes/**/*", "/var/www/html/wp-content/plugins/**/*"]'
 CODER_BS_PROXY=localhost
 CODER_BS_DOMAIN="$CODER_DOMAIN"
+CODER_BASE_PATH=/
 
 # Demyx
 if [[ "$DEMYX" = true ]]; then
     CODER_BS_FILES="$DEMYX_BS_FILES"
     CODER_BS_PROXY="$DEMYX_APP_WP_CONTAINER"
     CODER_BS_DOMAIN="$DEMYX_APP_DOMAIN"
+    CODER_BASE_PATH="$DEMYX_CODER_BASE_PATH/bs"
 fi
 
 echo '
@@ -24,11 +26,11 @@ module.exports={
     rewriteRules:[{
         match: /'$CODER_BS_DOMAIN'/g,
         fn: function (e,r,t) {
-            return '\"$CODER_BS_DOMAIN/demyx-bs\"'
+            return '\"${CODER_BS_DOMAIN}${CODER_BASE_PATH}\"'
         }
     }],
     scriptPath: function (path) {
-        return "/demyx-bs" + path;
+        return '\"${CODER_BASE_PATH}\"' + path;
     },
     socket: {
         domain: '\"$CODER_BS_DOMAIN\"'

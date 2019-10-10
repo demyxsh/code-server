@@ -41,6 +41,7 @@ DEMYX | LATEST | WP
 CODER_AUTH | true | true
 PASSWORD | demyx | demyx
 CODER_WORKDIR | /home/demyx | /var/www/html
+CODER_BASE_PATH | | /_demyx
 CODER_BS_FILES | | ["/var/www/html/wp-content/themes/\*\*/\*", "/var/www/html/wp-content/plugins/\*\*/\*"]
 CODER_BS_PROXY | | container_name
 CODER_BS_DOMAIN | | domain.tld

@@ -15,8 +15,8 @@ if [[ -z "$CODER_WORKDIR" ]]; then
 fi
 
 # Demyx use
-if [[ "$DEMYX" = true ]]; then
-    CODER_BASE_PATH="--base-path=/demyx-cs"
+if [[ "$DEMYX" = true ]] && [[ -n "$DEMYX_CODER_BASE_PATH" ]]; then
+    CODER_BASE_PATH="$DEMYX_CODER_BASE_PATH/cs"
 fi
 
-su -c "code-server $CODER_WORKDIR --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry $CODER_AUTH_FLAG $CODER_BASE_PATH" -s /bin/sh www-data
+su -c "code-server $CODER_WORKDIR --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry $CODER_AUTH_FLAG --base-path=$CODER_BASE_PATH" -s /bin/sh www-data
