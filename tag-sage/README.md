@@ -20,9 +20,9 @@ SHELL | zsh
 SHELL THEME | Oh My Zsh "ys"
 PACKAGES | composer gcc git gnupg htop jq<br />nano npm openssh sudo util-linux zsh
 WORDPRESS | https://domain.tld
-CODE-SERVER | https://domain.tld/demyx-cs/
-BROWSER-SYNC | https://domain.tld/demyx-bs/
-PHPMYADMIN | https://domain.tld/demyx-pma/
+CODE-SERVER | https://domain.tld/wp-demyx/cs/
+BROWSER-SYNC | https://domain.tld/wp-demyx/bs/
+PHPMYADMIN | https://domain.tld/wp-demyx/pma/
 
 ## Updates & Support
 
@@ -43,7 +43,7 @@ PHPMYADMIN | https://domain.tld/demyx-pma/
 ENVIRONMENT | VALUE 
 --- | ---
 PASSWORD | demyx
-CODER_BASE_PATH | /demyx-cs
+CODER_BASE_PATH | /wp-demyx/cs
 WORDPRESS_DB_NAME | demyx
 WORDPRESS_DB_USER | demyx
 WORDPRESS_DB_PASSWORD | demyx
@@ -101,7 +101,7 @@ ENVIRONMENT | VALUE
 --- | ---
 PMA_HOST | demyx_sage_db
 MYSQL_ROOT_PASSWORD | demyx
-PMA_ABSOLUTE_URI | https://domain.tld/demyx-pma/
+PMA_ABSOLUTE_URI | https://domain.tld/wp-demyx/pma/
 
 ## Usage
 
@@ -124,6 +124,42 @@ sage <arg>        Sage helper script
 ```
 
 ### docker-compose.yml
+
+When you run `docker-compose up -d`, it will probably take 10 seconds or less on the first time to initialize the container. You can see the output in real time by running `docker logs demyx_sage -f` to see what's installing in that moment.
+
+```
+docker logs demyx_sage -f            
+[s6-init] making user provided files available at /var/run/s6/etc...exited 0.
+[s6-init] ensuring user provided files have correct perms...exited 0.
+[fix-attrs.d] applying ownership & permissions fixes...
+[fix-attrs.d] done.
+[cont-init.d] executing container initialization scripts...
+[cont-init.d] 00-init: executing... 
+[demyx] installing WordPress...
+Success: WordPress installed successfully.
+Success: Rewrite structure set.
+Success: Rewrite rules flushed.
+[demyx] installing Sage...
+Success: Switched to 'Sage Starter Theme' theme.
+[demyx] installing demyx-browsersync mu plugin...
+[cont-init.d] 00-init: exited 0.
+[cont-init.d] done.
+[services.d] starting services
+[services.d] done.
+2019/10/10 13:53:52 [notice] 461#461: using the "epoll" event method
+2019/10/10 13:53:52 [notice] 461#461: nginx/1.17.4
+2019/10/10 13:53:52 [notice] 461#461: built by gcc 8.3.0 (Alpine 8.3.0) 
+2019/10/10 13:53:52 [notice] 461#461: OS: Linux 4.19.75-0-vanilla
+2019/10/10 13:53:52 [notice] 461#461: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2019/10/10 13:53:52 [notice] 461#461: start worker processes
+2019/10/10 13:53:52 [notice] 461#461: start worker process 464
+2019/10/10 13:53:52 [notice] 464#464: sched_setaffinity(): using cpu #0
+[10-Oct-2019 13:53:52] NOTICE: fpm is running, pid 462
+[10-Oct-2019 13:53:52] NOTICE: ready to handle connections
+info  Server listening on http://localhost:8080
+info    - Using custom password for authentication
+info    - Not serving HTTPS
+```
 
 * Configured for remote VPS
 * Ports 80 and 443 must be open when using Traefik
@@ -233,7 +269,7 @@ services:
       - demyx_sage_db
     environment:
       - PASSWORD=demyx # Password for code-server and wp
-      - CODER_BASE_PATH=/demyx-cs # https://domain.tld/demyx-cs/
+      - CODER_BASE_PATH=/wp-demyx/cs # https://domain.tld/wp-demyx/cs/
       - WORDPRESS_DB_NAME=demyx
       - WORDPRESS_DB_USER=demyx
       - WORDPRESS_DB_PASSWORD=demyx
@@ -264,21 +300,21 @@ services:
       - "traefik.http.services.sage-http.loadbalancer.server.port=80"
       - "traefik.http.services.sage-https.loadbalancer.server.port=80"
       - "traefik.http.middlewares.sage-redirect.redirectscheme.scheme=https"
-      # code-server https://domain.tld/demyx-cs/
-      - "traefik.http.routers.sage-cs.rule=(Host(`domain.tld`) && PathPrefix(`/demyx-cs/`))"
+      # code-server https://domain.tld/wp-demyx/cs/
+      - "traefik.http.routers.sage-cs.rule=(Host(`domain.tld`) && PathPrefix(`/wp-demyx/cs/`))"
       - "traefik.http.routers.sage-cs.middlewares=sage-cs-prefix"
       - "traefik.http.routers.sage-cs.entrypoints=https"
       - "traefik.http.routers.sage-cs.tls.certresolver=demyx"
       - "traefik.http.routers.sage-cs.service=sage-cs"
-      - "traefik.http.middlewares.sage-cs-prefix.stripprefix.prefixes=/demyx-cs/"
+      - "traefik.http.middlewares.sage-cs-prefix.stripprefix.prefixes=/wp-demyx/cs/"
       - "traefik.http.services.sage-cs.loadbalancer.server.port=8080"
-      # browser-sync https://domain.tld/demyx-bs/
-      - "traefik.http.routers.sage-bs.rule=(Host(`domain.tld`) && PathPrefix(`/demyx-bs/`))"
+      # browser-sync https://domain.tld/wp-demyx/bs/
+      - "traefik.http.routers.sage-bs.rule=(Host(`domain.tld`) && PathPrefix(`/wp-demyx/bs/`))"
       - "traefik.http.routers.sage-bs.middlewares=sage-bs-prefix"
       - "traefik.http.routers.sage-bs.entrypoints=https"
       - "traefik.http.routers.sage-bs.tls.certresolver=demyx"
       - "traefik.http.routers.sage-bs.service=sage-bs"
-      - "traefik.http.middlewares.sage-bs-prefix.stripprefix.prefixes=/demyx-bs/"
+      - "traefik.http.middlewares.sage-bs-prefix.stripprefix.prefixes=/wp-demyx/bs/"
       - "traefik.http.services.sage-bs.loadbalancer.server.port=3000"
       # browser-sync socket
       - "traefik.http.routers.sage-socket.rule=(Host(`domain.tld`) && PathPrefix(`/browser-sync/socket.io/`))"
@@ -286,7 +322,7 @@ services:
       - "traefik.http.routers.sage-socket.entrypoints=https"
       - "traefik.http.routers.sage-socket.tls.certresolver=demyx"
       - "traefik.http.routers.sage-socket.service=sage-socket"
-      - "traefik.http.middlewares.sage-socket-prefix.stripprefix.prefixes=/demyx-bs/browser-sync/socket.io/"
+      - "traefik.http.middlewares.sage-socket-prefix.stripprefix.prefixes=/wp-demyx/bs/browser-sync/socket.io/"
       - "traefik.http.services.sage-socket.loadbalancer.server.port=3000"
       # webpack
       - "traefik.http.routers.sage-webpack.rule=(Host(`domain.tld`) && PathPrefix(`/__webpack_hmr`))"
@@ -294,7 +330,7 @@ services:
       - "traefik.http.routers.sage-webpack.entrypoints=https"
       - "traefik.http.routers.sage-webpack.tls.certresolver=demyx"
       - "traefik.http.routers.sage-webpack.service=sage-webpack"
-      - "traefik.http.middlewares.sage-webpack-prefix.stripprefix.prefixes=/demyx-bs/__webpack_hmr"
+      - "traefik.http.middlewares.sage-webpack-prefix.stripprefix.prefixes=/wp-demyx/bs/__webpack_hmr"
       - "traefik.http.services.sage-webpack.loadbalancer.server.port=3000"
       # hot-update.js
       - "traefik.http.routers.sage-hotupdate-js.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z.0-9]+}.hot-update.js`))"
@@ -302,7 +338,7 @@ services:
       - "traefik.http.routers.sage-hotupdate-js.entrypoints=https"
       - "traefik.http.routers.sage-hotupdate-js.tls.certresolver=demyx"
       - "traefik.http.routers.sage-hotupdate-js.service=sage-hotupdate-js"
-      - "traefik.http.middlewares.sage-hotupdate-js-prefix.stripprefix.prefixes=/demyx-bs/app/themes/[a-z0-9]/dist/[a-z.0-9].hot-update.js"
+      - "traefik.http.middlewares.sage-hotupdate-js-prefix.stripprefix.prefixes=/wp-demyx/bs/app/themes/[a-z0-9]/dist/[a-z.0-9].hot-update.js"
       - "traefik.http.services.sage-hotupdate-js.loadbalancer.server.port=3000"
       # hot-update.json
       - "traefik.http.routers.sage-hotupdate-json.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z0-9]+}.hot-update.json`))"
@@ -310,7 +346,7 @@ services:
       - "traefik.http.routers.sage-hotupdate-json.entrypoints=https"
       - "traefik.http.routers.sage-hotupdate-json.tls.certresolver=demyx"
       - "traefik.http.routers.sage-hotupdate-json.service=sage-hotupdate-json"
-      - "traefik.http.middlewares.sage-hotupdate-json-prefix.stripprefix.prefixes=/demyx-bs/app/themes/[a-z0-9]/dist/[a-z0-9].hot-update.json"
+      - "traefik.http.middlewares.sage-hotupdate-json-prefix.stripprefix.prefixes=/wp-demyx/bs/app/themes/[a-z0-9]/dist/[a-z0-9].hot-update.json"
       - "traefik.http.services.sage-hotupdate-json.loadbalancer.server.port=3000"
   demyx_pma:
     image: phpmyadmin/phpmyadmin
@@ -323,15 +359,15 @@ services:
     environment:
       - PMA_HOST=demyx_sage_db
       - MYSQL_ROOT_PASSWORD=demyx
-      - PMA_ABSOLUTE_URI=https://domain.tld/demyx-pma/
+      - PMA_ABSOLUTE_URI=https://domain.tld/wp-demyx/pma/
     labels:
       - "traefik.enable=true"
-      # phpmyadmin https://domain.tld/demyx-pma/
-      - "traefik.http.routers.sage-pma.rule=(Host(`domain.tld`) && PathPrefix(`/demyx-pma/`))"
+      # phpmyadmin https://domain.tld/wp-demyx/pma/
+      - "traefik.http.routers.sage-pma.rule=(Host(`domain.tld`) && PathPrefix(`/wp-demyx/pma/`))"
       - "traefik.http.routers.sage-pma.middlewares=sage-pma-prefix"
       - "traefik.http.routers.sage-pma.entrypoints=https"
       - "traefik.http.routers.sage-pma.tls.certresolver=demyx"
-      - "traefik.http.middlewares.sage-pma-prefix.stripprefix.prefixes=/demyx-pma/"
+      - "traefik.http.middlewares.sage-pma-prefix.stripprefix.prefixes=/wp-demyx/pma/"
 volumes:
   demyx_sage:
     name: demyx_sage
