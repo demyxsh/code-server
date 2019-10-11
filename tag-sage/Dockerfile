@@ -15,6 +15,7 @@ RUN set -ex; \
     gnupg \
     htop \
     jq \
+    mysql-client \
     nano \
     npm \
     openssh \

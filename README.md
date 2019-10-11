@@ -19,7 +19,7 @@ PORT | 8080 | 8080 3000
 ENTRYPOINT | dumb-init | s6-overlay
 SHELL | zsh | zsh
 SHELL THEME | Oh My Zsh "ys" | Oh My Zsh "ys"
-PACKAGES | docker (binary) zsh jq htop nano tzdata | zsh jq htop nano tzdata composer npm browser-sync wp-cli
+PACKAGES | docker (binary) htop jq nano tzdata zsh | browser-sync composer htop jq mysql-client nano npm tzdata wp-cli zsh
 
 ## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)

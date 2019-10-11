@@ -26,6 +26,7 @@ RUN set -ex; \
     zsh \
     jq \
     htop \
+    mysql-client \
     nano \
     tzdata \
     gnupg \

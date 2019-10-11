@@ -18,7 +18,7 @@ PORT | 80 3000 8080 9000
 ENTRYPOINT | s6-overlay
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys"
-PACKAGES | composer gcc git gnupg htop jq<br />nano npm openssh sudo util-linux zsh
+PACKAGES | composer gcc git gnupg htop jq mysql-client<br />nano npm openssh sudo util-linux zsh
 WORDPRESS | https://domain.tld
 CODE-SERVER | https://domain.tld/wp-demyx/cs/
 BROWSER-SYNC | https://domain.tld/wp-demyx/bs/
