@@ -74,29 +74,29 @@ if [[ -n "$WORDPRESS_PHP_MAX_EXECUTION_TIME" ]]; then
 fi
 
 # PHP opcache
-if [[ "$WORDPRESS_PHP_OPCACHE" = off ]]; then
+if [[ "$WORDPRESS_PHP_OPCACHE" = off ]] || [[ "$WORDPRESS_PHP_OPCACHE" = false ]]; then
 	sed -i "s|opcache.enable=1|opcache.enable=0|g" /etc/php7/php.ini
 	sed -i "s|opcache.enable_cli=1|opcache.enable_cli=0|g" /etc/php7/php.ini
 	sed -i "s|sendfile on;|sendfile off;|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX FastCGI cache
-if [[ "$WORDPRESS_NGINX_CACHE" = on ]]; then
+if [[ "$WORDPRESS_NGINX_CACHE" = on ]] || [[ "$WORDPRESS_NGINX_CACHE" = true ]]; then
 	sed -i "s|#include /etc/nginx/cache|include /etc/nginx/cache|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX rate limiting
-if [[ "$WORDPRESS_NGINX_RATE_LIMIT" = on ]]; then
+if [[ "$WORDPRESS_NGINX_RATE_LIMIT" = on ]] || [[ "$WORDPRESS_NGINX_RATE_LIMIT" = true ]]; then
 	sed -i "s|#limit_req|limit_req|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX xmlrpc.php
-if [[ "$WORDPRESS_NGINX_XMLRPC" = on ]]; then
+if [[ "$WORDPRESS_NGINX_XMLRPC" = on ]] || [[ "$WORDPRESS_NGINX_XMLRPC" = true ]]; then
 	mv /etc/nginx/common/xmlrpc.conf /etc/nginx/common/xmlrpc.on
 fi
 
 # NGINX Basic auth
-if [[ "$WORDPRESS_NGINX_BASIC_AUTH" != off ]]; then
+if [[ "$WORDPRESS_NGINX_BASIC_AUTH" = on ]] || [[ "$WORDPRESS_NGINX_BASIC_AUTH" = true ]]; then
 	echo "$WORDPRESS_NGINX_BASIC_AUTH" > /.htpasswd
 	sed -i "s|#auth_basic|auth_basic|g" /etc/nginx/nginx.conf
 fi

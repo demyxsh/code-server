@@ -116,10 +116,10 @@ services:
       - WORDPRESS_UPLOAD_LIMIT=128M
       - WORDPRESS_PHP_MEMORY=256M
       - WORDPRESS_PHP_MAX_EXECUTION_TIME=300
-      - WORDPRESS_PHP_OPCACHE=off
-      - WORDPRESS_NGINX_CACHE=off
-      - WORDPRESS_NGINX_RATE_LIMIT=off
-      - WORDPRESS_NGINX_XMLRPC=off
+      - WORDPRESS_PHP_OPCACHE=false
+      - WORDPRESS_NGINX_CACHE=false
+      - WORDPRESS_NGINX_RATE_LIMIT=false
+      - WORDPRESS_NGINX_XMLRPC=false
       - TZ=America/Los_Angeles
     labels:
       - "traefik.enable=true"
