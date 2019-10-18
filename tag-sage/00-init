@@ -7,7 +7,7 @@ if [[ ! -f /var/www/html/.env ]]; then
 	tar -xzf /usr/src/bedrock.tgz -C /var/www/html
 	chown -R www-data:www-data /var/www/html
 
-	if [[ -n "$WORDPRESS_DB_NAME" ]] && [[ -n "$WORDPRESS_DB_USER" ]] && [[ -n "$WORDPRESS_DB_PASSWORD" ]] && [[ -n "$WORDPRESS_DB_HOST" ]] && [[ -n "$WORDPRESS_DOMAIN" ]]; then
+	if [[ -n "$WORDPRESS_DB_NAME" && -n "$WORDPRESS_DB_USER" && -n "$WORDPRESS_DB_PASSWORD" && -n "$WORDPRESS_DB_HOST" && -n "$WORDPRESS_DOMAIN" ]]; then
 		WORDPRESS_PROTO="http://$WORDPRESS_DOMAIN"
 		[[ "$WORDPRESS_SSL" = true ]] && WORDPRESS_PROTO="https://$WORDPRESS_DOMAIN"
 		sed -i "s|WP_HOME=.*|WP_HOME=$WORDPRESS_PROTO|g" /var/www/html/.env
