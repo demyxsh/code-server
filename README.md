@@ -10,16 +10,16 @@ code-server is VS Code running on a remote server, accessible through the browse
 
 <p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/93QZgnG.png" width="100%"></p>
 
-DEMYX | LATEST | WP
---- | --- | ---
-TAG | latest | wp
-USER<br />GROUP | coder (1000)<br />coder (1000)  | www-data (82)<br />www-data (82)
-WORKDIR | /home/demyx | /var/www/html
+DEMYX | CODE-SERVER
+--- | ---
+TAGS | latest wp sage
+USER<br />GROUP | coder (1000)<br />coder (1000)
+WORKDIR | /home/demyx
 PORT | 8080 | 8080 3000
-ENTRYPOINT | dumb-init | s6-overlay
-SHELL | zsh | zsh
-SHELL THEME | Oh My Zsh "ys" | Oh My Zsh "ys"
-PACKAGES | docker (binary) htop jq nano tzdata zsh | browser-sync composer htop jq mysql-client nano npm tzdata wp-cli zsh
+ENTRYPOINT | dumb-init
+SHELL | zsh
+SHELL THEME | Oh My Zsh "ys" 
+PACKAGES | docker (binary) htop jq nano tzdata zsh
 
 ## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
@@ -36,15 +36,11 @@ PACKAGES | docker (binary) htop jq nano tzdata zsh | browser-sync composer htop 
 
 * To disable password authentication, set CODER_AUTH to false.
 
-DEMYX | LATEST | WP
+DEMYX | CODE-SERVER
 --- | --- | ---
-CODER_AUTH | true | true
-PASSWORD | demyx | demyx
-CODER_WORKDIR | /home/demyx | /var/www/html
-CODER_BASE_PATH | | /_demyx
-CODER_BS_FILES | | ["/var/www/html/wp-content/themes/\*\*/\*", "/var/www/html/wp-content/plugins/\*\*/\*"]
-CODER_BS_PROXY | | container_name
-CODER_BS_DOMAIN | | domain.tld
+CODER_AUTH | true
+PASSWORD | demyx
+CODER_WORKDIR | /home/demyx
 TZ | America/Los_Angeles | America/Los_Angeles
 
 ## Usage
