@@ -3,7 +3,7 @@
 # https://demyx.sh
 
 if [[ -z "$CODER_BASE_PATH" ]]; then
-    CODER_BASE_PATH=/wp-demyx/cs
+    CODER_BASE_PATH=/demyx/cs
 fi
 
 su -c "code-server /var/www/html --user-data-dir=/home/www-data/.code/data --extensions-dir=/home/www-data/.code/extensions --disable-telemetry --auth=password --base-path=$CODER_BASE_PATH" -s /bin/sh www-data
