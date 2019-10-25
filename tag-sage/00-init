@@ -44,6 +44,8 @@ chown -R www-data:www-data /var/www/html
 
 # Domain replacement
 if [[ -n "$WORDPRESS_DOMAIN" ]]; then
+	sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/www.conf
+	sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/docker.conf
 	sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/nginx/nginx.conf
 	sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/php7/php-fpm.d/www.conf
 fi
