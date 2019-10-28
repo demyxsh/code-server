@@ -54,7 +54,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - demyx_cs:/home/coder
     environment:
-      - CODER_AUTH=true
       - CODER_WORKDIR=/home/demyx
       - PASSWORD=demyx
       - TZ=America/Los_Angeles

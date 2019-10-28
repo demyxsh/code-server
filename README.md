@@ -34,11 +34,8 @@ PACKAGES | docker (binary) htop jq nano tzdata zsh
 
 ## Environment Variables
 
-* To disable password authentication, set CODER_AUTH to false.
-
 DEMYX | CODE-SERVER
 --- | ---
-CODER_AUTH | true
 PASSWORD | demyx
 CODER_WORKDIR | /home/demyx
 TZ | America/Los_Angeles
