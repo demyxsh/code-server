@@ -27,7 +27,7 @@ RUN set -ex; \
 
 # Bedrock
 RUN set -ex; \
-	su -c 'composer create-project roots/bedrock /tmp/bedrock; composer clearcache' -s /bin/sh www-data; \
+    su -c 'composer create-project roots/bedrock /tmp/bedrock; composer clearcache' -s /bin/sh www-data; \
     tar -czf /usr/src/bedrock.tgz -C /tmp/bedrock .; \
     rm -rf /usr/src/wordpress; \
     rm -rf /tmp/*; \

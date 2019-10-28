@@ -3,36 +3,36 @@
 # https://demyx.sh
 
 if [[ ! -f /var/www/html/wp-config.php ]]; then
-	echo "[demyx] installing WordPress..."
-	cp -r /usr/src/wordpress/* /var/www/html
-	chown -R www-data:www-data /var/www/html
+    echo "[demyx] installing WordPress..."
+    cp -r /usr/src/wordpress/* /var/www/html
+    chown -R www-data:www-data /var/www/html
 
-	if [[ "$WORDPRESS_DB_NAME" && "$WORDPRESS_DB_USER" && "$WORDPRESS_DB_PASSWORD" && "$WORDPRESS_DB_HOST" && -n "$WORDPRESS_DOMAIN" ]]; then
-		WORDPRESS_PROTO="http://$WORDPRESS_DOMAIN"
-		[[ "$WORDPRESS_SSL" = true ]] && WORDPRESS_PROTO="https://$WORDPRESS_DOMAIN"
-		mv /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-		sed -i "s/database_name_here/$WORDPRESS_DB_NAME/g" /var/www/html/wp-config.php
-		sed -i "s/username_here/$WORDPRESS_DB_USER/g" /var/www/html/wp-config.php
-		sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/g" /var/www/html/wp-config.php
-		sed -i "s/localhost/$WORDPRESS_DB_HOST/g" /var/www/html/wp-config.php 
-		SALT=$(curl -sL https://api.wordpress.org/secret-key/1.1/salt/)
-		printf '%s\n' "g/put your unique phrase here/d" a "$SALT" . w | ed -s /var/www/html/wp-config.php
-		sed -i "s/$table_prefix = 'wp_';/$table_prefix = 'wp_';\n\n\/\/ If we're behind a proxy server and using HTTPS, we need to alert Wordpress of that fact\n\/\/ see also http:\/\/codex.wordpress.org\/Administration_Over_SSL#Using_a_Reverse_Proxy\nif (isset($\_SERVER['HTTP_X_FORWARDED_PROTO']) \&\& $\_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {\n\t$\_SERVER['HTTPS'] = 'on';\n}\n/g" /var/www/html/wp-config.php
-		sleep 5
-		su -c "wp core install --url=$WORDPRESS_PROTO --title=$WORDPRESS_DOMAIN --admin_user=$WORDPRESS_USER --admin_password=$PASSWORD --admin_email=$WORDPRESS_USER_EMAIL --skip-email" -s /bin/bash www-data
-		su -c "wp rewrite structure '/%category%/%postname%/'" -s /bin/bash www-data
-	else
-		echo "One or more environment variables are missing!"
-		exit 1
-	fi
+    if [[ "$WORDPRESS_DB_NAME" && "$WORDPRESS_DB_USER" && "$WORDPRESS_DB_PASSWORD" && "$WORDPRESS_DB_HOST" && -n "$WORDPRESS_DOMAIN" ]]; then
+        WORDPRESS_PROTO="http://$WORDPRESS_DOMAIN"
+        [[ "$WORDPRESS_SSL" = true ]] && WORDPRESS_PROTO="https://$WORDPRESS_DOMAIN"
+        mv /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+        sed -i "s/database_name_here/$WORDPRESS_DB_NAME/g" /var/www/html/wp-config.php
+        sed -i "s/username_here/$WORDPRESS_DB_USER/g" /var/www/html/wp-config.php
+        sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/g" /var/www/html/wp-config.php
+        sed -i "s/localhost/$WORDPRESS_DB_HOST/g" /var/www/html/wp-config.php 
+        SALT=$(curl -sL https://api.wordpress.org/secret-key/1.1/salt/)
+        printf '%s\n' "g/put your unique phrase here/d" a "$SALT" . w | ed -s /var/www/html/wp-config.php
+        sed -i "s/$table_prefix = 'wp_';/$table_prefix = 'wp_';\n\n\/\/ If we're behind a proxy server and using HTTPS, we need to alert Wordpress of that fact\n\/\/ see also http:\/\/codex.wordpress.org\/Administration_Over_SSL#Using_a_Reverse_Proxy\nif (isset($\_SERVER['HTTP_X_FORWARDED_PROTO']) \&\& $\_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {\n\t$\_SERVER['HTTPS'] = 'on';\n}\n/g" /var/www/html/wp-config.php
+        sleep 5
+        su -c "wp core install --url=$WORDPRESS_PROTO --title=$WORDPRESS_DOMAIN --admin_user=$WORDPRESS_USER --admin_password=$PASSWORD --admin_email=$WORDPRESS_USER_EMAIL --skip-email" -s /bin/bash www-data
+        su -c "wp rewrite structure '/%category%/%postname%/'" -s /bin/bash www-data
+    else
+        echo "One or more environment variables are missing!"
+        exit 1
+    fi
 fi
 
 # Copy demyx_helper.php
 if [[ -d /var/www/html/wp-content/mu-plugins ]]; then
-	cp /usr/src/demyx_helper.php /var/www/html/wp-content/mu-plugins
+    cp /usr/src/demyx_helper.php /var/www/html/wp-content/mu-plugins
 else
-	mkdir -p /var/www/html/wp-content/mu-plugins
-	cp /usr/src/demyx_helper.php /var/www/html/wp-content/mu-plugins
+    mkdir -p /var/www/html/wp-content/mu-plugins
+    cp /usr/src/demyx_helper.php /var/www/html/wp-content/mu-plugins
 fi
 
 # Set permissions and ownership
@@ -42,66 +42,66 @@ chown -R www-data:www-data /var/www/html
 
 # Domain replacement
 if [[ -n "$WORDPRESS_DOMAIN" ]]; then
-	sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/www.conf
-	sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/docker.conf
-	sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/nginx/nginx.conf
-	sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/php7/php-fpm.d/www.conf
+    sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/www.conf
+    sed -i "s|\[www\]|[$WORDPRESS_DOMAIN]|g" /etc/php7/php-fpm.d/docker.conf
+    sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/nginx/nginx.conf
+    sed -i "s|/var/log/demyx/demyx|/var/log/demyx/$WORDPRESS_DOMAIN|g" /etc/php7/php-fpm.d/www.conf
 fi
 
 # Cloudflare check
 WORDPRESS_CLOUDFLARE_CHECK="$(curl -m 1 -svo /dev/null "$WORDPRESS_DOMAIN" 2>&1 | grep "Server: cloudflare" || true)"
 if [[ -n "$WORDPRESS_CLOUDFLARE_CHECK" ]]; then
-	sed -i "s|#CF|real_ip_header CF-Connecting-IP; set_real_ip_from 0.0.0.0/0;|g" /etc/nginx/nginx.conf
+    sed -i "s|#CF|real_ip_header CF-Connecting-IP; set_real_ip_from 0.0.0.0/0;|g" /etc/nginx/nginx.conf
 else
-	sed -i "s|#CF|real_ip_header X-Forwarded-For; set_real_ip_from 0.0.0.0/0;|g" /etc/nginx/nginx.conf
+    sed -i "s|#CF|real_ip_header X-Forwarded-For; set_real_ip_from 0.0.0.0/0;|g" /etc/nginx/nginx.conf
 fi
 
 # PHP/NGINX Upload limit
 if [[ -n "$WORDPRESS_UPLOAD_LIMIT" ]]; then
-	sed -i "s|client_max_body_size 128M|client_max_body_size $WORDPRESS_UPLOAD_LIMIT|g" /etc/nginx/nginx.conf
-	sed -i "s|post_max_size = 128M|post_max_size = $WORDPRESS_UPLOAD_LIMIT|g" /etc/php7/php.ini
-	sed -i "s|upload_max_filesize = 128M|upload_max_filesize = $WORDPRESS_UPLOAD_LIMIT|g" /etc/php7/php.ini
+    sed -i "s|client_max_body_size 128M|client_max_body_size $WORDPRESS_UPLOAD_LIMIT|g" /etc/nginx/nginx.conf
+    sed -i "s|post_max_size = 128M|post_max_size = $WORDPRESS_UPLOAD_LIMIT|g" /etc/php7/php.ini
+    sed -i "s|upload_max_filesize = 128M|upload_max_filesize = $WORDPRESS_UPLOAD_LIMIT|g" /etc/php7/php.ini
 fi
 
 # PHP max memory limit
 if [[ -n "$WORDPRESS_PHP_MEMORY" ]]; then
-	sed -i "s|memory_limit = 256M|memory_limit = $WORDPRESS_PHP_MEMORY|g" /etc/php7/php.ini
+    sed -i "s|memory_limit = 256M|memory_limit = $WORDPRESS_PHP_MEMORY|g" /etc/php7/php.ini
 fi
 
 # PHP max execution time
 if [[ -n "$WORDPRESS_PHP_MAX_EXECUTION_TIME" ]]; then
-	sed -i "s|max_execution_time = 300|max_execution_time = $WORDPRESS_PHP_MAX_EXECUTION_TIME|g" /etc/php7/php.ini
+    sed -i "s|max_execution_time = 300|max_execution_time = $WORDPRESS_PHP_MAX_EXECUTION_TIME|g" /etc/php7/php.ini
 fi
 
 # PHP opcache
 if [[ "$WORDPRESS_PHP_OPCACHE" = off || "$WORDPRESS_PHP_OPCACHE" = false ]]; then
-	sed -i "s|opcache.enable=1|opcache.enable=0|g" /etc/php7/php.ini
-	sed -i "s|opcache.enable_cli=1|opcache.enable_cli=0|g" /etc/php7/php.ini
-	sed -i "s|sendfile on;|sendfile off;|g" /etc/nginx/nginx.conf
+    sed -i "s|opcache.enable=1|opcache.enable=0|g" /etc/php7/php.ini
+    sed -i "s|opcache.enable_cli=1|opcache.enable_cli=0|g" /etc/php7/php.ini
+    sed -i "s|sendfile on;|sendfile off;|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX FastCGI cache
 if [[ "$WORDPRESS_NGINX_CACHE" = on || "$WORDPRESS_NGINX_CACHE" = true ]]; then
-	sed -i "s|#include /etc/nginx/cache|include /etc/nginx/cache|g" /etc/nginx/nginx.conf
+    sed -i "s|#include /etc/nginx/cache|include /etc/nginx/cache|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX rate limiting
 if [[ "$WORDPRESS_NGINX_RATE_LIMIT" = on || "$WORDPRESS_NGINX_RATE_LIMIT" = true ]]; then
-	sed -i "s|#limit_req|limit_req|g" /etc/nginx/nginx.conf
+    sed -i "s|#limit_req|limit_req|g" /etc/nginx/nginx.conf
 fi
 
 # NGINX xmlrpc.php
 if [[ "$WORDPRESS_NGINX_XMLRPC" = on || "$WORDPRESS_NGINX_XMLRPC" = true ]]; then
-	mv /etc/nginx/common/xmlrpc.conf /etc/nginx/common/xmlrpc.on
+    mv /etc/nginx/common/xmlrpc.conf /etc/nginx/common/xmlrpc.on
 fi
 
 # NGINX Basic auth
 if [[ "$WORDPRESS_NGINX_BASIC_AUTH" = on || "$WORDPRESS_NGINX_BASIC_AUTH" = true ]]; then
-	echo "$WORDPRESS_NGINX_BASIC_AUTH" > /.htpasswd
-	sed -i "s|#auth_basic|auth_basic|g" /etc/nginx/nginx.conf
+    echo "$WORDPRESS_NGINX_BASIC_AUTH" > /.htpasswd
+    sed -i "s|#auth_basic|auth_basic|g" /etc/nginx/nginx.conf
 fi
 
 # Timezone
 if [[ "$TZ" ]]; then
-	sed -i "s|UTC|$TZ|g" /etc/php7/php.ini
+    sed -i "s|UTC|$TZ|g" /etc/php7/php.ini
 fi
