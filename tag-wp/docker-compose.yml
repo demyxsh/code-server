@@ -107,6 +107,9 @@ services:
       - CODER_BASE_PATH=/demyx # https://domain.tld/demyx/cs/
       - CODER_BS_DOMAIN=domain.tld
       - CODER_BS_PROXY=demyx
+      - DISABLE_BROWSERSYNC | false
+      - DISABLE_NGINX | false
+      - DISABLE_PHP | false
       - WORDPRESS_DB_NAME=demyx
       - WORDPRESS_DB_USER=demyx
       - WORDPRESS_DB_PASSWORD=demyx

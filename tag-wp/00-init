@@ -27,6 +27,21 @@ if [[ ! -f /var/www/html/wp-config.php ]]; then
     fi
 fi
 
+# Disable browser-sync
+if [[ "$DISABLE_BROWSERSYNC" = on || "$DISABLE_BROWSERSYNC" = true ]]; then
+    rm -rf /etc/services.d/browser-sync
+fi
+
+# Disable nginx
+if [[ "$DISABLE_NGINX" = on || "$DISABLE_NGINX" = true ]]; then
+    rm -rf /etc/services.d/nginx
+fi
+
+# Disable php-fpm
+if [[ "$DISABLE_PHP" = on || "$DISABLE_PHP" = true ]]; then
+    rm -rf /etc/services.d/php-fpm
+fi
+
 # Copy demyx_helper.php
 if [[ -d /var/www/html/wp-content/mu-plugins ]]; then
     cp /usr/src/demyx_helper.php /var/www/html/wp-content/mu-plugins
