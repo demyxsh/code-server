@@ -71,7 +71,8 @@ RUN set -ex; \
     sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
     sed -i "s|/home/www-data:/sbin/nologin|/home/www-data:/bin/zsh|g" /etc/passwd; \
     \
-    # Set default shell for code-server
+    # Create code-server directories and set default shell for code-server
+    mkdir -p /home/www-data/.code/extensions; \
     mkdir -p /home/www-data/.code/data/User; \
     echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/www-data/.code/data/User/settings.json; \
     \
@@ -93,6 +94,10 @@ RUN set -ex; \
     tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz -C /tmp; \
     mv /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64/code-server /usr/local/bin; \
     rm -rf /tmp/*
+
+# Install code-server Laravel Blade extension
+RUN set -ex; \
+    su -c 'code-server --extensions-dir /home/www-data/.code/extensions --install-extension cjhowe7.laravel-blade --force' -s /bin/sh www-data
 
 COPY 00-init /etc/cont-init.d/00-init
 COPY run-code-server /etc/services.d/code-server/run

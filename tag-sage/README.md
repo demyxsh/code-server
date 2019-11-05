@@ -19,6 +19,7 @@ ENTRYPOINT | s6-overlay
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys"
 PACKAGES | composer gcc git gnupg htop jq mysql-client<br />nano npm openssh sudo util-linux zsh
+EXTENSIONS | [cjhowe7.laravel-blade](https://github.com/cjoftheweb/laravel-blade-vscode)
 WORDPRESS | https://domain.tld
 CODE-SERVER | https://domain.tld/demyx/cs/
 BROWSER-SYNC | https://domain.tld/demyx/bs/
