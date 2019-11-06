@@ -1,4 +1,4 @@
-FROM demyx/nginx-php-wordpress
+FROM demyx/nginx-php-wordpress:bedrock
 
 LABEL sh.demyx.image demyx/code-server:sage
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -24,16 +24,6 @@ RUN set -ex; \
     zsh; \
     \
     npm -g install yarn
-
-# Bedrock
-RUN set -ex; \
-    su -c 'composer create-project roots/bedrock /tmp/bedrock; composer clearcache' -s /bin/sh www-data; \
-    tar -czf /usr/src/bedrock.tgz -C /tmp/bedrock .; \
-    rm -rf /usr/src/wordpress; \
-    rm -rf /tmp/*; \
-    \
-    echo -e '# Prevent PHP scripts from being executed inside the uploads folder.\nlocation ~* /app/uploads/.*.php\$ {\n    deny all;\n}\nlocation ~* .(blade.php)$ {\n     deny all;\n}' > /etc/nginx/common/bedrock.conf; \
-    sed -i "s|/var/www/html|/var/www/html/web|g" /etc/nginx/nginx.conf
 
 # Sage
 RUN set ex; \
