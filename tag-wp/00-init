@@ -113,7 +113,7 @@ fi
 # NGINX Basic auth
 if [[ "$WORDPRESS_NGINX_BASIC_AUTH" = on || "$WORDPRESS_NGINX_BASIC_AUTH" = true ]]; then
     echo "$WORDPRESS_NGINX_BASIC_AUTH" > /.htpasswd
-    sed -i "s|#auth_basic|auth_basic|g" /etc/nginx/nginx.conf
+    sed -i "s|#auth_basic|auth_basic|g" /etc/nginx/common/wpcommon.conf
 fi
 
 # Timezone
