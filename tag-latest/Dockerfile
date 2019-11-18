@@ -85,7 +85,7 @@ RUN set -ex; \
     chown -R demyx:demyx /home/demyx
 
 # Copy entrypoint
-COPY demyx.sh /usr/local/bin/demyx
+COPY demyx.sh /usr/local/bin/demyx-cs
 
 # Sudo wrapper for demyx executable so demyx user doesn't have to type sudo on each demyx command
 RUN set -ex; \
@@ -93,7 +93,7 @@ RUN set -ex; \
     echo 'sudo /demyx/etc/demyx.sh "$@"' >> /usr/local/bin/demyx; \
     chmod +x /usr/local/bin/demyx; \
     \
-    chmod +x /usr/local/bin/demyx
+    chmod +x /usr/local/bin/demyx-cs
 
 EXPOSE 8080
 
@@ -101,4 +101,4 @@ WORKDIR /home/demyx
 
 USER demyx
 
-ENTRYPOINT ["dumb-init", "demyx"]
+ENTRYPOINT ["dumb-init", "demyx-cs"]
