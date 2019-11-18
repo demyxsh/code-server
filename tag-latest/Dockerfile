@@ -6,26 +6,28 @@ LABEL sh.demyx.url https://demyx.sh
 LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
+# Set default environment variables
 ENV TZ America/Los_Angeles
 ENV PASSWORD=demyx
 
 # Install custom packages
 RUN set -ex; \
     apk add --update --no-cache \
-    gcc \
     bash \
-    zsh \
-    jq \
-    htop \
-    nano \
-    tzdata \
-    gnupg \
-    git \
-    sudo \
+    bind-tools \
     curl \
+    dumb-init \
+    gcc \
+    git \
+    gnupg \
+    htop \
+    jq \
+    nano \
     openssh \
+    sudo \
+    tzdata \
     util-linux \
-    dumb-init
+    zsh
 
 # Download Alpine binary of code-server
 RUN set -ex; \
@@ -82,7 +84,8 @@ RUN set -ex; \
     \
     chown -R demyx:demyx /home/demyx
 
-COPY demyx-entrypoint.sh /usr/local/bin/demyx-entrypoint
+# Copy entrypoint
+COPY demyx.sh /usr/local/bin/demyx
 
 # Sudo wrapper for demyx executable so demyx user doesn't have to type sudo on each demyx command
 RUN set -ex; \
@@ -90,12 +93,12 @@ RUN set -ex; \
     echo 'sudo /demyx/etc/demyx.sh "$@"' >> /usr/local/bin/demyx; \
     chmod +x /usr/local/bin/demyx; \
     \
-    chmod +x /usr/local/bin/demyx-entrypoint
+    chmod +x /usr/local/bin/demyx
 
 EXPOSE 8080
 
-USER demyx
-
 WORKDIR /home/demyx
 
-ENTRYPOINT ["dumb-init", "demyx-entrypoint"]
+USER demyx
+
+ENTRYPOINT ["dumb-init", "demyx"]

@@ -8,18 +8,18 @@
 
 code-server is VS Code running on a remote server, accessible through the browser.
 
-<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/93QZgnG.png" width="100%"></p>
+<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/tixdMb1.png" width="100%"></p>
 
 DEMYX | CODE-SERVER
 --- | ---
 TAGS | latest wp sage
-USER<br />GROUP | coder (1000)<br />coder (1000)
+USER<br />GROUP | demyx (1000)<br />demyx (1000)
 WORKDIR | /home/demyx
-PORT | 8080 | 8080 3000
+PORT | 8080
 ENTRYPOINT | dumb-init
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys" 
-PACKAGES | docker (binary) htop jq nano tzdata zsh
+PACKAGES | bash bind-tools curl docker (binary) dumb-init gcc git gnupg htop jq nano openssh sudo tzdata util-linux zsh
 
 ## Updates & Support
 [![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
@@ -41,8 +41,8 @@ CODER_WORKDIR | /home/demyx
 TZ | America/Los_Angeles
 
 ## Usage
+* SSL/TLS first!
 * Requires no config file for Traefik and is ready to go when running: `docker-compose up -d`
-* For SSL/TLS, just remove the comments (#)
 * Upgrading from Traefik v1 to v2? You will need to convert your [acme.json](https://github.com/containous/traefik-migration-tool)
 
 ```

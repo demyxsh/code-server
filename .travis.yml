@@ -18,15 +18,14 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - docker pull codercom/code-server:v2
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest/.
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage/.
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp/.
-  - docker-compose up -d code_server
+  - docker-compose up -d demyx_cs
   - sleep 5
-  - docker exec -t demyx_cs code-server --version
+  - docker exec demyx_cs code-server --version
 
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin

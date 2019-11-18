@@ -1,6 +1,8 @@
 # Demyx
 # https://demyx.sh
-
+#
+# Be sure to change all the domain.tld domains and credentials
+#
 version: "3.7"
 services:
   traefik:
@@ -11,7 +13,7 @@ services:
       - demyx
     ports:
       - 80:80
-      #- 443:443
+      - 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - demyx_traefik:/demyx
@@ -20,11 +22,11 @@ services:
       - TRAEFIK_PROVIDERS_DOCKER=true
       - TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false
       - TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS=:80
-      #- TRAEFIK_ENTRYPOINTS_HTTPS_ADDRESS=:443
-      #- TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_HTTPCHALLENGE=true
-      #- TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_HTTPCHALLENGE_ENTRYPOINT=http
-      #- TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_EMAIL=info@domain.tld
-      #- TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_STORAGE=/demyx/acme.json
+      - TRAEFIK_ENTRYPOINTS_HTTPS_ADDRESS=:443
+      - TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_HTTPCHALLENGE=true
+      - TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_HTTPCHALLENGE_ENTRYPOINT=http
+      - TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_EMAIL=info@domain.tld
+      - TRAEFIK_CERTIFICATESRESOLVERS_DEMYX_ACME_STORAGE=/demyx/acme.json
       - TRAEFIK_LOG=true
       - TRAEFIK_LOG_LEVEL=INFO
       - TRAEFIK_LOG_FILEPATH=/demyx/error.log
@@ -32,19 +34,20 @@ services:
       - TRAEFIK_ACCESSLOG_FILEPATH=/demyx/access.log
       - TZ=America/Los_Angeles
     labels:
+      # traefik https://traefik.domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-http.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-http.service=api@internal"
       - "traefik.http.routers.traefik-http.entrypoints=http"
-      #- "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
-      #- "traefik.http.routers.traefik-https.rule=Host(`traefik.domain.tld`)"
-      #- "traefik.http.routers.traefik-https.entrypoints=https"
-      #- "traefik.http.routers.traefik-https.service=api@internal"
-      #- "traefik.http.routers.traefik-https.tls.certresolver=demyx"
-      #- "traefik.http.routers.traefik-https.middlewares=traefik-auth"
-      #- "traefik.http.middlewares.traefik-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1"
-      #- "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https" 
-  code_server:
+      - "traefik.http.routers.traefik-https.rule=Host(`traefik.domain.tld`)"
+      - "traefik.http.routers.traefik-https.entrypoints=https"
+      - "traefik.http.routers.traefik-https.service=api@internal"
+      - "traefik.http.routers.traefik-https.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
+      - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
+      - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
+  demyx_cs:
     container_name: demyx_cs
     image: demyx/code-server
     restart: unless-stopped
@@ -52,20 +55,21 @@ services:
       - demyx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - demyx_cs:/home/coder
+      - demyx_cs:/home/demyx
     environment:
       - CODER_WORKDIR=/home/demyx
       - PASSWORD=demyx
       - TZ=America/Los_Angeles
     labels:
+      # code-server https://domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.domaintld-http.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
       - "traefik.http.routers.domaintld-http.entrypoints=http"
-      #- "traefik.http.routers.domaintld-http.middlewares=domaintld-redirect"
-      #- "traefik.http.routers.domaintld-https.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
-      #- "traefik.http.routers.domaintld-https.entrypoints=https"
-      #- "traefik.http.routers.domaintld-https.tls.certresolver=demyx"
-      #- "traefik.http.middlewares.domaintld-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.domaintld-https.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
+      - "traefik.http.routers.domaintld-https.entrypoints=https"
+      - "traefik.http.routers.domaintld-http.middlewares=domaintld-redirect"
+      - "traefik.http.middlewares.domaintld-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.domaintld-https.tls.certresolver=demyx"
 volumes:
   demyx_cs:
     name: demyx_cs

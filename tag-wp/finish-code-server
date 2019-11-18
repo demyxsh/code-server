@@ -1,5 +1,0 @@
-#!/usr/bin/with-contenv bash
-# Demyx
-# https://demyx.sh
-
-rm -f /var/www/html/wp-content/mu-plugins/demyx_helper.php

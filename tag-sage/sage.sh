@@ -37,12 +37,13 @@ SAGE_WEBPACK_CONFIG=/var/www/html/web/app/themes/"$SAGE_THEME"/resources/assets/
 
 if [[ "$SAGE_COMMAND" = init ]]; then
     WP_HOME="$(grep WP_HOME= /var/www/html/.env | awk -F '[=]' '{print $2}')"
+    WP_DOMAIN="$(echo $WP_HOME | awk -F/ '{print $3}')"
     [[ ! -d /var/www/html/web/app/themes/"$SAGE_THEME" ]] && echo -e "\n\e[31m$SAGE_THEME doesn't exist\e[39m\n" && sage help && exit 1
     echo -e "$(cat /usr/src/bs.js)\n$(cat $SAGE_WEBPACK_CONFIG)" > "$SAGE_WEBPACK_CONFIG"
     sed -i "s|delay: 500|delay: 500, advanced: demyxBS|g" "$SAGE_WEBPACK_CONFIG"
     sed -i "s|config.proxyUrl +|'$WP_HOME' +|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|domain.tld|$WORDPRESS_DOMAIN|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|example.test|$(hostname)|g" /var/www/html/web/app/themes/"$SAGE_THEME"/resources/assets/config.json
+    sed -i "s|domain.tld|$WP_DOMAIN|g" "$SAGE_WEBPACK_CONFIG"
+    sed -i "s|example.test|$BS_PROXY|g" /var/www/html/web/app/themes/"$SAGE_THEME"/resources/assets/config.json
     echo -e "\nmodule.hot.accept();" >> /var/www/html/web/app/themes/"$SAGE_THEME"/resources/assets/scripts/main.js
 elif [[ "$SAGE_COMMAND" = help ]]; then
     echo "sage <arg>        Sage helper script"
