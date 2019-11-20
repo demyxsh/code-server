@@ -21,6 +21,7 @@ RUN set -ex; \
     nano \
     openssh \
     php7 \
+    php7-ctype \
     php7-json \
     php7-mbstring \
     php7-mysqli \
