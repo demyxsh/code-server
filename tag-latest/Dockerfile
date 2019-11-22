@@ -87,11 +87,15 @@ RUN set -ex; \
 # Copy entrypoint
 COPY demyx.sh /usr/local/bin/demyx-cs
 
-# Sudo wrapper for demyx executable so demyx user doesn't have to type sudo on each demyx command
+# Sudo wrappers
 RUN set -ex; \
     echo '#!/bin/bash' >> /usr/local/bin/demyx; \
-    echo 'sudo bash /demyx/etc/demyx.sh "$@"' >> /usr/local/bin/demyx; \
+    echo 'docker exec -it demyx demyx "$@"' >> /usr/local/bin/demyx; \
     chmod +x /usr/local/bin/demyx; \
+    \
+    echo '#!/bin/bash' >> /usr/local/bin/ctop; \
+    echo 'docker exec -it demyx ctop' >> /usr/local/bin/ctop; \
+    chmod +x /usr/local/bin/ctop; \
     \
     chmod +x /usr/local/bin/demyx-cs
 
