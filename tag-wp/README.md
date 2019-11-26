@@ -51,10 +51,14 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 ```
 # browser-sync
 
+- BS_DOMAIN_MATCH=http://localhost
+- BS_DOMAIN_RETURN=http://localhost
+- BS_DOMAIN_SOCKET=http://localhost
 - BS_PROXY=demyx_nginx
 - BS_DOMAIN=domain.tld
 - BS_FILES=["/var/www/html/wp-content/themes/\*\*/\*", "/var/www/html/wp-content/plugins/\*\*/\*"]
 - BS_PATH=/demyx
+- BS_PREFIX=/bs
 - BS_PORT=3000
 ```
 ```
@@ -316,10 +320,14 @@ services:
     volumes:
       - demyx_wp:/var/www/html
     environment:
+      - BS_DOMAIN_MATCH=http://localhost
+      - BS_DOMAIN_RETURN=http://localhost
+      - BS_DOMAIN_SOCKET=http://localhost
       - BS_PROXY=demyx_nginx
       - BS_DOMAIN=domain.tld
       - BS_FILES=["/var/www/html/wp-content/themes/**/*", "/var/www/html/wp-content/plugins/**/*"]
       - BS_PATH=/demyx
+      - BS_PREFIX=/bs
       - BS_PORT=3000
     labels:
       # browser-sync https://domain.tld/demyx/bs/
