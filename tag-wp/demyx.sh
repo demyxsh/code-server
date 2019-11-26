@@ -21,9 +21,12 @@ fi
 [[ ! -d /var/www/html/wp-content/mu-plugins ]] && mkdir -p /var/www/html/wp-content/mu-plugins
 cp /usr/src/bs.php /var/www/html/wp-content/mu-plugins
 
-# Set base path
-if [[ -n "$CODER_BASE_PATH" ]]; then
-    CODER_BASE_PATH="$CODER_BASE_PATH"/cs
-fi
+# Set prefix
+[[ -z "$CODER_BASE_PREFIX" ]] && CODER_BASE_PREFIX=/cs
+[[ "$CODER_BASE_PREFIX" = false ]] && CODER_BASE_PREFIX=
 
-code-server /var/www/html --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path="$CODER_BASE_PATH"
+# Set base path
+[[ -z "$CODER_BASE_PATH" ]] && CODER_BASE_PATH=/demyx
+[[ "$CODER_BASE_PATH" = false ]] && CODER_BASE_PATH=
+
+code-server /var/www/html --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path="${CODER_BASE_PATH}${CODER_BASE_PREFIX}"
