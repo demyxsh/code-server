@@ -16,7 +16,7 @@ TAGS | latest wp sage
 USER<br />GROUP | demyx (1000)<br />demyx (1000)
 WORKDIR | /home/demyx
 PORT | 8080
-ENTRYPOINT | dumb-init
+ENTRYPOINT | ["dumb-init", "demyx"]
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys" 
 PACKAGES | bash bind-tools curl docker (binary) dumb-init gcc git gnupg htop jq nano openssh sudo tzdata util-linux zsh
