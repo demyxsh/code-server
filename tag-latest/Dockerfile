@@ -1,3 +1,4 @@
+FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
 FROM alpine
 
 LABEL sh.demyx.image demyx/code-server
@@ -86,15 +87,17 @@ RUN set -ex; \
 
 # Copy entrypoint
 COPY demyx.sh /usr/local/bin/demyx-cs
+# ctop
+COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
 
-# Sudo wrappers
+# Wrappers
 RUN set -ex; \
     echo '#!/bin/bash' >> /usr/local/bin/demyx; \
     echo 'docker exec -it demyx demyx "$@"' >> /usr/local/bin/demyx; \
     chmod +x /usr/local/bin/demyx; \
     \
     echo '#!/bin/bash' >> /usr/local/bin/ctop; \
-    echo 'docker exec -it demyx ctop' >> /usr/local/bin/ctop; \
+    echo 'sudo ctop-bin' >> /usr/local/bin/ctop; \
     chmod +x /usr/local/bin/ctop; \
     \
     chmod +x /usr/local/bin/demyx-cs
