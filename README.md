@@ -5,6 +5,7 @@
 [![Alpine](https://img.shields.io/badge/alpine-3.10.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![code-server](https://img.shields.io/badge/code--server-2.1692--vsc1.39.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
+[![Become a Patron!](https://img.shields.io/badge/become%20a%20patron-$5-informational?style=flat&color=blue)](https://www.patreon.com/bePatron?u=23406156)
 
 code-server is VS Code running on a remote server, accessible through the browser.
 
