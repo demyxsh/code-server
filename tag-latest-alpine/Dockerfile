@@ -1,5 +1,5 @@
 FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
-FROM debian
+FROM alpine
 
 LABEL sh.demyx.image demyx/code-server
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -13,10 +13,9 @@ ENV PASSWORD=demyx
 
 # Install custom packages
 RUN set -ex; \
-    apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
+    apk add --update --no-cache \
     bash \
-    net-tools \
+    bind-tools \
     curl \
     dumb-init \
     gcc \
@@ -25,22 +24,20 @@ RUN set -ex; \
     htop \
     jq \
     nano \
-    openssh-client \
+    openssh \
     sudo \
     tzdata \
     util-linux \
-    zsh; \
-    \
-    rm -rf /var/lib/apt/lists/*
+    zsh
 
 # Download Alpine binary of code-server
 RUN set -ex; \
     export DEMYX_CODER_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
     # Set fixed version as a fallback if curling fails
     if [ -z "$DEMYX_CODER_BINARY" ]; then export DEMYX_CODER_BINARY=2.1650-vsc1.39.2; fi; \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$DEMYX_CODER_BINARY"/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -o /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz; \
-    tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -C /tmp; \
-    mv /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64/code-server /usr/local/bin; \
+    wget https://github.com/cdr/code-server/releases/download/"$DEMYX_CODER_BINARY"/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz -qO /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz; \
+    tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz -C /tmp; \
+    mv /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64/code-server /usr/local/bin; \
     rm -rf /tmp/*
 
 # Download latest Docker client binary
@@ -48,7 +45,7 @@ RUN set -ex; \
     export DEMYX_DOCKER_BINARY=$(curl -sL https://api.github.com/repos/docker/docker-ce/releases/latest | grep '"name":' | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
     # Set fixed version as a fallback if curling fails
     if [ -z "$DEMYX_DOCKER_BINARY" ]; then export DEMYX_DOCKER_BINARY=18.09.9; fi; \
-    curl -sL https://download.docker.com/linux/static/stable/x86_64/docker-"$DEMYX_DOCKER_BINARY".tgz -o /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz; \
+    wget https://download.docker.com/linux/static/stable/x86_64/docker-"$DEMYX_DOCKER_BINARY".tgz -qO /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz; \
     tar -xzf /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz -C /tmp; \
     mv /tmp/docker/docker /usr/local/bin/docker-bin; \
     # sudo wrapper for Docker binary
@@ -59,9 +56,11 @@ RUN set -ex; \
 
 # Create and configure demyx user
 RUN set -ex; \
-    adduser --gecos '' --disabled-password demyx; \
+    addgroup -g 1000 -S demyx; \
+    adduser -u 1000 -D -S -G demyx demyx; \
+    echo demyx:demyx | chpasswd; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    mkdir -p /home/demyx/.code/data/User; \
     echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
     echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
 

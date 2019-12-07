@@ -1,23 +1,23 @@
-# code-server:wp
+# code-server:sage
 
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Alpine](https://img.shields.io/badge/alpine-3.10.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
-[![Debian](https://img.shields.io/badge/debian-10-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![code-server](https://img.shields.io/badge/code--server-2.1692--vsc1.39.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
-code-server optimized for WordPress development. Example YAML comes with pre-configured development tools: BrowserSync and phpMyAdmin.
+code-server optimized for WordPress, Sage, and Bedrock development. Example YAML comes with pre-configured development tools: BrowserSync and phpMyAdmin.
 
-<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/aMZhO9F.png" width="100%"></p>
+<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/YylWFHJ.png" width="100%"></p>
 
-DEMYX | CODE-SERVER:WP
+DEMYX | CODE-SERVER:SAGE
 --- | ---
 USER<br />GROUP | demyx (1000)<br />demyx (1000)
 WORKDIR | /var/www/html
-PORT | 8080
+PORT | 8080 3000
 ENTRYPOINT | ["dumb-init", "demyx"]
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys"
+EXTENSIONS | [cjhowe7.laravel-blade](https://github.com/cjoftheweb/laravel-blade-vscode)
 WORDPRESS | https://domain.tld
 CODE-SERVER | https://domain.tld/demyx/cs/
 BROWSER-SYNC | https://domain.tld/demyx/bs/
@@ -42,25 +42,13 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 
 - PASSWORD=demyx
 - CODER_BASE_PATH=/demyx
+- BS_PROXY=domaintld_nginx
 - WORDPRESS_INSTALL_URL=https://domain.tld
 - WORDPRESS_INSTALL_TITLE=demyx
 - WORDPRESS_INSTALL_USER=demyx
 - WORDPRESS_INSTALL_PASSWORD=demyx
 - WORDPRESS_INSTALL_EMAIL=info@domain.tld
 - TZ=America/Los_Angeles
-```
-```
-# browser-sync
-
-- BS_DOMAIN_MATCH=http://localhost
-- BS_DOMAIN_RETURN=http://localhost
-- BS_DOMAIN_SOCKET=http://localhost
-- BS_PROXY=demyx_nginx
-- BS_DOMAIN=domain.tld
-- BS_FILES=["/var/www/html/wp-content/themes/\*\*/\*", "/var/www/html/wp-content/plugins/\*\*/\*"]
-- BS_PATH=/demyx
-- BS_PREFIX=/bs
-- BS_PORT=3000
 ```
 ```
 # phpmyadmin
@@ -73,6 +61,7 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 # nginx
 
 - WORDPRESS=true
+- WORDPRESS_BEDROCK=true
 - WORDPRESS_CONTAINER=demyx_wp
 - NGINX_DOMAIN=domain.tld
 - NGINX_CACHE=false
@@ -89,6 +78,7 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 - WORDPRESS_DB_USER=demyx
 - WORDPRESS_DB_PASSWORD=demyx
 - WORDPRESS_DOMAIN=domain.tld
+- WORDPRESS_SSL=true
 - WORDPRESS_UPLOAD_LIMIT=128M
 - WORDPRESS_PHP_MEMORY=256M
 - WORDPRESS_PHP_MAX_EXECUTION_TIME=300
@@ -136,6 +126,39 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 
 ## Usage
 
+`code-server:sage` comes with a helper script that wraps yarn commands and also does other things.
+
+```
+sage <arg>        Sage helper script
+
+     init         Initializes fixes for webpack
+                  Ex: sage -t <theme> init
+
+     help         Help menu for sage helper script
+                  Ex: sage help
+
+     new          Executes composer create-project, yarn, and sage -t <theme> init
+                  Ex: sage -t <theme> new
+
+     -t           Set the theme
+                  Ex: sage -t <theme> add <package>
+```
+
+When you run `docker-compose up -d`, it will probably take up to 10 seconds or less on the first time to initialize the container. You can see the output in real time by running `docker logs demyx_sage -f` to see what's installing in that moment.
+
+```
+# docker logs demyx_sage -f
+Creating domaintld_cs    ... done
+Success: WordPress installed successfully.
+Success: Rewrite structure set.
+Success: Rewrite rules flushed.
+"[demyx] installing Sage..."
+Success: Switched to 'Sage Starter Theme' theme.
+info  Server listening on http://localhost:8080
+info    - Using custom password for authentication
+info    - Not serving HTTPS
+```
+
 * Configured for remote VPS
 * Ports 80 and 443 must be open when using Traefik
 * TLS/SSL enabled by default
@@ -177,19 +200,19 @@ services:
       - TRAEFIK_ACCESSLOG_FILEPATH=/demyx/access.log
       - TZ=America/Los_Angeles
     labels:
-      # Traefik dashboard with basic auth protection https://traefik.domain.tld
+      # traefik https://traefik.domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-http.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-http.service=api@internal"
       - "traefik.http.routers.traefik-http.entrypoints=http"
-      - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
       - "traefik.http.routers.traefik-https.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-https.entrypoints=https"
       - "traefik.http.routers.traefik-https.service=api@internal"
-      - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
       - "traefik.http.routers.traefik-https.middlewares=traefik-auth"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
+      - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
       - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
   demyx_db:
     container_name: demyx_db
     image: demyx/mariadb
@@ -228,7 +251,7 @@ services:
       - TZ=America/Los_Angeles
   demyx_wp:
     container_name: demyx_wp
-    image: demyx/wordpress
+    image: demyx/wordpress:bedrock
     restart: unless-stopped
     networks:
       - demyx
@@ -243,7 +266,9 @@ services:
       - WORDPRESS_DB_USER=demyx
       - WORDPRESS_DB_PASSWORD=demyx
       - WORDPRESS_DOMAIN=domain.tld
+      - WORDPRESS_SSL=true
       - WORDPRESS_UPLOAD_LIMIT=128M
+      - WORDPRESS_BEDROCK_MODE=development
       - WORDPRESS_PHP_MEMORY=256M
       - WORDPRESS_PHP_MAX_EXECUTION_TIME=300
       - WORDPRESS_PHP_OPCACHE=false
@@ -268,6 +293,7 @@ services:
       - demyx_log:/var/log/demyx
     environment:
       - WORDPRESS=true
+      - WORDPRESS_BEDROCK=true
       - WORDPRESS_CONTAINER=demyx_wp
       - NGINX_DOMAIN=domain.tld
       - NGINX_CACHE=false
@@ -276,7 +302,7 @@ services:
       - NGINX_XMLRPC=false
       - TZ=America/Los_Angeles
     labels:
-      # nginx https://domain.tld
+      # wordpress https://domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.domaintld-http.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
       - "traefik.http.routers.domaintld-http.entrypoints=http"
@@ -306,49 +332,9 @@ services:
       - "traefik.http.middlewares.domaintld-pma-prefix.stripprefix.prefixes=/demyx/pma/"
       - "traefik.http.routers.domaintld-pma.priority=99"
       - "traefik.http.routers.domaintld-pma.tls.certresolver=demyx"
-  demyx_bs:
-    image: demyx/browsersync
-    container_name: demyx_bs
-    restart: unless-stopped
-    networks:
-      - demyx
-    depends_on:
-      - demyx_cs
-    volumes:
-      - demyx_wp:/var/www/html
-    environment:
-      - BS_DOMAIN_MATCH=http://localhost
-      - BS_DOMAIN_RETURN=http://localhost
-      - BS_DOMAIN_SOCKET=http://localhost
-      - BS_PROXY=demyx_nginx
-      - BS_DOMAIN=domain.tld
-      - BS_FILES=["/var/www/html/wp-content/themes/**/*", "/var/www/html/wp-content/plugins/**/*"]
-      - BS_PATH=/demyx
-      - BS_PREFIX=/bs
-      - BS_PORT=3000
-    labels:
-      # browser-sync https://domain.tld/demyx/bs/
-      - "traefik.enable=true"
-      - "traefik.http.routers.domaintld-bs-https.rule=(Host(`domain.tld`) && PathPrefix(`/demyx/bs/`))"
-      - "traefik.http.routers.domaintld-bs-https.entrypoints=https"
-      - "traefik.http.routers.domaintld-bs-https.middlewares=domaintld-bs-prefix"
-      - "traefik.http.middlewares.domaintld-bs-prefix.stripprefix.prefixes=/demyx/bs/"
-      - "traefik.http.routers.domaintld-bs-https.service=domaintld-bs"
-      - "traefik.http.services.domaintld-bs.loadbalancer.server.port=3000"
-      - "traefik.http.routers.domaintld-bs-https.priority=99"
-      - "traefik.http.routers.domaintld-bs-https.tls.certresolver=demyx"
-      # browser-sync socket
-      - "traefik.http.routers.domaintld-socket-https.rule=(Host(`domain.tld`) && PathPrefix(`/browser-sync/socket.io/`))"
-      - "traefik.http.routers.domaintld-socket-https.entrypoints=https"
-      - "traefik.http.routers.domaintld-socket-https.middlewares=domaintld-socket-prefix"
-      - "traefik.http.middlewares.domaintld-socket-prefix.stripprefix.prefixes=/demyx/bs/browser-sync/socket.io/"
-      - "traefik.http.routers.domaintld-socket-https.service=domaintld-socket"
-      - "traefik.http.services.domaintld-socket.loadbalancer.server.port=3000"
-      - "traefik.http.routers.domaintld-socket-https.priority=99"
-      - "traefik.http.routers.domaintld-socket-https.tls.certresolver=demyx"
   demyx_cs:
     container_name: demyx_cs
-    image: demyx/code-server:wp
+    image: demyx/code-server:sage
     restart: unless-stopped
     hostname: domaintld
     networks:
@@ -361,6 +347,7 @@ services:
     environment:
       - PASSWORD=demyx
       - CODER_BASE_PATH=/demyx
+      - BS_PROXY=demyx_nginx
       - WORDPRESS_INSTALL_URL=https://domain.tld
       - WORDPRESS_INSTALL_TITLE=demyx
       - WORDPRESS_INSTALL_USER=demyx
@@ -370,12 +357,59 @@ services:
     labels:
       # code-server https://domain.tld/demyx/cs/
       - "traefik.enable=true"
-      - "traefik.http.routers.domaintld-cs-https.rule=(Host(`domain.tld`) && PathPrefix(`/demyx/cs/`))"
-      - "traefik.http.routers.domaintld-cs-https.entrypoints=https"
-      - "traefik.http.routers.domaintld-cs-https.middlewares=domaintld-cs-prefix"
+      - "traefik.http.routers.domaintld-cs.rule=(Host(`domain.tld`) && PathPrefix(`/demyx/cs/`))"
+      - "traefik.http.routers.domaintld-cs.entrypoints=https"
+      - "traefik.http.routers.domaintld-cs.middlewares=domaintld-cs-prefix"
       - "traefik.http.middlewares.domaintld-cs-prefix.stripprefix.prefixes=/demyx/cs/"
-      - "traefik.http.routers.domaintld-cs-https.priority=99"
-      - "traefik.http.routers.domaintld-cs-https.tls.certresolver=demyx"
+      - "traefik.http.routers.domaintld-cs.service=domaintld-cs"
+      - "traefik.http.services.domaintld-cs.loadbalancer.server.port=8080"
+      - "traefik.http.routers.domaintld-cs.priority=99"
+      - "traefik.http.routers.domaintld-cs.tls.certresolver=demyx"
+      # browser-sync https://domain.tld/demyx/bs/
+      - "traefik.http.routers.domaintld-bs.rule=(Host(`domain.tld`) && PathPrefix(`/demyx/bs/`))"
+      - "traefik.http.routers.domaintld-bs.entrypoints=https"
+      - "traefik.http.routers.domaintld-bs.middlewares=domaintld-bs-prefix"
+      - "traefik.http.middlewares.domaintld-bs-prefix.stripprefix.prefixes=/demyx/bs/"
+      - "traefik.http.routers.domaintld-bs.service=domaintld-bs"
+      - "traefik.http.services.domaintld-bs.loadbalancer.server.port=3000"
+      - "traefik.http.routers.domaintld-bs.priority=99"
+      - "traefik.http.routers.domaintld-bs.tls.certresolver=demyx"
+      # browser-sync socket
+      - "traefik.http.routers.domaintld-socket.rule=(Host(`domain.tld`) && PathPrefix(`/browser-sync/socket.io/`))"
+      - "traefik.http.routers.domaintld-socket.entrypoints=https"
+      - "traefik.http.routers.domaintld-socket.middlewares=domaintld-socket-prefix"
+      - "traefik.http.middlewares.domaintld-socket-prefix.stripprefix.prefixes=/demyx/bs/browser-sync/socket.io/"
+      - "traefik.http.routers.domaintld-socket.service=domaintld-socket"
+      - "traefik.http.services.domaintld-socket.loadbalancer.server.port=3000"
+      - "traefik.http.routers.domaintld-socket.priority=99"
+      - "traefik.http.routers.domaintld-socket.tls.certresolver=demyx"
+      # webpack
+      - "traefik.http.routers.domaintld-webpack.rule=(Host(`domain.tld`) && PathPrefix(`/__webpack_hmr`))"
+      - "traefik.http.routers.domaintld-webpack.entrypoints=https"
+      - "traefik.http.routers.domaintld-webpack.middlewares=domaintld-webpack-prefix"
+      - "traefik.http.middlewares.domaintld-webpack-prefix.stripprefix.prefixes=/demyx/bs/__webpack_hmr"
+      - "traefik.http.routers.domaintld-webpack.service=domaintld-webpack"
+      - "traefik.http.services.domaintld-webpack.loadbalancer.server.port=3000"
+      - "traefik.http.routers.domaintld-webpack.priority=99"
+      - "traefik.http.routers.domaintld-webpack.tls.certresolver=demyx"
+      # hot-update.js
+      - "traefik.http.routers.domaintld-hotupdate-js.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z.0-9]+}.hot-update.js`))"
+      - "traefik.http.routers.domaintld-hotupdate-js.entrypoints=https"
+      - "traefik.http.routers.domaintld-hotupdate-js.middlewares=domaintld-hotupdate-js-prefix"
+      - "traefik.http.middlewares.domaintld-hotupdate-js-prefix.stripprefix.prefixes=/demyx/bs/app/themes/[a-z0-9]/dist/[a-z.0-9].hot-update.js"
+      - "traefik.http.routers.domaintld-hotupdate-js.service=domaintld-hotupdate-js"
+      - "traefik.http.services.domaintld-hotupdate-js.loadbalancer.server.port=3000"
+      - "traefik.http.routers.domaintld-hotupdate-js.priority=99"
+      - "traefik.http.routers.domaintld-hotupdate-js.tls.certresolver=demyx"
+      # hot-update.json
+      - "traefik.http.routers.domaintld-hotupdate-json.rule=(Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z0-9]+}.hot-update.json`))"
+      - "traefik.http.routers.domaintld-hotupdate-json.entrypoints=https"
+      - "traefik.http.routers.domaintld-hotupdate-json.middlewares=domaintld-hotupdate-json-prefix"
+      - "traefik.http.middlewares.domaintld-hotupdate-json-prefix.stripprefix.prefixes=/demyx/bs/app/themes/[a-z0-9]/dist/[a-z0-9].hot-update.json"
+      - "traefik.http.routers.domaintld-hotupdate-json.service=domaintld-hotupdate-json"
+      - "traefik.http.services.domaintld-hotupdate-json.loadbalancer.server.port=3000"
+      - "traefik.http.routers.domaintld-hotupdate-json.priority=99"
+      - "traefik.http.routers.domaintld-hotupdate-json.tls.certresolver=demyx"
 volumes:
   demyx_wp:
     name: demyx_wp

@@ -1,4 +1,4 @@
-FROM alpine
+FROM debian
 
 LABEL sh.demyx.image demyx/code-server:wp
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -8,7 +8,8 @@ LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
 # Packages
 RUN set -ex; \
-    apk add --update --no-cache \
+    apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     bash \
     curl \
     dumb-init \
@@ -17,19 +18,17 @@ RUN set -ex; \
     gnupg \
     htop \
     jq \
-    mysql-client \
+    default-mysql-client \
     nano \
-    openssh \
-    php7 \
-    php7-ctype \
-    php7-json \
-    php7-mbstring \
-    php7-mysqli \
-    php7-phar \
+    openssh-client \
+    php7.3 \
+    php7.3-mysql \
     sudo \
     util-linux \
     tzdata \
-    zsh
+    zsh; \
+    \
+    rm -rf /var/lib/apt/lists/*
 
 # wp-cli
 RUN set -ex; \
@@ -39,8 +38,7 @@ RUN set -ex; \
 
 # Create and configure demyx user
 RUN set -ex; \
-    addgroup -g 1000 -S demyx; \
-    adduser -u 1000 -D -S -G demyx demyx; \
+    adduser --gecos '' --disabled-password demyx; \
     \
     # Oh-My-Zsh
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
@@ -61,11 +59,11 @@ RUN set -ex; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
     \
     # Set default shell for code-server
-    mkdir -p /home/demyx/.code/data/User; \
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
     \
     # No password when using sudo
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd; \
+    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
     \
     # gpg purposes
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
@@ -78,9 +76,9 @@ RUN set -ex; \
     export DEMYX_CODER_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
     # Set fixed version as a fallback if curling fails
     if [ -z "$DEMYX_CODER_BINARY" ]; then export DEMYX_CODER_BINARY=2.1650-vsc1.39.2; fi; \
-    wget https://github.com/cdr/code-server/releases/download/"$DEMYX_CODER_BINARY"/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz -qO /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz; \
-    tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64.tar.gz -C /tmp; \
-    mv /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64/code-server /usr/local/bin; \
+    curl -sL https://github.com/cdr/code-server/releases/download/"$DEMYX_CODER_BINARY"/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -o /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz; \
+    tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -C /tmp; \
+    mv /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64/code-server /usr/local/bin; \
     rm -rf /tmp/*
 
 # Copy files

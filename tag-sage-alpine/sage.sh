@@ -1,10 +1,9 @@
 #!/bin/bash
 # Demyx
 # https://demyx.sh
-set -euo pipefail
 
 while :; do
-    case "${1:-}" in
+    case "$1" in
         init)
             SAGE_COMMAND=init
             ;;
@@ -32,8 +31,8 @@ while :; do
     shift
 done
 
-SAGE_THEME="${SAGE_THEME:-sage}"
-[[ -z "${SAGE_COMMAND:-}" ]] && SAGE_COMMAND="$@"
+[[ -z "$SAGE_THEME" ]]  && SAGE_THEME=sage
+[[ -z "$SAGE_COMMAND" ]] && SAGE_COMMAND="$@"
 SAGE_WEBPACK_CONFIG=/var/www/html/web/app/themes/"$SAGE_THEME"/resources/assets/build/webpack.config.watch.js
 
 if [[ "$SAGE_COMMAND" = init ]]; then

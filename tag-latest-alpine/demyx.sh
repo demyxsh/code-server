@@ -1,7 +1,6 @@
 #!/bin/bash
 # Demyx
 # https://demyx.sh
-set -euo pipefail
 
 # Execute command before starting up code-server
 "$@"
@@ -12,6 +11,8 @@ if [[ -d /home/demyx/.docker ]]; then
 fi
 
 # Set default workdir
-CODER_WORKDIR="${CODER_WORKDIR:-/home/demyx}"
+if [[ -z "$CODER_WORKDIR" ]]; then
+    CODER_WORKDIR=/home/demyx
+fi
 
 code-server $(echo "$CODER_WORKDIR") --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
