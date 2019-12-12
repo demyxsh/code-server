@@ -6,7 +6,7 @@
 [![code-server](https://img.shields.io/badge/code--server-2.1692--vsc1.39.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
-code-server optimized for WordPress development. Example YAML comes with pre-configured development tools: BrowserSync and phpMyAdmin. Also comes with Xdebug.
+code-server optimized for WordPress development. Example YAML comes with pre-configured development tools: BrowserSync, phpMyAdmin, and Xdebug.
 
 <p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/aMZhO9F.png" width="100%"></p>
 
