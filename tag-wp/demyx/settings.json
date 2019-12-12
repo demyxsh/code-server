@@ -1,0 +1,16 @@
+// Demyx
+// https://demyx.sh
+{
+    "terminal.integrated.shell.linux": "/bin/zsh",
+    "update.mode": "none",
+    "telemetry.enableTelemetry": false,
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "/demyx/index.php": true,
+        "/demyx/wp-*.php": true,
+        "/demyx/wp-admin/**": true,
+        "/demyx/wp-includes/**": true,
+        "/demyx/wp-content/uploads/**": true
+    }
+}

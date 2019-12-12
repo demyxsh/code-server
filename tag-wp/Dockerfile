@@ -1,4 +1,4 @@
-FROM debian
+FROM php:7.3.12-fpm-buster
 
 LABEL sh.demyx.image demyx/code-server:wp
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -6,23 +6,28 @@ LABEL sh.demyx.url https://demyx.sh
 LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
+# Set default variables
+ENV CODE_SERVER_ROOT=/demyx
+ENV CODE_SERVER_CONFIG=/etc/demyx
+ENV CODE_SERVER_LOG=/var/log/demyx
+ENV TZ America/Los_Angeles
+
 # Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
     bash \
+    ca-certificates \
     curl \
     dumb-init \
     gcc \
     git \
     gnupg \
     htop \
+    less \
+    libpng-dev \
     jq \
-    default-mysql-client \
     nano \
     openssh-client \
-    php7.3 \
-    php7.3-mysql \
     sudo \
     util-linux \
     tzdata \
@@ -30,11 +35,16 @@ RUN set -ex; \
     \
     rm -rf /var/lib/apt/lists/*
 
-# wp-cli
+# Install php extensions
 RUN set -ex; \
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
-    chmod +x wp-cli.phar; \
-    mv wp-cli.phar /usr/local/bin/wp
+    docker-php-ext-install gd mysqli mbstring sockets
+
+# Compile xdebug
+RUN set -ex; \
+    git clone https://github.com/xdebug/xdebug.git /tmp/xdebug; \
+    cd /tmp/xdebug; \
+    ./rebuild.sh; \
+    rm -rf /tmp/xdebug
 
 # Create and configure demyx user
 RUN set -ex; \
@@ -58,10 +68,6 @@ RUN set -ex; \
     sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
     \
-    # Set default shell for code-server
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
-    echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
-    \
     # No password when using sudo
     echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
     \
@@ -81,18 +87,51 @@ RUN set -ex; \
     mv /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64/code-server /usr/local/bin; \
     rm -rf /tmp/*
 
+# wp-cli
+RUN set -ex; \
+    curl -s https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
+    chmod +x /usr/local/bin/wp
+
 # Copy files
 COPY demyx.sh /usr/local/bin/demyx
-# A static homepage will redirect BrowserSync, this plugin disables that.
-COPY bs.php /usr/src/bs.php
+COPY --chown=demyx:demyx demyx/. "$CODE_SERVER_CONFIG"
+
+# WordPress
+RUN set -ex; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_ROOT"; \
+    \
+    curl -sL https://wordpress.org/latest.tar.gz -o /latest.tar.gz; \
+    tar -xzf /latest.tar.gz -C "$CODE_SERVER_CONFIG"; \
+    rm -f /latest.tar.gz; \
+    chown -R demyx:demyx "$CODE_SERVER_CONFIG"
 
 # Finalize
 RUN set -ex; \
+    # Configure code-server for user
+    su -c 'code-server --extensions-dir /home/demyx/.code/extensions --install-extension felixfbecker.php-debug --force' -s /bin/sh demyx; \
+    \
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    mv "$CODE_SERVER_CONFIG"/settings.json /home/demyx/.code/data/User; \
+    \
+    # Create log directory
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_LOG"; \
+    \
+    # Remove php-fpm configs
+    rm -f /usr/local/etc/php-fpm.d/*; \
+    \
+    # Use our php-fpm configs
+    ln -s "$CODE_SERVER_CONFIG"/php.ini /usr/local/etc/php/php.ini; \
+    ln -sf "$CODE_SERVER_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
+    ln -sf "$CODE_SERVER_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
+    \
+    mv "$CODE_SERVER_CONFIG"/config.sh /usr/local/bin/demyx-config && chmod +x /usr/local/bin/demyx-config; \
+    mv "$CODE_SERVER_CONFIG"/install.sh /usr/local/bin/demyx-install && chmod +x /usr/local/bin/demyx-install; \
+    \
     chmod +x /usr/local/bin/demyx
 
-EXPOSE 8080
+EXPOSE 8080 9000 9001
 
-WORKDIR /var/www/html
+WORKDIR "$CODE_SERVER_ROOT"
 
 USER demyx
 
