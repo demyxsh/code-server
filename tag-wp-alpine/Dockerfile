@@ -1,6 +1,6 @@
 FROM php:7.3.12-fpm-alpine
 
-LABEL sh.demyx.image demyx/code-server:wp
+LABEL sh.demyx.image demyx/code-server:wp-alpine
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
 LABEL sh.demyx.url https://demyx.sh
 LABEL sh.demyx.github https://github.com/demyxco
