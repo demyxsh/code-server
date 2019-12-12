@@ -33,11 +33,7 @@ RUN set -ex; \
     util-linux \
     zsh
 
-# Install php extensions
-RUN set -ex; \
-    docker-php-ext-install gd mysqli mbstring sockets
-
-# Compile xdebug
+# Compile
 RUN set -ex; \
     apk add --no-cache --virtual .phpize-deps \
         autoconf \
@@ -54,6 +50,9 @@ RUN set -ex; \
     cd /tmp/xdebug; \
     ./rebuild.sh; \
     rm -rf /tmp/xdebug; \
+    \
+    # Install additional extensions
+    docker-php-ext-install gd mysqli mbstring sockets; \
     \
     apk del --no-network .phpize-deps; \
     rm -vrf /var/cache/apk/*
