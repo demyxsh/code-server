@@ -86,8 +86,8 @@ services:
       - MARIADB_TABLE_OPEN_CACHE=64
       - MARIADB_WRITE_BUFFER=2M
       - TZ=America/Los_Angeles
-  demyx_nginx:
-    container_name: demyx_nginx
+  demyx_nx:
+    container_name: demyx_nx
     image: demyx/nginx
     restart: unless-stopped
     networks:
@@ -199,7 +199,7 @@ services:
       - CODE_SERVER_ROOT=/demyx
       - CODE_SERVER_CONFIG=/etc/demyx
       - CODE_SERVER_LOG=/var/log/demyx
-      - WORDPRESS_DB_HOST=domaintld_db
+      - WORDPRESS_DB_HOST=demyx_db
       - WORDPRESS_DB_NAME=demyx
       - WORDPRESS_DB_USER=demyx
       - WORDPRESS_DB_PASSWORD=demyx
