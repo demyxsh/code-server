@@ -7,9 +7,12 @@ LABEL sh.demyx.url https://demyx.sh
 LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
-# Set default environment variables
-ENV TZ America/Los_Angeles
+# Set default variables
+ENV CODE_SERVER_ROOT=/demyx
+ENV CODE_SERVER_CONFIG=/etc/demyx
+ENV CODE_SERVER_LOG=/var/log/demyx
 ENV PASSWORD=demyx
+ENV TZ America/Los_Angeles
 
 # Install custom packages
 RUN set -ex; \
@@ -29,6 +32,39 @@ RUN set -ex; \
     tzdata \
     util-linux \
     zsh
+
+# Configure Demyx
+RUN set -ex; \
+    addgroup -g 1000 -S demyx; \
+    adduser -u 1000 -D -S -G demyx demyx; \
+    echo demyx:demyx | chpasswd; \
+    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
+    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
+    \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_ROOT"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_LOG"
+
+# Oh-My-Zsh
+RUN set -ex; \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
+    sed -i "s/(git)/(git zsh-autosuggestions)/g" /root/.zshrc; \
+    \
+    su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions; \
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
+    sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
+    \
+    # Symlink demyx command history with root
+    ln -s /home/demyx/.zsh_history /root; \
+    \
+    # gpg purposes
+    echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
+    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
+    \
+    chown -R demyx:demyx /home/demyx
 
 # Download Alpine binary of code-server
 RUN set -ex; \
@@ -54,37 +90,8 @@ RUN set -ex; \
     chmod +x /usr/local/bin/docker; \
     rm -rf /tmp/*
 
-# Create and configure demyx user
-RUN set -ex; \
-    addgroup -g 1000 -S demyx; \
-    adduser -u 1000 -D -S -G demyx demyx; \
-    echo demyx:demyx | chpasswd; \
-    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    mkdir -p /home/demyx/.code/data/User; \
-    echo -e "{\n    \"terminal.integrated.shell.linux\": \"/bin/zsh\"\n}" > /home/demyx/.code/data/User/settings.json; \
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nopasswd
-
-# Oh-My-Zsh
-RUN set -ex; \
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /root/.zshrc; \
-    \
-    su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
-    \
-    # Symlink demyx command history with root
-    ln -s /home/demyx/.zsh_history /root; \
-    \
-    # gpg purposes
-    echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
-    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
-    \
-    chown -R demyx:demyx /home/demyx
-
+# Set default code-server user setting
+COPY --chown=demyx:demyx settings.json /home/demyx/.code/data/User/settings.json
 # Copy entrypoint
 COPY demyx.sh /usr/local/bin/demyx-cs
 # ctop
@@ -108,4 +115,4 @@ WORKDIR /home/demyx
 
 USER demyx
 
-ENTRYPOINT ["dumb-init", "demyx-cs"]
+CMD ["code-server", "/home/demyx", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry"]

@@ -39,13 +39,13 @@ services:
       - "traefik.http.routers.traefik-http.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-http.service=api@internal"
       - "traefik.http.routers.traefik-http.entrypoints=http"
+      - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
+      - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.traefik-https.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-https.entrypoints=https"
       - "traefik.http.routers.traefik-https.service=api@internal"
       - "traefik.http.routers.traefik-https.middlewares=traefik-auth"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
-      - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
-      - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
   demyx_cs:
     container_name: demyx_cs
