@@ -62,6 +62,9 @@ RUN set -ex; \
     # Symlink demyx command history with root
     ln -s /home/demyx/.zsh_history /root; \
     \
+    # Change root shell
+    sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
+    \
     # gpg purposes
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
