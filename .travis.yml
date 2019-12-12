@@ -21,11 +21,11 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":latest-alpine tag-latest-alpine
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
   - docker-compose up -d demyx_cs
   - sleep 5
   - docker exec demyx_cs code-server --version
@@ -33,9 +33,9 @@ script:
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
   - docker push demyx/"$DEMYX_REPOSITORY"
-  - docker push demyx/"$DEMYX_REPOSITORY":sage
-  - docker push demyx/"$DEMYX_REPOSITORY":wp
   - docker push demyx/"$DEMYX_REPOSITORY":latest-alpine
+  - docker push demyx/"$DEMYX_REPOSITORY":wp
   - docker push demyx/"$DEMYX_REPOSITORY":wp-alpine
+  - docker push demyx/"$DEMYX_REPOSITORY":sage
   - docker push demyx/"$DEMYX_REPOSITORY":sage-alpine
   - bash travis.sh
