@@ -8,9 +8,4 @@ if [[ -d /home/demyx/.docker ]]; then
     sudo ln -sf /home/demyx/.docker /root/.docker
 fi
 
-# first arg is `-f` or `--some-option`
-if [[ "${1#-}" != "$1" ]]; then
-	set -- php-fpm "$@"
-fi
-
-exec "$@"
+code-server /home/demyx --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
