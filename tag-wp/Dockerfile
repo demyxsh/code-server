@@ -10,6 +10,7 @@ LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 ENV CODE_SERVER_ROOT=/demyx
 ENV CODE_SERVER_CONFIG=/etc/demyx
 ENV CODE_SERVER_LOG=/var/log/demyx
+ENV PASSWORD=demyx
 ENV TZ America/Los_Angeles
 
 # Packages
@@ -27,6 +28,7 @@ RUN set -ex; \
     libpng-dev \
     jq \
     nano \
+    net-tools \
     openssh-client \
     sudo \
     util-linux \
@@ -46,11 +48,18 @@ RUN set -ex; \
     ./rebuild.sh; \
     rm -rf /tmp/xdebug
 
-# Create and configure demyx user
+# Configure Demyx
 RUN set -ex; \
     adduser --gecos '' --disabled-password demyx; \
+    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
+    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
     \
-    # Oh-My-Zsh
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_ROOT"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_LOG"
+
+# Oh-My-Zsh
+RUN set -ex; \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
     git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
     sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
@@ -64,12 +73,8 @@ RUN set -ex; \
     # Symlink demyx command history with root
     ln -s /home/demyx/.zsh_history /root; \
     \
-    # Change shell
+    # Change root shell
     sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
-    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    \
-    # No password when using sudo
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
     \
     # gpg purposes
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
@@ -98,8 +103,6 @@ COPY --chown=demyx:demyx demyx/. "$CODE_SERVER_CONFIG"
 
 # WordPress
 RUN set -ex; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_ROOT"; \
-    \
     curl -sL https://wordpress.org/latest.tar.gz -o /latest.tar.gz; \
     tar -xzf /latest.tar.gz -C "$CODE_SERVER_CONFIG"; \
     rm -f /latest.tar.gz; \
@@ -112,9 +115,6 @@ RUN set -ex; \
     \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     mv "$CODE_SERVER_CONFIG"/settings.json /home/demyx/.code/data/User; \
-    \
-    # Create log directory
-    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_LOG"; \
     \
     # Remove php-fpm configs
     rm -f /usr/local/etc/php-fpm.d/*; \

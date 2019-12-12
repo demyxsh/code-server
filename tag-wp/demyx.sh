@@ -36,4 +36,4 @@ sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$CODE_SERVER_ROOT"/wp-config.ph
 # Start php-fpm in the background
 php-fpm -D
 
-code-server /demyx --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path="${CODE_SERVER_BASE_PATH}${CODE_SERVER_BASE_PREFIX}"
+code-server ${CODE_SERVER_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path="${CODE_SERVER_BASE_PATH}${CODE_SERVER_BASE_PREFIX}"
