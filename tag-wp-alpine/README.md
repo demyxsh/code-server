@@ -1,19 +1,20 @@
-# code-server:wp
+# code-server:wp-alpine
 
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Alpine](https://img.shields.io/badge/alpine-3.10.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![code-server](https://img.shields.io/badge/code--server-2.1692--vsc1.39.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
-code-server optimized for WordPress development. Example YAML comes with pre-configured development tools: BrowserSync and phpMyAdmin.
+code-server optimized for WordPress development. Example YAML comes with pre-configured development tools: BrowserSync and phpMyAdmin. Also comes with Xdebug.
 
 <p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/aMZhO9F.png" width="100%"></p>
 
-DEMYX | CODE-SERVER:WP
+DEMYX | CODE-SERVER:WP-ALPINE
 --- | ---
-USER<br />GROUP | demyx (1000)<br />demyx (1000)
-WORKDIR | /var/www/html
-PORT | 8080
+PORT | 8080 9000 9001
+USER | demyx
+WORKDIR | /demyx
+CONFIG | /etc/demyx
 ENTRYPOINT | ["dumb-init", "demyx"]
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys"
@@ -22,44 +23,47 @@ CODE-SERVER | https://domain.tld/demyx/cs/
 BROWSER-SYNC | https://domain.tld/demyx/bs/
 PHPMYADMIN | https://domain.tld/demyx/pma/
 
-## Updates & Support
-
-[![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
-[![Repository Size](https://img.shields.io/github/repo-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
-[![Watches](https://img.shields.io/github/watchers/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
-[![Stars](https://img.shields.io/github/stars/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
-[![Forks](https://img.shields.io/github/forks/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
-
-* Auto built weekly on Sundays (America/Los_Angeles)
-* Rolling release updates
-* For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
-
 ## Environment Variables
 
 ```
 # code-server
 
 - PASSWORD=demyx
-- CODER_BASE_PATH=/demyx
-- WORDPRESS_INSTALL_URL=https://domain.tld
-- WORDPRESS_INSTALL_TITLE=demyx
-- WORDPRESS_INSTALL_USER=demyx
-- WORDPRESS_INSTALL_PASSWORD=demyx
-- WORDPRESS_INSTALL_EMAIL=info@domain.tld
+- CODE_SERVER_BASE_PATH=/demyx
+- CODE_SERVER_ROOT=/demyx
+- CODE_SERVER_CONFIG=/etc/demyx
+- CODE_SERVER_LOG=/var/log/demyx
+- WORDPRESS_DB_HOST=domaintld_db
+- WORDPRESS_DB_NAME=demyx
+- WORDPRESS_DB_USER=demyx
+- WORDPRESS_DB_PASSWORD=demyx
+- WORDPRESS_ADMIN_USER=demyx
+- WORDPRESS_ADMIN_PASSWORD=demyx
+- WORDPRESS_ADMIN_EMAIL=info@domain.tld
+- WORDPRESS_DOMAIN=https://domain.tld
+- WORDPRESS_UPLOAD_LIMIT=128M
+- WORDPRESS_PHP_MEMORY=256M
+- WORDPRESS_PHP_MAX_EXECUTION_TIME=300
+- WORDPRESS_PHP_PM=ondemand
+- WORDPRESS_PHP_PM_MAX_CHILDREN=100
+- WORDPRESS_PHP_PM_START_SERVERS=10
+- WORDPRESS_PHP_PM_MIN_SPARE_SERVERS=5
+- WORDPRESS_PHP_PM_MAX_SPARE_SERVERS=25
+- WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT=5s
+- WORDPRESS_PHP_PM_MAX_REQUESTS=500
 - TZ=America/Los_Angeles
 ```
 ```
 # browser-sync
 
-- BS_DOMAIN_MATCH=http://localhost
-- BS_DOMAIN_RETURN=http://localhost
-- BS_DOMAIN_SOCKET=http://localhost
-- BS_PROXY=demyx_nginx
-- BS_DOMAIN=domain.tld
-- BS_FILES=["/var/www/html/wp-content/themes/\*\*/\*", "/var/www/html/wp-content/plugins/\*\*/\*"]
-- BS_PATH=/demyx
-- BS_PREFIX=/bs
-- BS_PORT=3000
+- BROWSERSYNC_DOMAIN_MATCH=https://domain.tld
+- BROWSERSYNC_DOMAIN_RETURN=https://domain.tld
+- BROWSERSYNC_DOMAIN_SOCKET=https://domain.tld
+- BROWSERSYNC_PROXY=demyx_nginx
+- BROWSERSYNC_FILES=["/demyx/wp-content/themes/**/*", "/demyx/wp-content/plugins/**/*"]
+- BROWSERSYNC_PATH=/demyx
+- BROWSERSYNC_PREFIX=/bs
+- BROWSERSYNC_PORT=3000
 ```
 ```
 # phpmyadmin
@@ -73,32 +77,15 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 
 - WORDPRESS=true
 - WORDPRESS_CONTAINER=demyx_wp
+- WORDPRESS_CONTAINER_PORT=9000
+- NGINX_ROOT=/demyx
+- NGINX_CONFIG=/etc/demyx
+- NGINX_LOG=/var/log/demyx
 - NGINX_DOMAIN=domain.tld
 - NGINX_CACHE=false
 - NGINX_UPLOAD_LIMIT=128M
 - NGINX_RATE_LIMIT=false
 - NGINX_XMLRPC=false
-- TZ=America/Los_Angeles
-```
-```
-# wordpress
-
-- WORDPRESS_DB_HOST=demyx_db
-- WORDPRESS_DB_NAME=demyx
-- WORDPRESS_DB_USER=demyx
-- WORDPRESS_DB_PASSWORD=demyx
-- WORDPRESS_DOMAIN=domain.tld
-- WORDPRESS_UPLOAD_LIMIT=128M
-- WORDPRESS_PHP_MEMORY=256M
-- WORDPRESS_PHP_MAX_EXECUTION_TIME=300
-- WORDPRESS_PHP_OPCACHE=true
-- WORDPRESS_PHP_PM=ondemand
-- WORDPRESS_PHP_PM_MAX_CHILDREN=100
-- WORDPRESS_PHP_PM_START_SERVERS=10
-- WORDPRESS_PHP_PM_MIN_SPARE_SERVERS=5
-- WORDPRESS_PHP_PM_MAX_SPARE_SERVERS=25
-- WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT=5s
-- WORDPRESS_PHP_PM_MAX_REQUESTS=500
 - TZ=America/Los_Angeles
 ```
 ```
@@ -108,6 +95,9 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 - MARIADB_USERNAME=demyx
 - MARIADB_PASSWORD=demyx
 - MARIADB_ROOT_PASSWORD=demyx # Required
+- MARIADB_ROOT=/demyx
+- MARIADB_CONFIG=/etc/demyx
+- MARIADB_LOG=/var/log/demyx
 - MARIADB_CHARACTER_SET_SERVER=utf8
 - MARIADB_COLLATION_SERVER=utf8_general_ci
 - MARIADB_DEFAULT_CHARACTER_SET=utf8
@@ -176,19 +166,19 @@ services:
       - TRAEFIK_ACCESSLOG_FILEPATH=/demyx/access.log
       - TZ=America/Los_Angeles
     labels:
-      # Traefik dashboard with basic auth protection https://traefik.domain.tld
+      # traefik https://traefik.domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-http.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-http.service=api@internal"
       - "traefik.http.routers.traefik-http.entrypoints=http"
       - "traefik.http.routers.traefik-http.middlewares=traefik-redirect"
+      - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.traefik-https.rule=Host(`traefik.domain.tld`)"
       - "traefik.http.routers.traefik-https.entrypoints=https"
       - "traefik.http.routers.traefik-https.service=api@internal"
       - "traefik.http.routers.traefik-https.tls.certresolver=demyx"
       - "traefik.http.routers.traefik-https.middlewares=traefik-auth"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
-      - "traefik.http.middlewares.traefik-redirect.redirectscheme.scheme=https"
   demyx_db:
     container_name: demyx_db
     image: demyx/mariadb
@@ -196,12 +186,15 @@ services:
     networks:
       - demyx
     volumes:
-      - demyx_db:/var/lib/mysql
+      - demyx_db:/demyx
     environment:
       - MARIADB_DATABASE=demyx
       - MARIADB_USERNAME=demyx
       - MARIADB_PASSWORD=demyx
       - MARIADB_ROOT_PASSWORD=demyx # Required
+      - MARIADB_ROOT=/demyx
+      - MARIADB_CONFIG=/etc/demyx
+      - MARIADB_LOG=/var/log/demyx
       - MARIADB_CHARACTER_SET_SERVER=utf8
       - MARIADB_COLLATION_SERVER=utf8_general_ci
       - MARIADB_DEFAULT_CHARACTER_SET=utf8
@@ -225,35 +218,6 @@ services:
       - MARIADB_TABLE_OPEN_CACHE=64
       - MARIADB_WRITE_BUFFER=2M
       - TZ=America/Los_Angeles
-  demyx_wp:
-    container_name: demyx_wp
-    image: demyx/wordpress
-    restart: unless-stopped
-    networks:
-      - demyx
-    depends_on:
-      - demyx_db
-    volumes:
-      - demyx_wp:/var/www/html
-      - demyx_log:/var/log/demyx
-    environment:
-      - WORDPRESS_DB_HOST=demyx_db
-      - WORDPRESS_DB_NAME=demyx
-      - WORDPRESS_DB_USER=demyx
-      - WORDPRESS_DB_PASSWORD=demyx
-      - WORDPRESS_DOMAIN=domain.tld
-      - WORDPRESS_UPLOAD_LIMIT=128M
-      - WORDPRESS_PHP_MEMORY=256M
-      - WORDPRESS_PHP_MAX_EXECUTION_TIME=300
-      - WORDPRESS_PHP_OPCACHE=false
-      - WORDPRESS_PHP_PM=ondemand
-      - WORDPRESS_PHP_PM_MAX_CHILDREN=100
-      - WORDPRESS_PHP_PM_START_SERVERS=10
-      - WORDPRESS_PHP_PM_MIN_SPARE_SERVERS=5
-      - WORDPRESS_PHP_PM_MAX_SPARE_SERVERS=25
-      - WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT=5s
-      - WORDPRESS_PHP_PM_MAX_REQUESTS=500
-      - TZ=America/Los_Angeles
   demyx_nginx:
     container_name: demyx_nginx
     image: demyx/nginx
@@ -263,11 +227,15 @@ services:
     depends_on:
       - demyx_wp
     volumes:
-      - demyx_wp:/var/www/html
+      - demyx_wp:/demyx
       - demyx_log:/var/log/demyx
     environment:
       - WORDPRESS=true
       - WORDPRESS_CONTAINER=demyx_wp
+      - WORDPRESS_CONTAINER_PORT=9000
+      - NGINX_ROOT=/demyx
+      - NGINX_CONFIG=/etc/demyx
+      - NGINX_LOG=/var/log/demyx
       - NGINX_DOMAIN=domain.tld
       - NGINX_CACHE=false
       - NGINX_UPLOAD_LIMIT=128M
@@ -275,14 +243,14 @@ services:
       - NGINX_XMLRPC=false
       - TZ=America/Los_Angeles
     labels:
-      # nginx https://domain.tld
+      # wordpress https://domain.tld
       - "traefik.enable=true"
       - "traefik.http.routers.domaintld-http.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
       - "traefik.http.routers.domaintld-http.entrypoints=http"
-      - "traefik.http.routers.domaintld-https.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
-      - "traefik.http.routers.domaintld-https.entrypoints=https"
       - "traefik.http.routers.domaintld-http.middlewares=domaintld-redirect"
       - "traefik.http.middlewares.domaintld-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.domaintld-https.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
+      - "traefik.http.routers.domaintld-https.entrypoints=https"
       - "traefik.http.routers.domaintld-https.tls.certresolver=demyx"
   demyx_pma:
     image: phpmyadmin/phpmyadmin
@@ -314,17 +282,16 @@ services:
     depends_on:
       - demyx_cs
     volumes:
-      - demyx_wp:/var/www/html
+      - demyx_wp:/demyx
     environment:
-      - BS_DOMAIN_MATCH=http://localhost
-      - BS_DOMAIN_RETURN=http://localhost
-      - BS_DOMAIN_SOCKET=http://localhost
-      - BS_PROXY=demyx_nginx
-      - BS_DOMAIN=domain.tld
-      - BS_FILES=["/var/www/html/wp-content/themes/**/*", "/var/www/html/wp-content/plugins/**/*"]
-      - BS_PATH=/demyx
-      - BS_PREFIX=/bs
-      - BS_PORT=3000
+      - BROWSERSYNC_DOMAIN_MATCH=https://domain.tld
+      - BROWSERSYNC_DOMAIN_RETURN=https://domain.tld
+      - BROWSERSYNC_DOMAIN_SOCKET=https://domain.tld
+      - BROWSERSYNC_PROXY=demyx_nginx
+      - BROWSERSYNC_FILES=["/demyx/wp-content/themes/**/*", "/demyx/wp-content/plugins/**/*"]
+      - BROWSERSYNC_PATH=/demyx
+      - BROWSERSYNC_PREFIX=/bs
+      - BROWSERSYNC_PORT=3000
     labels:
       # browser-sync https://domain.tld/demyx/bs/
       - "traefik.enable=true"
@@ -347,7 +314,7 @@ services:
       - "traefik.http.routers.domaintld-socket-https.tls.certresolver=demyx"
   demyx_cs:
     container_name: demyx_cs
-    image: demyx/code-server:wp
+    image: demyx/code-server:wp-alpine
     restart: unless-stopped
     hostname: domaintld
     networks:
@@ -356,15 +323,32 @@ services:
       - demyx_wp
     volumes:
       - demyx_user:/home/demyx
-      - demyx_wp:/var/www/html
+      - demyx_wp:/demyx
+      - demyx_log:/var/log/demyx
     environment:
       - PASSWORD=demyx
-      - CODER_BASE_PATH=/demyx
-      - WORDPRESS_INSTALL_URL=https://domain.tld
-      - WORDPRESS_INSTALL_TITLE=demyx
-      - WORDPRESS_INSTALL_USER=demyx
-      - WORDPRESS_INSTALL_PASSWORD=demyx
-      - WORDPRESS_INSTALL_EMAIL=info@domain.tld
+      - CODE_SERVER_BASE_PATH=/demyx
+      - CODE_SERVER_ROOT=/demyx
+      - CODE_SERVER_CONFIG=/etc/demyx
+      - CODE_SERVER_LOG=/var/log/demyx
+      - WORDPRESS_DB_HOST=domaintld_db
+      - WORDPRESS_DB_NAME=demyx
+      - WORDPRESS_DB_USER=demyx
+      - WORDPRESS_DB_PASSWORD=demyx
+      - WORDPRESS_ADMIN_USER=demyx
+      - WORDPRESS_ADMIN_PASSWORD=demyx
+      - WORDPRESS_ADMIN_EMAIL=info@domain.tld
+      - WORDPRESS_DOMAIN=https://domain.tld
+      - WORDPRESS_UPLOAD_LIMIT=128M
+      - WORDPRESS_PHP_MEMORY=256M
+      - WORDPRESS_PHP_MAX_EXECUTION_TIME=300
+      - WORDPRESS_PHP_PM=ondemand
+      - WORDPRESS_PHP_PM_MAX_CHILDREN=100
+      - WORDPRESS_PHP_PM_START_SERVERS=10
+      - WORDPRESS_PHP_PM_MIN_SPARE_SERVERS=5
+      - WORDPRESS_PHP_PM_MAX_SPARE_SERVERS=25
+      - WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT=5s
+      - WORDPRESS_PHP_PM_MAX_REQUESTS=500
       - TZ=America/Los_Angeles
     labels:
       # code-server https://domain.tld/demyx/cs/
@@ -373,6 +357,8 @@ services:
       - "traefik.http.routers.domaintld-cs-https.entrypoints=https"
       - "traefik.http.routers.domaintld-cs-https.middlewares=domaintld-cs-prefix"
       - "traefik.http.middlewares.domaintld-cs-prefix.stripprefix.prefixes=/demyx/cs/"
+      - "traefik.http.routers.domaintld-cs.service=domaintld-cs"
+      - "traefik.http.services.domaintld-cs.loadbalancer.server.port=8080"
       - "traefik.http.routers.domaintld-cs-https.priority=99"
       - "traefik.http.routers.domaintld-cs-https.tls.certresolver=demyx"
 volumes:
@@ -390,3 +376,15 @@ networks:
   demyx:
     name: demyx
 ```
+
+## Updates & Support
+
+[![Code Size](https://img.shields.io/github/languages/code-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
+[![Repository Size](https://img.shields.io/github/repo-size/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
+[![Watches](https://img.shields.io/github/watchers/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
+[![Stars](https://img.shields.io/github/stars/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
+[![Forks](https://img.shields.io/github/forks/demyxco/code-server?style=flat&color=blue)](https://github.com/demyxco/code-server)
+
+* Auto built weekly on Sundays (America/Los_Angeles)
+* Rolling release updates
+* For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
