@@ -15,7 +15,7 @@ RUN set -ex; \
 
 # Packages
 RUN set -ex; \
-    sudo sh -c "apk add --update --no-cache npm; \
+    sudo sh -c "apk add --update --no-cache autoconf automake libtool nasm npm zlib-dev; \
         \
         sudo npm -g install yarn"
 
