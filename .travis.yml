@@ -21,7 +21,7 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":latest-alpine tag-latest-alpine
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
@@ -33,7 +33,7 @@ script:
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
   - docker push demyx/"$DEMYX_REPOSITORY"
-  - docker push demyx/"$DEMYX_REPOSITORY":latest-alpine
+  - docker push demyx/"$DEMYX_REPOSITORY":alpine
   - docker push demyx/"$DEMYX_REPOSITORY":wp
   - docker push demyx/"$DEMYX_REPOSITORY":wp-alpine
   - docker push demyx/"$DEMYX_REPOSITORY":sage

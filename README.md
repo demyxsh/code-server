@@ -14,7 +14,7 @@ code-server is VS Code running on a remote server, accessible through the browse
 
 DEMYX | CODE-SERVER
 --- | ---
-TAGS | latest latest-alpine wp wp-alpine sage sage-alpine
+TAGS | latest alpine wp wp-alpine sage sage-alpine
 PORT | 8080
 USER | demyx
 WORKDIR | /demyx
