@@ -6,8 +6,8 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Get versions
-DEMYX_ALPINE_VERSION="$(docker run --rm --entrypoint=cat demyx/code-server:latest-alpine /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/\r//g')"
-DEMYX_CODE_VERSION="$(docker run --rm --entrypoint=code-server demyx/code-server:latest-alpine --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed 's/\r//g')"
+DEMYX_ALPINE_VERSION="$(docker run --rm --entrypoint=cat demyx/code-server:alpine /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/\r//g')"
+DEMYX_CODE_VERSION="$(docker run --rm --entrypoint=code-server demyx/code-server:alpine --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed 's/\r//g')"
 DEMYX_DEBIAN_VERSION="$(docker exec demyx_cs cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's|"||g' | sed 's/\r//g')"
 DEMYX_DEBIAN_CODE_VERSION="$(docker exec demyx_cs code-server --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed 's/\r//g')"
 
