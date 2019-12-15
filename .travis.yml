@@ -21,10 +21,10 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
   - docker-compose up -d demyx_cs
   - sleep 5
