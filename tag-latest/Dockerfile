@@ -1,4 +1,5 @@
 FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
+FROM codercom/code-server as demyx_cs
 FROM debian:buster-slim
 
 LABEL sh.demyx.image demyx/code-server
@@ -71,16 +72,6 @@ RUN set -ex; \
     \
     chown -R demyx:demyx /home/demyx
 
-# Download Alpine binary of code-server
-RUN set -ex; \
-    export DEMYX_CODER_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    # Set fixed version as a fallback if curling fails
-    if [ -z "$DEMYX_CODER_BINARY" ]; then export DEMYX_CODER_BINARY=2.1650-vsc1.39.2; fi; \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$DEMYX_CODER_BINARY"/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -o /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz; \
-    tar -xzf /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64.tar.gz -C /tmp; \
-    mv /tmp/code-server"$DEMYX_CODER_BINARY"-linux-x86_64/code-server /usr/local/bin; \
-    rm -rf /tmp/*
-
 # Download latest Docker client binary
 RUN set -ex; \
     export DEMYX_DOCKER_BINARY=$(curl -sL https://api.github.com/repos/docker/docker-ce/releases/latest | grep '"name":' | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
@@ -101,6 +92,8 @@ COPY --chown=demyx:demyx settings.json /home/demyx/.code/data/User/settings.json
 COPY demyx.sh /usr/local/bin/demyx-cs
 # ctop
 COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
+# code-server
+COPY --from=demyx_cs /usr/local/bin/code-server /usr/local/bin
 
 # Wrappers
 RUN set -ex; \
