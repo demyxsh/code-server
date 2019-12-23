@@ -26,6 +26,8 @@ script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed tag-openlitespeed
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed-sage tag-openlitespeed-sage
   - docker-compose up -d demyx_cs
   - sleep 5
   - docker exec demyx_cs code-server --version
@@ -38,4 +40,6 @@ after_success:
   - docker push demyx/"$DEMYX_REPOSITORY":wp-alpine
   - docker push demyx/"$DEMYX_REPOSITORY":sage
   - docker push demyx/"$DEMYX_REPOSITORY":sage-alpine
+  - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed
+  - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed-sage
   - bash travis.sh
