@@ -1,11 +1,33 @@
 // Demyx
 // https://demyx.sh
 {
+    "editor.fontLigatures": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/tmp": true,
+        "**/node_modules": true,
+        "**/bower_components": true,
+    },
+    "files.watcherExclude": {
+        "**/*.img": true,
+        "**/*.tar.gz": true,
+        "**/*.tgz": true,
+        "**/*.zip": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/bower_components/**": true,
+        "**/dist/**": true,
+        "**/node_modules/**": true,
+        "**/tmp/**": true,
+    },
+    "materialTheme.accent": "Teal",
+    "telemetry.enableTelemetry": false,
     "terminal.integrated.shell.linux": "/bin/zsh",
     "update.mode": "none",
-    "telemetry.enableTelemetry": false,
-    "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true
-    }
+    "workbench.colorTheme": "Material Theme Darker High Contrast",
+    "workbench.iconTheme": "material-icon-theme"
 }
