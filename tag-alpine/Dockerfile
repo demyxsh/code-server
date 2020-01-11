@@ -1,4 +1,5 @@
 FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
+FROM docker as demyx_docker
 FROM alpine
 
 LABEL sh.demyx.image demyx/code-server:alpine
@@ -12,6 +13,7 @@ ENV CODE_SERVER_ROOT=/demyx
 ENV CODE_SERVER_CONFIG=/etc/demyx
 ENV CODE_SERVER_LOG=/var/log/demyx
 ENV PASSWORD=demyx
+ENV TERM=linux
 ENV TZ America/Los_Angeles
 
 # Install custom packages
@@ -23,6 +25,7 @@ RUN set -ex; \
     dumb-init \
     gcc \
     git \
+    libc-dev \
     gnupg \
     htop \
     jq \
@@ -76,36 +79,36 @@ RUN set -ex; \
     mv /tmp/code-server"$DEMYX_CODER_BINARY"-alpine-x86_64/code-server /usr/local/bin; \
     rm -rf /tmp/*
 
-# Download latest Docker client binary
-RUN set -ex; \
-    export DEMYX_DOCKER_BINARY=$(curl -sL https://api.github.com/repos/docker/docker-ce/releases/latest | grep '"name":' | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    # Set fixed version as a fallback if curling fails
-    if [ -z "$DEMYX_DOCKER_BINARY" ]; then export DEMYX_DOCKER_BINARY=18.09.9; fi; \
-    wget https://download.docker.com/linux/static/stable/x86_64/docker-"$DEMYX_DOCKER_BINARY".tgz -qO /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz; \
-    tar -xzf /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz -C /tmp; \
-    mv /tmp/docker/docker /usr/local/bin/docker-bin; \
-    # sudo wrapper for Docker binary
-    echo '#!/bin/bash' >> /usr/local/bin/docker; \
-    echo 'sudo /usr/local/bin/docker-bin "$@"' >> /usr/local/bin/docker; \
-    chmod +x /usr/local/bin/docker; \
-    rm -rf /tmp/*
-
 # Set default code-server user setting
 COPY --chown=demyx:demyx settings.json /home/demyx/.code/data/User/settings.json
 # Copy entrypoint
 COPY demyx.sh /usr/local/bin/demyx-cs
 # ctop
 COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
+# docker
+COPY --from=demyx_docker /usr/local/bin/docker /usr/local/bin/docker-bin
 
-# Wrappers
+# Finalize
 RUN set -ex; \
-    echo '#!/bin/bash' >> /usr/local/bin/demyx; \
-    echo 'docker exec -it demyx demyx "$@"' >> /usr/local/bin/demyx; \
-    chmod +x /usr/local/bin/demyx; \
+    # Setup code-server
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
+    su -c 'code-server --extensions-dir=/home/demyx/.code/extensions \
+        --install-extension=equinusocio.vsc-material-theme \
+        --install-extension=pkief.material-icon-theme \
+        --force' -s /bin/sh demyx; \
     \
+    # ctop
     echo '#!/bin/bash' >> /usr/local/bin/ctop; \
     echo 'sudo ctop-bin' >> /usr/local/bin/ctop; \
     chmod +x /usr/local/bin/ctop; \
+    \
+    # docker
+    echo '#!/bin/bash' >> /usr/local/bin/docker; \
+    echo 'sudo docker-bin "$@"' >> /usr/local/bin/docker; \
+    chmod +x /usr/local/bin/docker; \
+    \
+    # Disable sudo warnings for now
+    echo "Set disable_coredump false" > /etc/sudo.conf; \
     \
     chmod +x /usr/local/bin/demyx-cs
 
