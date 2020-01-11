@@ -116,3 +116,5 @@ WORKDIR /home/demyx
 USER demyx
 
 ENTRYPOINT ["dumb-init", "demyx-cs"]
+
+CMD ["code-server", "/home/demyx", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry"]

@@ -8,4 +8,9 @@ if [[ -d /home/demyx/.docker ]]; then
     sudo ln -sf /home/demyx/.docker /root/.docker
 fi
 
-code-server /home/demyx --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+	set -- code-server "$@"
+fi
+
+exec "$@"
