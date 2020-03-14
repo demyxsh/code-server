@@ -21,7 +21,8 @@
         "/demyx/web/app/plugins/**": true,
         "/demyx/web/app/upgrade/**": true,
         "/demyx/web/app/uploads/**": true,
-        "/demyx/web/app/wflogs/**": true
+        "/demyx/web/app/wflogs/**": true,
+        "/demyx/web/wp/**": true
     },
     "files.watcherExclude": {
         "**/*.img": true,
@@ -39,6 +40,7 @@
         "/demyx/web/app/plugins/**": true,
         "/demyx/web/app/upgrade/**": true,
         "/demyx/web/app/uploads/**": true,
-        "/demyx/web/app/wflogs/**": true
+        "/demyx/web/app/wflogs/**": true,
+        "/demyx/web/wp/**": true
     }
 }
