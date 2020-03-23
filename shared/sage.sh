@@ -44,7 +44,7 @@ if [[ "$SAGE_COMMAND" = init ]]; then
     sed -i "s|delay: 500|delay: 500, advanced: demyxBS|g" "$SAGE_WEBPACK_CONFIG"
     sed -i "s|config.proxyUrl +|'$WP_HOME' +|g" "$SAGE_WEBPACK_CONFIG"
     sed -i "s|domain.tld|$WP_DOMAIN|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|example.test|${BROWSERSYNC_PROXY:-}|g" "$CODE_SERVER_ROOT"/web/app/themes/"$SAGE_THEME"/resources/assets/config.json
+    sed -i "s|\"devUrl\": .*|\"devUrl\": \"${BROWSERSYNC_PROXY:-}\",|g" "$CODE_SERVER_ROOT"/web/app/themes/"$SAGE_THEME"/resources/assets/config.json
     echo -e "\nmodule.hot.accept();" >> "$CODE_SERVER_ROOT"/web/app/themes/"$SAGE_THEME"/resources/assets/scripts/main.js
 elif [[ "$SAGE_COMMAND" = help ]]; then
     echo "sage <arg>        Sage helper script"
