@@ -3,6 +3,9 @@
 # https://demyx.sh
 set -euo pipefail
 
+# Support for demyx/code-server:openlitespeed-sage
+[[ -n "$OPENLITESPEED_ROOT" ]] && CODE_SERVER_ROOT="$OPENLITESPEED_ROOT"
+
 while :; do
     case "${1:-}" in
         init)
