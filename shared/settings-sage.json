@@ -2,6 +2,8 @@
     "editor.fontLigatures": true,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.shell.linux": "/bin/zsh",
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.cursorStyle": "line",
     "update.mode": "none",
     "materialTheme.accent": "Teal",
     "workbench.colorTheme": "Material Theme Darker High Contrast",
