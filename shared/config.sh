@@ -4,7 +4,14 @@
 set -euo pipefail
 
 # Default variables
+WORDPRESS_PHP_OPCACHE="${WORDPRESS_PHP_OPCACHE:-true}"
 CODE_SERVER_XDEBUG="$(find /usr/local/lib/php/extensions -name "xdebug.so")"
+
+# PHP opcache
+if [[ "$WORDPRESS_PHP_OPCACHE" = off || "$WORDPRESS_PHP_OPCACHE" = false ]]; then
+    WORDPRESS_PHP_OPCACHE_ENABLE=0
+    WORDPRESS_PHP_OPCACHE_ENABLE_CLI=0
+fi
 
 # Generate www.conf
 echo "[${WORDPRESS_DOMAIN:-www}]
@@ -84,12 +91,15 @@ max_file_uploads = 20
 allow_url_fopen = On
 allow_url_include = Off
 default_socket_timeout = 60
+upload_tmp_dir = /tmp
+sendmail_path = 
 
 [CLI Server]
 cli_server.color = On
 
 [Date]
 date.timezone = ${TZ:-America/Los_Angeles}
+
 [filter]
 
 [iconv]
@@ -210,6 +220,16 @@ ldap.max_links = -1
 [dba]
 
 [opcache]
+opcache.enable=${WORDPRESS_PHP_OPCACHE_ENABLE:-1}
+opcache.enable_cli=${WORDPRESS_PHP_OPCACHE_ENABLE_CLI:-1}
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.max_wasted_percentage=10
+opcache.memory_consumption=256
+opcache.save_comments=1
+opcache.revalidate_freq=0
+opcache.validate_timestamps=1
+opcache.consistency_checks=0
 
 [curl]
 
