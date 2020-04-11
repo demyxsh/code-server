@@ -11,6 +11,7 @@
     "material-icon-theme.showUpdateMessage": false,
     "workbench.colorTheme": "Material Theme Darker High Contrast",
     "workbench.iconTheme": "material-icon-theme",
+    "phpcs.standard": "WordPress",
     "files.autoSave": "onFocusChange",
     "files.exclude": {
         "**/.git": true,
