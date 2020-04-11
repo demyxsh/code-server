@@ -17,12 +17,12 @@ fi
 echo "[${WORDPRESS_DOMAIN:-www}]
 listen                      = 9000
 pm                          = ${WORDPRESS_PHP_PM:-ondemand}
-pm.max_children             = ${WORDPRESS_PHP_PM_MAX_CHILDREN:-100}
-pm.start_servers            = ${WORDPRESS_PHP_PM_START_SERVERS:-10}
+pm.max_children             = ${WORDPRESS_PHP_PM_MAX_CHILDREN:-25}
+pm.start_servers            = ${WORDPRESS_PHP_PM_START_SERVERS:-5}
 pm.min_spare_servers        = ${WORDPRESS_PHP_PM_MIN_SPARE_SERVERS:-5}
-pm.max_spare_servers        = ${WORDPRESS_PHP_PM_MAX_SPARE_SERVERS:-25}
-pm.process_idle_timeout     = ${WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT:-5s}
-pm.max_requests             = ${WORDPRESS_PHP_PM_MAX_REQUESTS:-500}
+pm.max_spare_servers        = ${WORDPRESS_PHP_PM_MAX_SPARE_SERVERS:-20}
+pm.process_idle_timeout     = ${WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT:-3s}
+pm.max_requests             = ${WORDPRESS_PHP_PM_MAX_REQUESTS:-1000}
 chdir                       = $CODE_SERVER_ROOT
 catch_workers_output        = yes
 php_admin_value[error_log]  = /var/log/demyx/${WORDPRESS_DOMAIN:-demyx}.error.log
@@ -236,7 +236,7 @@ opcache.consistency_checks=0
 [openssl]
 
 [XDebug]
-zend_extension=${CODE_SERVER_XDEBUG}
+; zend_extension=${CODE_SERVER_XDEBUG}
 xdebug.remote_enable = 1
 xdebug.remote_autostart = 1
 xdebug.remote_port = 9001
