@@ -4,8 +4,8 @@
 set -euo pipefail
 
 # Support for demyx/code-server:openlitespeed-sage
-[[ -n "$OPENLITESPEED_ROOT" ]] && CODE_ROOT="$OPENLITESPEED_ROOT"
-[[ -n "$OPENLITESPEED_CONFIG" ]] && CODE_CONFIG="$OPENLITESPEED_ROOT"
+[[ -n "${OPENLITESPEED_ROOT:-}" ]] && CODE_ROOT="$OPENLITESPEED_ROOT"
+[[ -n "${OPENLITESPEED_CONFIG:-}" ]] && CODE_CONFIG="$OPENLITESPEED_ROOT"
 
 while :; do
     case "${1:-}" in
