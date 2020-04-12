@@ -5,7 +5,7 @@ set -euo pipefail
 
 # Default variables
 WORDPRESS_PHP_OPCACHE="${WORDPRESS_PHP_OPCACHE:-true}"
-CODE_SERVER_XDEBUG="$(find /usr/local/lib/php/extensions -name "xdebug.so")"
+CODE_XDEBUG="$(find /usr/local/lib/php/extensions -name "xdebug.so")"
 
 # PHP opcache
 if [[ "$WORDPRESS_PHP_OPCACHE" = off || "$WORDPRESS_PHP_OPCACHE" = false ]]; then
@@ -23,10 +23,10 @@ pm.min_spare_servers        = ${WORDPRESS_PHP_PM_MIN_SPARE_SERVERS:-5}
 pm.max_spare_servers        = ${WORDPRESS_PHP_PM_MAX_SPARE_SERVERS:-20}
 pm.process_idle_timeout     = ${WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT:-3s}
 pm.max_requests             = ${WORDPRESS_PHP_PM_MAX_REQUESTS:-1000}
-chdir                       = $CODE_SERVER_ROOT
+chdir                       = $CODE_ROOT
 catch_workers_output        = yes
 php_admin_value[error_log]  = /var/log/demyx/${WORDPRESS_DOMAIN:-demyx}.error.log
-" > "$CODE_SERVER_CONFIG"/www.conf
+" > "$CODE_CONFIG"/www.conf
 
 # Generate docker.conf
 echo "[global]
@@ -44,7 +44,7 @@ clear_env = no
 ; Ensure worker stdout and stderr are sent to the main error log.
 catch_workers_output = yes
 decorate_workers_output = no
-" > "$CODE_SERVER_CONFIG"/docker.conf
+" > "$CODE_CONFIG"/docker.conf
 
 # Generate php.ini
 echo "[PHP]
@@ -236,8 +236,8 @@ opcache.consistency_checks=0
 [openssl]
 
 [XDebug]
-; zend_extension=${CODE_SERVER_XDEBUG}
+; zend_extension=${CODE_XDEBUG}
 xdebug.remote_enable = 1
 xdebug.remote_autostart = 1
 xdebug.remote_port = 9001
-" > "$CODE_SERVER_CONFIG"/php.ini
+" > "$CODE_CONFIG"/php.ini
