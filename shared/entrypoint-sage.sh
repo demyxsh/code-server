@@ -24,4 +24,4 @@ sed -i "s|WP_ENV=.*|WP_ENV=development|g" "$CODE_SERVER_ROOT"/.env
 # Start php-fpm in the background
 php-fpm -D
 
-code-server ${CODE_SERVER_ROOT} --host=0.0.0.0 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --port=8080
+code-server ${CODE_SERVER_ROOT} --host=0.0.0.0 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --disable-ssh --port=8080
