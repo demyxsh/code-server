@@ -3,9 +3,6 @@
 # https://demyx.sh
 set -euo pipefail
 
-# Compatibility with old paths
-[[ -d /var/www/html/wp-admin ]] && CODE_SERVER_ROOT=/var/www/html
-
 # Generate config
 demyx-config
 
