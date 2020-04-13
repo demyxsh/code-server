@@ -17,7 +17,7 @@ sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-info
 sed -i "s|go-.*.-informational|go-${DEMYX_GO_VERSION}-informational|g" README.md
 
 sed -i "s|debian-.*.-informational|debian-${DEMYX_DEBIAN_VERSION}-informational|g" tag-wp/README.md
-sed -i "s|code--server-.*.-informational|code--server-${DEMYX_DEBIAN_CODE_VERSION}-informational|g" tag-wp/README.md
+sed -i "s|code--server-.*.-informational|code--server-${DEMYX_DEBIAN_VERSION}-informational|g" tag-wp/README.md
 
 sed -i "s|debian-.*.-informational|debian-${DEMYX_DEBIAN_VERSION}-informational|g" tag-sage/README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-sage/README.md
