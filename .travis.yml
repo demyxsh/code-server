@@ -10,31 +10,31 @@ services:
   - docker
 
 env:
-  - DOCKER_COMPOSE_VERSION=1.24.1 DEMYX_USERNAME=demyx DEMYX_REPOSITORY=code-server
+  - DEMYX_USERNAME=demyx 
+  - DEMYX_REPOSITORY=code-server
 
 before_install:
-  - sudo apt-get install jq
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+  - docker pull alpine
+  - docker pull debian:buster-slim
+  - docker pull php:fpm-buster
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":go tag-go
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed tag-openlitespeed
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed-sage tag-openlitespeed-sage
+  - docker run -dit --name="$DEMYX_REPOSITORY" demyx/"$DEMYX_REPOSITORY"
+  - docker exec "$DEMYX_REPOSITORY" code-server --version
   #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
   #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
   #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
-  - docker-compose up -d demyx_cs
-  - sleep 5
-  - docker exec demyx_cs code-server --version
 
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
   - docker push demyx/"$DEMYX_REPOSITORY"
+  - docker push demyx/"$DEMYX_REPOSITORY":go
   - docker push demyx/"$DEMYX_REPOSITORY":wp
   - docker push demyx/"$DEMYX_REPOSITORY":sage
   - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed

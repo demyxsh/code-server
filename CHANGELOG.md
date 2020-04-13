@@ -1,0 +1,76 @@
+# CHANGELOG
+Entries before tag-* affects all code-server tags. 
+
+## 2020-04-12
+### Added
+- Shared folder with reusable files
+- Go variant of code-server
+- tag-alpine
+    - Added CODE_VERSION and CODE_BINARY
+- tag-openlitespeed
+    - Third party source to upgrade php to 7.4
+- tag-openlitespeed-sage
+    - Third party source to upgrade php to 7.4
+- tag-sage
+    - Third party script to install additional php extensions
+    - PHP_CodeSniffer and its code-server extension
+- tag-sage-alpine
+    - Third party script to install additional php extensions
+    - PHP_CodeSniffer and its code-server extension
+- tag-wp
+    - Third party script to install additional php extensions
+    - PHP_CodeSniffer and its code-server extension
+- tag-wp-alpine
+    - Third party script to install additional php extensions
+    - PHP_CodeSniffer and its code-server extension
+- Travis-CI
+    - Pull several needed base images
+    - Include go tag
+    - Output versions in a file
+    - Commit version file first before committing the rest
+### Changed
+- CODE_SERVER_ROOT => CODE_ROOT
+- CODE_SERVER_CONFIG => CODE_CONFIG
+- CODE_SERVER_LOG => CODE_LOG
+- Formatted LABELS and ENV entries
+- Moved Configure Demyx commands below the ENV entries
+- Shared files are fetched via curl
+- Renamed entrypoints
+- Rearranged RUN commands
+- Update screenshot
+- tag-alpine
+    - Set a fixed version when configuring code-server
+- tag-latest
+    - Update code-server to 3.1.0 via multistage layer
+    - CMD uses flags specific for code-server v3
+    - Updated docker-compose.yml
+- tag-openlitespeed
+    - Update code-server to 3.1.0 via multistage layer
+    - Use updated variables from demyx/openlitespeed
+- tag-openlitespeed-sage
+    - Update code-server to 3.1.0 via multistage layer
+    - Use updated variables from demyx/openlitespeed
+- tag-sage
+    - Update code-server to 3.1.0 via multistage layer
+    - Base iamge is now php:fpm-buster
+- tag-sage-alpine
+    - Set a fixed version when configuring code-server
+    - Base image is now php-fpm-alpine
+    - Configure Sage in separate RUN command
+- tag-wp
+    - Update code-server to 3.1.0 via multistage layer
+    - Base iamge is now php:fpm-buster
+    - docker-compose.yml now includes updates from tag-openlitespeed's .yml
+- tag-sage-alpine
+    - Set a fixed version when configuring code-server
+    - Base image is now php-fpm-alpine
+    - Configure Sage in separate RUN command
+- Travis-CI
+    - Each environment variables are now in their own lines
+    - Run tag-latest in the background
+### Removed
+- Files that were gonna be used for COPY
+- Unused environment variable for main docker-compose.yml
+- Travis-CI
+    - DOCKER_COMPOSE_VERSION variable
+    - docker-compose install commands

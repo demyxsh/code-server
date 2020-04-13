@@ -64,47 +64,6 @@ services:
       - "traefik.http.routers.traefik-http.tls.certresolver=demyx"
       - "traefik.http.routers.traefik-http.middlewares=traefik-http-auth"
       - "traefik.http.middlewares.traefik-http-auth.basicauth.users=demyx:$$apr1$$EqJj89Yw$$WLsBIjCILtBGjHppQ76YT1" # Password: demyx
-  demyx_db:
-    container_name: demyx_db
-    image: demyx/mariadb:edge
-    restart: unless-stopped
-    depends_on:
-      - demyx_traefik
-    networks:
-      - demyx
-    volumes:
-      - demyx_db:/demyx
-    environment:
-      - MARIADB_DATABASE=demyx
-      - MARIADB_USERNAME=demyx
-      - MARIADB_PASSWORD=demyx
-      - MARIADB_ROOT_PASSWORD=demyx # Mandatory
-      - MARIADB_ROOT=/demyx
-      - MARIADB_CONFIG=/etc/demyx
-      - MARIADB_LOG=/var/log/demyx
-      - MARIADB_CHARACTER_SET_SERVER=utf8
-      - MARIADB_COLLATION_SERVER=utf8_general_ci
-      - MARIADB_DEFAULT_CHARACTER_SET=utf8
-      - MARIADB_INNODB_BUFFER_POOL_SIZE=16M
-      - MARIADB_INNODB_DATA_FILE_PATH=ibdata1:10M:autoextend
-      - MARIADB_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
-      - MARIADB_INNODB_LOCK_WAIT_TIMEOUT=50
-      - MARIADB_INNODB_LOG_BUFFER_SIZE=8M
-      - MARIADB_INNODB_LOG_FILE_SIZE=5M
-      - MARIADB_INNODB_USE_NATIVE_AIO=1
-      - MARIADB_KEY_BUFFER_SIZE=20M
-      - MARIADB_MAX_ALLOWED_PACKET=16M
-      - MARIADB_MAX_CONNECTIONS=151
-      - MARIADB_MYISAM_SORT_BUFFER_SIZE=8M
-      - MARIADB_NET_BUFFER_SIZE=8K
-      - MARIADB_READ_BUFFER=2M
-      - MARIADB_READ_BUFFER_SIZE=256K
-      - MARIADB_READ_RND_BUFFER_SIZE=512K
-      - MARIADB_SERVER_ID=1
-      - MARIADB_SORT_BUFFER_SIZE=20M
-      - MARIADB_TABLE_OPEN_CACHE=64
-      - MARIADB_WRITE_BUFFER=2M
-      - TZ=America/Los_Angeles
   demyx_wp:
     container_name: demyx_wp
     image: demyx/code-server:openlitespeed
@@ -119,7 +78,6 @@ services:
       - demyx_log:/var/log/demyx
     environment:
       - PASSWORD=demyx
-      - CODE_SERVER_BASE_PATH=/demyx
       - WORDPRESS_DB_HOST=demyx_db
       - WORDPRESS_DB_NAME=demyx
       - WORDPRESS_DB_USER=demyx
@@ -132,22 +90,24 @@ services:
       - OPENLITESPEED_BASIC_AUTH_USERNAME=demyx
       - OPENLITESPEED_BASIC_AUTH_PASSWORD=demyx
       - OPENLITESPEED_BASIC_AUTH_WP=false
-      - OPENLITESPEED_CACHE=false
-      - OPENLITESPEED_CLIENT_THROTTLE_STATIC=50
-      - OPENLITESPEED_CLIENT_THROTTLE_DYNAMIC=50
+      - OPENLITESPEED_CACHE=true
+      - OPENLITESPEED_CLIENT_THROTTLE_STATIC=250
+      - OPENLITESPEED_CLIENT_THROTTLE_DYNAMIC=250
       - OPENLITESPEED_CLIENT_THROTTLE_BANDWIDTH_OUT=0
       - OPENLITESPEED_CLIENT_THROTTLE_BANDWIDTH_IN=0
-      - OPENLITESPEED_CLIENT_THROTTLE_SOFT_LIMIT=250
-      - OPENLITESPEED_CLIENT_THROTTLE_HARD_LIMIT=500
+      - OPENLITESPEED_CLIENT_THROTTLE_SOFT_LIMIT=500
+      - OPENLITESPEED_CLIENT_THROTTLE_HARD_LIMIT=750
       - OPENLITESPEED_CLIENT_THROTTLE_BLOCK_BAD_REQUEST=1
-      - OPENLITESPEED_CLIENT_THROTTLE_GRACE_PERIOD=15
+      - OPENLITESPEED_CLIENT_THROTTLE_GRACE_PERIOD=30
       - OPENLITESPEED_CLIENT_THROTTLE_BAN_PERIOD=60
+      - OPENLITESPEED_CRAWLER_LOAD_LIMIT=5.2
+      - OPENLITESPEED_CRAWLER_USLEEP=1000
       - OPENLITESPEED_TUNING_MAX_CONNECTIONS=1000
       - OPENLITESPEED_TUNING_CONNECTION_TIMEOUT=60
-      - OPENLITESPEED_TUNING_MAX_KEEP_ALIVE=500
-      - OPENLITESPEED_TUNING_SMART_KEEP_ALIVE=0
+      - OPENLITESPEED_TUNING_MAX_KEEP_ALIVE=1000
+      - OPENLITESPEED_TUNING_SMART_KEEP_ALIVE=1000
       - OPENLITESPEED_TUNING_KEEP_ALIVE_TIMEOUT=5
-      - OPENLITESPEED_PHP_LSAPI_CHILDREN=10
+      - OPENLITESPEED_PHP_LSAPI_CHILDREN=1000
       - OPENLITESPEED_PHP_OPCACHE=true
       - OPENLITESPEED_PHP_MAX_EXECUTION_TIME=300
       - OPENLITESPEED_PHP_MEMORY=256M
@@ -191,6 +151,47 @@ services:
       - "traefik.http.routers.domaintld-cs.entrypoints=https"
       - "traefik.http.routers.domaintld-cs.tls.certresolver=demyx"
       - "traefik.http.routers.domaintld-cs.priority=99"
+  demyx_db:
+    container_name: demyx_db
+    image: demyx/mariadb:edge
+    restart: unless-stopped
+    depends_on:
+      - demyx_traefik
+    networks:
+      - demyx
+    volumes:
+      - demyx_db:/demyx
+    environment:
+      - MARIADB_DATABASE=demyx
+      - MARIADB_USERNAME=demyx
+      - MARIADB_PASSWORD=demyx
+      - MARIADB_ROOT_PASSWORD=demyx # Mandatory
+      - MARIADB_ROOT=/demyx
+      - MARIADB_CONFIG=/etc/demyx
+      - MARIADB_LOG=/var/log/demyx
+      - MARIADB_CHARACTER_SET_SERVER=utf8
+      - MARIADB_COLLATION_SERVER=utf8_general_ci
+      - MARIADB_DEFAULT_CHARACTER_SET=utf8
+      - MARIADB_INNODB_BUFFER_POOL_SIZE=16M
+      - MARIADB_INNODB_DATA_FILE_PATH=ibdata1:10M:autoextend
+      - MARIADB_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
+      - MARIADB_INNODB_LOCK_WAIT_TIMEOUT=50
+      - MARIADB_INNODB_LOG_BUFFER_SIZE=8M
+      - MARIADB_INNODB_LOG_FILE_SIZE=5M
+      - MARIADB_INNODB_USE_NATIVE_AIO=1
+      - MARIADB_KEY_BUFFER_SIZE=20M
+      - MARIADB_MAX_ALLOWED_PACKET=16M
+      - MARIADB_MAX_CONNECTIONS=500
+      - MARIADB_MYISAM_SORT_BUFFER_SIZE=8M
+      - MARIADB_NET_BUFFER_SIZE=8K
+      - MARIADB_READ_BUFFER=2M
+      - MARIADB_READ_BUFFER_SIZE=256K
+      - MARIADB_READ_RND_BUFFER_SIZE=512K
+      - MARIADB_SERVER_ID=1
+      - MARIADB_SORT_BUFFER_SIZE=20M
+      - MARIADB_TABLE_OPEN_CACHE=64
+      - MARIADB_WRITE_BUFFER=2M
+      - TZ=America/Los_Angeles
   demyx_bs:
     image: demyx/browsersync
     restart: unless-stopped
@@ -202,7 +203,7 @@ services:
       - BROWSERSYNC_DOMAIN_MATCH=domain.tld
       - BROWSERSYNC_DOMAIN_RETURN=domain.tld
       - BROWSERSYNC_DOMAIN_SOCKET=domain.tld
-      - BROWSERSYNC_PROXY=test2demyxsh_wp_64c030f5_1
+      - BROWSERSYNC_PROXY=demyx_wp
       - BROWSERSYNC_FILES=["/demyx/wp-content/themes/**/*", "/demyx/wp-content/plugins/**/*"]
       - BROWSERSYNC_PATH=/demyx
       - TZ=America/Los_Angeles

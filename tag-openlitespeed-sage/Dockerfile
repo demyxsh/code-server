@@ -1,13 +1,15 @@
-FROM codercom/code-server as demyx_cs
+FROM codercom/code-server:3.1.0 as demyx_cs
 FROM demyx/openlitespeed:bedrock
 
-LABEL sh.demyx.image demyx/code-server:openlitespeed-sage
-LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
-LABEL sh.demyx.url https://demyx.sh
-LABEL sh.demyx.github https://github.com/demyxco
-LABEL sh.demyx.registry https://hub.docker.com/u/demyx
+LABEL sh.demyx.image        demyx/code-server:openlitespeed-sage
+LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
+LABEL sh.demyx.url          https://demyx.sh
+LABEL sh.demyx.github       https://github.com/demyxco
+LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
-# Need to do root stuff
+ENV CODE_PHP     php7.4
+
+# Run as root for now
 USER root
 
 # Packages 
@@ -24,16 +26,26 @@ RUN set -ex; \
     npm \
     net-tools \
     openssh-client \
-    php7.3 \
-    php7.3-mbstring \
-    php7.3-mysql \
-    php7.3-xml \
-    php7.3-zip \
     unzip \
     util-linux \
+    wget \
     zsh; \
     \
     npm -g install yarn; \
+    \
+    apt-get install -y --no-install-recommends \
+    apt-transport-https \
+    ca-certificates \
+    lsb-release; \
+    \
+    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg; \
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list; \
+    apt-get update && apt-get install -y --no-install-recommends \
+    "$CODE_PHP" \
+    "$CODE_PHP"-mbstring \
+    "$CODE_PHP"-mysql \
+    "$CODE_PHP"-xml \
+    "$CODE_PHP"-zip; \
     \
     rm -rf /var/lib/apt/lists/*
 
@@ -81,33 +93,63 @@ RUN set -ex; \
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
-    chown -R demyx:demyx /home/demyx
+    # Disable sudo warnings for now
+    echo "Set disable_coredump false" > /etc/sudo.conf
 
 # wp-cli
 RUN set -ex; \
     curl -s https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
     chmod +x /usr/local/bin/wp
 
-# code-server
-COPY --from=demyx_cs /usr/local/bin/code-server /usr/local/bin
-# Copy files
-COPY demyx.sh /usr/local/bin/demyx
-COPY --chown=demyx:demyx demyx/. "$OPENLITESPEED_CONFIG"
+# Copy source & binary
+COPY --chown=demyx:demyx src "$OPENLITESPEED_CONFIG"
+COPY --from=demyx_cs /usr/local/lib/code-server /usr/local/lib/code-server
+# Add shared files
+ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/"$CODE_ICONS" "$OPENLITESPEED_CONFIG"
+ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js "$OPENLITESPEED_CONFIG"/bs.js
+ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php "$OPENLITESPEED_CONFIG"/bs.php
+ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json "$OPENLITESPEED_CONFIG"/settings.json
+ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/sage.sh "$OPENLITESPEED_CONFIG"
+
+# Configure code-server
+RUN set -ex; \
+    # Create code-server directories
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    \
+    # Get remote files
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js -o "$OPENLITESPEED_CONFIG"/bs.js; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php -o "$OPENLITESPEED_CONFIG"/bs.php; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
+    \
+    # Symlink code-server
+    ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server; \
+    \
+    # Install default extensions
+    code-server --extensions-dir=/home/demyx/.code/extensions \
+    --install-extension=cjhowe7.laravel-blade \
+    --install-extension=equinusocio.vsc-material-theme \
+    --install-extension=pkief.material-icon-theme; \
+    \
+    # Set ownership
+    chown -R demyx:demyx /home/demyx/.code
 
 # Finalize
 RUN set -ex; \
-    # Install blade extension
-    code-server --extensions-dir="$OPENLITESPEED_CONFIG" --install-extension=cjhowe7.laravel-blade --force; \
+    # sage
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage.sh; \
+    chmod +x /usr/local/bin/sage.sh; \
     \
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
+    # demyx-install
+    chmod +x "$OPENLITESPEED_CONFIG"/install.sh; \
+    mv "$OPENLITESPEED_CONFIG"/install.sh /usr/local/bin/demyx-install; \
     \
-    # Install scripts
-    sudo sh -c "mv ${OPENLITESPEED_CONFIG}/sage.sh /usr/local/bin/sage; \
-        mv ${OPENLITESPEED_CONFIG}/install.sh /usr/local/bin/demyx-install; \
-        chmod +x /usr/local/bin/sage; \
-        chmod +x /usr/local/bin/demyx-install; \
-        chmod +x /usr/local/bin/demyx"
+    # demyx-entrypoint
+    chmod +x "$OPENLITESPEED_CONFIG"/entrypoint.sh; \
+    mv "$OPENLITESPEED_CONFIG"/entrypoint.sh /usr/local/bin/demyx-entrypoint; \
+    \
+    # Set ownership
+    chown -R root:root /usr/local/bin
 
 # Expose code-server port
 EXPOSE 80 8080 8081

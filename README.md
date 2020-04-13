@@ -4,13 +4,14 @@
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Alpine](https://img.shields.io/badge/alpine-3.10.3-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Debian](https://img.shields.io/badge/debian-10-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
+[![Go](https://img.shields.io/badge/go-1.13.6-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![code-server](https://img.shields.io/badge/code--server-2.1692--vsc1.39.2-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 [![Become a Patron!](https://img.shields.io/badge/become%20a%20patron-$5-informational?style=flat&color=blue)](https://www.patreon.com/bePatron?u=23406156)
 
 code-server is VS Code running on a remote server, accessible through the browser.
 
-<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/tixdMb1.png" width="100%"></p>
+<p align="center" style="max-width: 1024px"><img src="https://i.imgur.com/jBSya1n.png" width="100%"></p>
 
 DEMYX | CODE-SERVER
 --- | ---
@@ -19,17 +20,9 @@ PORT | 8080
 USER | demyx
 WORKDIR | /demyx
 CONFIG | /etc/demyx
-ENTRYPOINT | ["dumb-init", "demyx"]
+ENTRYPOINT | ["demyx-entrypoint"]
 SHELL | zsh
 SHELL THEME | Oh My Zsh "ys" 
-
-## Environment Variables
-
-DEMYX | CODE-SERVER
---- | ---
-PASSWORD | demyx
-CODER_WORKDIR | /home/demyx
-TZ | America/Los_Angeles
 
 ## Usage
 * SSL/TLS first!
@@ -96,7 +89,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - demyx_cs:/home/demyx
     environment:
-      - CODER_WORKDIR=/home/demyx
       - PASSWORD=demyx
       - TZ=America/Los_Angeles
     labels:

@@ -7,32 +7,45 @@ IFS=$'\n\t'
 
 # Get versions
 #DEMYX_ALPINE_VERSION="$(docker run --rm --entrypoint=cat demyx/code-server:alpine /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/\r//g')"
-DEMYX_CODE_VERSION="$(docker run --rm --entrypoint=code-server demyx/code-server:alpine --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed 's/\r//g')"
-DEMYX_DEBIAN_VERSION="$(docker exec demyx_cs cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's|"||g' | sed 's/\r//g')"
-DEMYX_DEBIAN_CODE_VERSION="$(docker exec demyx_cs code-server --version | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'| head -n1 | sed "s|info  ||g" | sed "s|-|--|g" | sed 's/\r//g')"
+DEMYX_DEBIAN_VERSION="$(docker exec "$DEMYX_REPOSITORY" cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's|"||g' | sed 's/\r//g')"
+DEMYX_CODE_VERSION="$(docker exec "$DEMYX_REPOSITORY" code-server --version | awk -F '[ ]' '{print $1}' | sed 's/\r//g')"
+DEMYX_GO_VERSION="$(docker run --rm --entrypoint=go demyx/"$DEMYX_REPOSITORY":go version | awk -F '[ ]' '{print $3}' | sed 's/go//g' | sed 's/\r//g')"
 
 # Replace versions
-#sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" README.md
 sed -i "s|debian-.*.-informational|debian-${DEMYX_DEBIAN_VERSION}-informational|g" README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" README.md
+sed -i "s|go-.*.-informational|go-${DEMYX_GO_VERSION}-informational|g" README.md
 
 sed -i "s|debian-.*.-informational|debian-${DEMYX_DEBIAN_VERSION}-informational|g" tag-wp/README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_DEBIAN_CODE_VERSION}-informational|g" tag-wp/README.md
 
-#sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" tag-wp-alpine/README.md
-#sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-wp-alpine/README.md
-
 sed -i "s|debian-.*.-informational|debian-${DEMYX_DEBIAN_VERSION}-informational|g" tag-sage/README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-sage/README.md
 
+#sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" README.md
+
+#sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" tag-wp-alpine/README.md
+#sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-wp-alpine/README.md
+
 #sed -i "s|alpine-.*.-informational|alpine-${DEMYX_ALPINE_VERSION}-informational|g" tag-sage-alpine/README.md
 #sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-sage-alpine/README.md
+
+# Echo versions to file
+echo "DEMYX_DEBIAN_VERSION=$DEMYX_DEBIAN_VERSION
+DEMYX_CODE_VERSION=$DEMYX_CODE_VERSION
+DEMYX_GO_VERSION=$DEMYX_GO_VERSION" > VERSION
 
 # Push back to GitHub
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
 git remote set-url origin https://${DEMYX_GITHUB_TOKEN}@github.com/demyxco/"$DEMYX_REPOSITORY".git
-git add .; git commit -m "Travis Build $TRAVIS_BUILD_NUMBER"; git push origin HEAD:master
+# Commit VERSION file first
+git add VERSION
+git commit -m "DEBIAN $DEMYX_DEBIAN_VERSION, CODE-SERVER $DEMYX_CODE_VERSION, GO $DEMYX_GO_VERSION"
+# Add and commit the rest
+git add .
+git commit -m "Travis Build $TRAVIS_BUILD_NUMBER"
+git push origin HEAD:master
 
 # Set the default path to README.md
 README_FILEPATH="./README.md"

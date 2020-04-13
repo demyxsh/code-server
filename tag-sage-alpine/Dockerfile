@@ -1,4 +1,4 @@
-FROM demyx/code-server:wp-alpine
+FROM php:fpm-alpine
 
 LABEL sh.demyx.image demyx/code-server:sage
 LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
@@ -7,58 +7,201 @@ LABEL sh.demyx.github https://github.com/demyxco
 LABEL sh.demyx.registry https://hub.docker.com/u/demyx
 
 # Set default variables
-ENV WORDPRESS_BEDROCK_MODE=development
+ENV CODE_ROOT               /demyx
+ENV CODE_CONFIG             /etc/demyx
+ENV CODE_LOG                /var/log/demyx
+ENV CODE_VERSION            2.1698
+ENV CODE_BINARY             2.1698-vsc1.41.1
+ENV PASSWORD                demyx
+ENV WORDPRESS_BEDROCK_MODE  development
+ENV TZ                      America/Los_Angeles
 
-# Remove WordPress
+# Configure Demyx
 RUN set -ex; \
-    rm -rf "$CODE_SERVER_CONFIG"/wordpress
+    addgroup -g 1000 -S demyx; \
+    adduser -u 1000 -D -S -G demyx demyx; \
+    \
+    install -d -m 0755 -o demyx -g demyx "$CODE_ROOT"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_LOG"
 
 # Packages
 RUN set -ex; \
-    sudo sh -c "apk add --update --no-cache autoconf automake libtool nasm npm zlib-dev; \
-        \
-        sudo npm -g install yarn"
+    apk add --update --no-cache \
+    bash \
+    curl \
+    dumb-init \
+    git \
+    gnupg \
+    htop \
+    less \
+    jq \
+    nano \
+    npm \
+    openssh \
+    python \
+    sudo \
+    unzip \
+    util-linux \
+    tzdata \
+    zsh
+
+# Install php extensions
+RUN set -ex; \
+    curl -sL https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions -o /usr/local/bin/install-php-extensions; \
+    chmod uga+x /usr/local/bin/install-php-extensions; \
+    sync; \
+    install-php-extensions exif gd imagick mysqli opcache pdo_mysql ssh2 sockets xdebug zip
+
+# Set up user
+RUN set -ex; \
+    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
+    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
+    \
+    # Oh-My-Zsh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
+    sed -i "s/(git)/(git zsh-autosuggestions)/g" /root/.zshrc; \
+    \
+    su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
+    su -c  "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
+    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
+    sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
+    \
+    # Symlink demyx command history with root
+    ln -s /home/demyx/.zsh_history /root; \
+    \
+    # Change root shell
+    sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
+    \
+    # gpg purposes
+    echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
+    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
+    \
+    # Disable sudo warnings for now
+    echo "Set disable_coredump false" > /etc/sudo.conf
+
+# Configure code-server
+RUN set -ex; \
+    # Define layer variables
+    #CODE_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -n1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    #CODE_VERSION="$(echo "$CODE_BINARY" | awk -F '[-]' '{print $1}')"; \
+    # Set fixed version as a fallback if curling fails
+    #if [ -z "$CODE_BINARY" ]; then CODE_BINARY=2.1698-vsc1.41.1; fi; \
+    #\
+    # Fetch code-server binary
+    wget https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server"$CODE_BINARY"-alpine-x86_64.tar.gz -qO /tmp/code-server"$CODE_BINARY"-alpine-x86_64.tar.gz; \
+    tar -xzf /tmp/code-server"$CODE_BINARY"-alpine-x86_64.tar.gz -C /tmp; \
+    mv /tmp/code-server"$CODE_BINARY"-alpine-x86_64/code-server /usr/local/bin; \
+    \
+    # Create code-server user directories
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    \
+    \
+    # Get remote files
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js -o "$CODE_CONFIG"/bs.js; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php -o "$CODE_CONFIG"/bs.php; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/launch.json -o "$CODE_CONFIG"/launch.json; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/shevaua.phpcs-1.0.8.vsix -o "$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix; \
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
+    \
+    # Install default extensions
+    code-server --extensions-dir=/home/demyx/.code/extensions \
+    --install-extension=equinusocio.vsc-material-theme \
+    --install-extension=pkief.material-icon-theme \
+    --install-extension="$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix \
+    --install-extension=felixfbecker.php-debug \
+    --install-extension=cjhowe7.laravel-blade; \
+    \
+    # Set ownership
+    chown -R demyx:demyx /home/demyx/.code
 
 # Composer
 RUN set -ex; \
     curl -sL https://getcomposer.org/installer -o /tmp/composer-setup.php; \
-    sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+# PHP CodeSniffer & WPCS
+RUN set -ex; \
+    su -c "mkdir \"$CODE_CONFIG\"/phpcs && cd \"$CODE_CONFIG\"/phpcs; \
+    composer require \"squizlabs/php_codesniffer=*\"; \
+    cd .. && git clone https://github.com/WordPress/WordPress-Coding-Standards; \
+    \"$CODE_CONFIG\"/phpcs/vendor/bin/phpcs --config-set installed_paths ${CODE_CONFIG}/WordPress-Coding-Standards" -s /bin/sh demyx; \
+    ln -s "$CODE_CONFIG"/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs
+
+# wp-cli
+RUN set -ex; \
+    curl -sL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
+    chmod +x /usr/local/bin/wp
+
+# NPM
+RUN set -ex; \
+    npm -g install yarn
 
 # Install Sage
 RUN set ex; \
-    composer create-project -n roots/sage "$CODE_SERVER_CONFIG"/sage; \
+    su -c "composer create-project -n roots/sage ${CODE_CONFIG}/sage; \
     \
-    yarn --cwd="$CODE_SERVER_CONFIG"/sage; \
-    yarn --cwd="$CODE_SERVER_CONFIG"/sage build; \
+    yarn --cwd=${CODE_CONFIG}/sage; \
+    yarn --cwd=${CODE_CONFIG}/sage build; \
     yarn cache clean; \
     \
     composer clearcache; \
     \
-    tar -czf "$CODE_SERVER_CONFIG"/sage.tgz -C "$CODE_SERVER_CONFIG" sage; \
+    tar -czf ${CODE_CONFIG}/sage.tgz -C ${CODE_CONFIG} sage; \
     \
-    rm -rf "$CODE_SERVER_CONFIG"/sage
+    rm -rf ${CODE_CONFIG}/sage" -s /bin/sh demyx
 
-# Install Bedrock
+# Bedrock
 RUN set -ex; \
-    composer create-project roots/bedrock "$CODE_SERVER_CONFIG"/bedrock; \
+    su -c "composer create-project roots/bedrock ${CODE_CONFIG}/bedrock" -s /bin/sh demyx; \
+    \
+    # Upgrade WordPress to latest version
+    sed -i 's|"roots/wordpress": .*|"roots/wordpress": ">5",|g' "$CODE_CONFIG"/bedrock/composer.json; \
+    \
+    su -c "cd ${CODE_CONFIG}/bedrock && composer update; \
+    \
     composer clearcache; \
     \
-    tar -czf "$CODE_SERVER_CONFIG"/bedrock.tgz -C "$CODE_SERVER_CONFIG" bedrock; \
+    tar -czf ${CODE_CONFIG}/bedrock.tgz -C ${CODE_CONFIG} bedrock; \
     \
-    rm -rf "$CODE_SERVER_CONFIG"/bedrock
-
-# Copy files
-COPY demyx.sh /usr/local/bin/demyx
-COPY --chown=demyx:demyx demyx/. "$CODE_SERVER_CONFIG"
+    rm -rf ${CODE_CONFIG}/bedrock" -s /bin/sh demyx
 
 # Finalize
 RUN set -ex; \
-    # Install blade extension
-    code-server --extensions-dir=/home/demyx/.code/extensions --install-extension=cjhowe7.laravel-blade --force; \
+    # Remove php-fpm configs
+    rm -f /usr/local/etc/php-fpm.d/*; \
     \
-    # Install scripts
-    sudo sh -c "mv ${CODE_SERVER_CONFIG}/sage.sh /usr/local/bin/sage; \
-        mv ${CODE_SERVER_CONFIG}/install.sh /usr/local/bin/demyx-install; \
-        chmod +x /usr/local/bin/sage; \
-        chmod +x /usr/local/bin/demyx-install; \
-        chmod +x /usr/local/bin/demyx"
+    # Use our php-fpm configs
+    ln -s "$CODE_CONFIG"/php.ini /usr/local/etc/php/php.ini; \
+    ln -s "$CODE_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
+    ln -s "$CODE_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
+    \
+    # sage
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage; \
+    chmod +x /usr/local/bin/sage; \
+    \
+    # demyx-config
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/config-wp.sh -o /usr/local/bin/demyx-config; \
+    chmod +x /usr/local/bin/demyx-config; \
+    \
+    # demyx-install
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/install-sage.sh -o /usr/local/bin/demyx-install; \
+    chmod +x /usr/local/bin/demyx-install; \
+    \
+    # demyx-entrypoint
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint-sage.sh -o /usr/local/bin/demyx-entrypoint; \
+    chmod +x /usr/local/bin/demyx-entrypoint; \
+    \
+    # Set ownership
+    chown -R root:root /usr/local/bin
+
+EXPOSE 8080 9000 9001
+
+WORKDIR "$CODE_ROOT"
+
+USER demyx
+
+ENTRYPOINT ["demyx-entrypoint"]

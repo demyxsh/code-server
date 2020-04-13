@@ -1,19 +1,28 @@
+FROM codercom/code-server:3.1.0 as demyx_cs
 FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
-FROM codercom/code-server as demyx_cs
+FROM docker as demyx_docker
 FROM debian:buster-slim
 
-LABEL sh.demyx.image demyx/code-server
-LABEL sh.demyx.maintainer Demyx <info@demyx.sh>
-LABEL sh.demyx.url https://demyx.sh
-LABEL sh.demyx.github https://github.com/demyxco
-LABEL sh.demyx.registry https://hub.docker.com/u/demyx
+LABEL sh.demyx.image        demyx/code-server
+LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
+LABEL sh.demyx.url          https://demyx.sh
+LABEL sh.demyx.github       https://github.com/demyxco
+LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 # Set default variables
-ENV CODE_SERVER_ROOT=/demyx
-ENV CODE_SERVER_CONFIG=/etc/demyx
-ENV CODE_SERVER_LOG=/var/log/demyx
-ENV PASSWORD=demyx
-ENV TZ America/Los_Angeles
+ENV CODE_ROOT       /demyx
+ENV CODE_CONFIG     /etc/demyx
+ENV CODE_LOG        /var/log/demyx
+ENV PASSWORD        demyx
+ENV TZ              America/Los_Angeles
+
+# Configure Demyx
+RUN set -ex; \
+    adduser --gecos '' --disabled-password demyx; \
+    \
+    install -d -m 0755 -o demyx -g demyx "$CODE_ROOT"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$CODE_LOG"
 
 # Install dependencies 
 RUN set -ex; \
@@ -38,18 +47,13 @@ RUN set -ex; \
     \
     rm -rf /var/lib/apt/lists/*
 
-# Configure Demyx
+# Set up user
 RUN set -ex; \
-    adduser --gecos '' --disabled-password demyx; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
+    # Configure sudo
+    echo "demyx ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/demyx; \
     \
-    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_ROOT"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_CONFIG"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_SERVER_LOG"
-
-# Oh-My-Zsh
-RUN set -ex; \
+    # Oh My Zsh!
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
     git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
     sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
@@ -68,44 +72,56 @@ RUN set -ex; \
     \
     # gpg purposes
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
-    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
-    \
-    chown -R demyx:demyx /home/demyx
+    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc
 
-# Download latest Docker client binary
-RUN set -ex; \
-    export DEMYX_DOCKER_BINARY=$(curl -sL https://api.github.com/repos/docker/docker-ce/releases/latest | grep '"name":' | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    # Set fixed version as a fallback if curling fails
-    if [ -z "$DEMYX_DOCKER_BINARY" ]; then export DEMYX_DOCKER_BINARY=18.09.9; fi; \
-    curl -sL https://download.docker.com/linux/static/stable/x86_64/docker-"$DEMYX_DOCKER_BINARY".tgz -o /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz; \
-    tar -xzf /tmp/docker-"$DEMYX_DOCKER_BINARY".tgz -C /tmp; \
-    mv /tmp/docker/docker /usr/local/bin/docker-bin; \
-    # sudo wrapper for Docker binary
-    echo '#!/bin/bash' >> /usr/local/bin/docker; \
-    echo 'sudo /usr/local/bin/docker-bin "$@"' >> /usr/local/bin/docker; \
-    chmod +x /usr/local/bin/docker; \
-    rm -rf /tmp/*
-
-# Set default code-server user setting
-COPY --chown=demyx:demyx settings.json /home/demyx/.code/data/User/settings.json
-# Copy entrypoint
-COPY demyx.sh /usr/local/bin/demyx-cs
-# ctop
+# Copy binaries
 COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
-# code-server
-COPY --from=demyx_cs /usr/local/bin/code-server /usr/local/bin
+COPY --from=demyx_cs /usr/local/lib/code-server /usr/local/lib/code-server
+COPY --from=demyx_docker /usr/local/bin/docker /usr/local/bin/docker-bin
 
-# Wrappers
+# Configure code-server
 RUN set -ex; \
+    # Create code-server directories
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
+    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    \
+    # Get settings.json
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
+    \
+    # Symlink code-server
+    ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server; \
+    \
+    # Install default extensions
+    code-server --extensions-dir=/home/demyx/.code/extensions \
+    --install-extension=equinusocio.vsc-material-theme \
+    --install-extension=pkief.material-icon-theme; \
+    \
+    # Set ownership
+    chown -R demyx:demyx /home/demyx/.code
+
+# Finalize
+RUN set -ex; \
+    # Support for demyx container
     echo '#!/bin/bash' >> /usr/local/bin/demyx; \
     echo 'docker exec -it demyx demyx "$@"' >> /usr/local/bin/demyx; \
     chmod +x /usr/local/bin/demyx; \
     \
+    # ctop
     echo '#!/bin/bash' >> /usr/local/bin/ctop; \
     echo 'sudo ctop-bin' >> /usr/local/bin/ctop; \
     chmod +x /usr/local/bin/ctop; \
     \
-    chmod +x /usr/local/bin/demyx-cs
+    # docker
+    echo '#!/bin/bash' >> /usr/local/bin/docker; \
+    echo 'sudo docker-bin "$@"' >> /usr/local/bin/docker; \
+    chmod +x /usr/local/bin/docker; \
+    \
+    # demyx-entrypoint
+    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint.sh -o /usr/local/bin/demyx-entrypoint; \
+    chmod +x /usr/local/bin/demyx-entrypoint; \
+    \
+    # Set ownership
+    chown -R root:root /usr/local/bin
 
 EXPOSE 8080
 
@@ -113,5 +129,6 @@ WORKDIR /home/demyx
 
 USER demyx
 
-ENTRYPOINT ["dumb-init", "demyx-cs"]
+ENTRYPOINT ["demyx-entrypoint"]
 
+CMD ["code-server", "/home/demyx", "--host=0.0.0.0", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry", "--disable-updates", "--disable-ssh"]
