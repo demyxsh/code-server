@@ -10,8 +10,7 @@ services:
   - docker
 
 env:
-  - DEMYX_USERNAME=demyx 
-  - DEMYX_REPOSITORY=code-server
+  - DEMYX_USERNAME=demyx DEMYX_REPOSITORY=code-server
 
 before_install:
   - docker pull alpine
