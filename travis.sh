@@ -7,7 +7,7 @@ IFS=$'\n\t'
 
 # Get versions
 #DEMYX_ALPINE_VERSION="$(docker run --rm --entrypoint=cat demyx/code-server:alpine /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/\r//g')"
-DEMYX_CODE_DEBIAN_VERSION="$(docker exec "$DEMYX_REPOSITORY" cat /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's|"||g' | sed 's/\r//g')"
+DEMYX_CODE_DEBIAN_VERSION="$(docker exec "$DEMYX_REPOSITORY" cat /etc/debian_version | sed -e 's/\r//g')"
 DEMYX_CODE_VERSION="$(docker exec "$DEMYX_REPOSITORY" code-server --version | awk -F '[ ]' '{print $1}' | sed 's/\r//g')"
 DEMYX_CODE_GO_VERSION="$(docker run --rm --entrypoint=go demyx/"$DEMYX_REPOSITORY":go version | awk -F '[ ]' '{print $3}' | sed 's/go//g' | sed 's/\r//g')"
 
