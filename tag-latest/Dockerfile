@@ -1,4 +1,4 @@
-FROM codercom/code-server:3.1.0 as demyx_cs
+FROM codercom/code-server:3.2.0 as demyx_cs
 FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
 FROM docker as demyx_docker
 FROM debian:buster-slim
@@ -131,4 +131,4 @@ USER demyx
 
 ENTRYPOINT ["demyx-entrypoint"]
 
-CMD ["code-server", "/home/demyx", "--host=0.0.0.0", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry", "--disable-updates", "--disable-ssh"]
+CMD ["code-server", "/home/demyx", "--bind-addr=0.0.0.0:8080", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry", "--disable-updates"]

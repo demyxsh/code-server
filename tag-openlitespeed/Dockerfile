@@ -1,4 +1,4 @@
-FROM codercom/code-server:3.1.0 as demyx_cs
+FROM codercom/code-server:3.2.0 as demyx_cs
 FROM demyx/openlitespeed
 
 LABEL sh.demyx.image        demyx/code-server:openlitespeed

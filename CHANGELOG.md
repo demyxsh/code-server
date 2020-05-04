@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-04
+### Changed
+- Updated Debian based code-server to 3.2.0 and its related flags
+
 ## 2020-04-12
 ### Added
 - Shared folder with reusable files

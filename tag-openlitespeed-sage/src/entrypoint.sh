@@ -24,4 +24,4 @@ cp "$OPENLITESPEED_CONFIG"/bs.php "$OPENLITESPEED_ROOT"/web/app/mu-plugins
 # Set Bedrock to debug mode
 sed -i "s|WP_ENV=.*|WP_ENV=development|g" "$OPENLITESPEED_ROOT"/.env
 
-code-server ${OPENLITESPEED_ROOT} --host=0.0.0.0 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --port=8081
+code-server ${OPENLITESPEED_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --port=8081

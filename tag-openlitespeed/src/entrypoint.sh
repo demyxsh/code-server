@@ -25,4 +25,4 @@ cp "$OPENLITESPEED_CONFIG"/bs.php "$OPENLITESPEED_ROOT"/wp-content/mu-plugins
 # Set wp-config.php to debug mode
 sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$OPENLITESPEED_ROOT"/wp-config.php
 
-code-server ${OPENLITESPEED_ROOT} --host=0.0.0.0 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --disable-ssh --port=8081
+code-server ${OPENLITESPEED_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --port=8081
