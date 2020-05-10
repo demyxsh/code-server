@@ -1,4 +1,3 @@
-FROM codercom/code-server:3.1.0 as demyx_cs
 FROM demyx/openlitespeed:bedrock
 
 LABEL sh.demyx.image        demyx/code-server:openlitespeed-sage
@@ -93,6 +92,9 @@ RUN set -ex; \
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
+    # Copy .zshrc to config directory
+    cp /home/demyx/.zshrc "$CODE_CONFIG"; \
+    \
     # Disable sudo warnings for now
     echo "Set disable_coredump false" > /etc/sudo.conf
 
@@ -103,7 +105,6 @@ RUN set -ex; \
 
 # Copy source & binary
 COPY --chown=demyx:demyx src "$OPENLITESPEED_CONFIG"
-COPY --from=demyx_cs /usr/local/lib/code-server /usr/local/lib/code-server
 # Add shared files
 ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/"$CODE_ICONS" "$OPENLITESPEED_CONFIG"
 ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js "$OPENLITESPEED_CONFIG"/bs.js
@@ -113,6 +114,12 @@ ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared
 
 # Configure code-server
 RUN set -ex; \
+    # Get code-server
+    CODE_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_BINARY"/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz -o /tmp/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz; \
+    tar -xzf /tmp/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz -C /tmp; \
+    mv /tmp/code-server-"$CODE_BINARY"-linux-x86_64 /usr/local/lib/code-server; \
+    \
     # Create code-server directories
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
@@ -132,7 +139,11 @@ RUN set -ex; \
     --install-extension=pkief.material-icon-theme; \
     \
     # Set ownership
-    chown -R demyx:demyx /home/demyx/.code
+    chown -R demyx:demyx /home/demyx/.code; \
+    chown -R demyx:demyx "$CODE_CONFIG"; \
+    \
+    # Make a copy to demyx config directory
+    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
 
 # Finalize
 RUN set -ex; \

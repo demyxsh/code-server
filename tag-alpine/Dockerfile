@@ -70,7 +70,10 @@ RUN set -ex; \
     \
     # gpg purposes
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
-    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc
+    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
+    \
+    # Copy .zshrc to config directory
+    cp /home/demyx/.zshrc "$CODE_CONFIG"
 
 # Copy binaries
 COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
@@ -103,6 +106,11 @@ RUN set -ex; \
     \
     # Set ownership
     chown -R demyx:demyx /home/demyx/.code; \
+    chown -R demyx:demyx "$CODE_CONFIG"; \
+    \
+    # Make a copy to demyx config directory
+    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    \
     # Clean /tmp
     rm -rf /tmp/*
 

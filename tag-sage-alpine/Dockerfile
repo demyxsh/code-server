@@ -79,6 +79,9 @@ RUN set -ex; \
     echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
+    # Copy .zshrc to config directory
+    cp /home/demyx/.zshrc "$CODE_CONFIG"; \
+    \
     # Disable sudo warnings for now
     echo "Set disable_coredump false" > /etc/sudo.conf
 
@@ -116,7 +119,11 @@ RUN set -ex; \
     --install-extension=cjhowe7.laravel-blade; \
     \
     # Set ownership
-    chown -R demyx:demyx /home/demyx/.code
+    chown -R demyx:demyx /home/demyx/.code; \
+    chown -R demyx:demyx "$CODE_CONFIG"; \
+    \
+    # Make a copy to demyx config directory
+    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
 
 # Composer
 RUN set -ex; \
