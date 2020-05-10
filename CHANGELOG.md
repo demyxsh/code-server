@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-09
+### Changed
+- Entrypoints now copy code-server configs if it's missing
+
 ## 2020-05-04
 ### Changed
 - Updated Debian based code-server to 3.2.0 and its related flags
