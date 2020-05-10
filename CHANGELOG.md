@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-10
+### Changed
+- The openlitespeed tags do not use CODE_CONFIG variable
+
 ## 2020-05-09
 ### Changed
 - Entrypoints now copy code-server configs if it's missing

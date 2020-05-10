@@ -93,7 +93,7 @@ RUN set -ex; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
     # Copy .zshrc to config directory
-    cp /home/demyx/.zshrc "$CODE_CONFIG"; \
+    cp /home/demyx/.zshrc "$OPENLITESPEED_CONFIG"; \
     \
     # Disable sudo warnings for now
     echo "Set disable_coredump false" > /etc/sudo.conf
@@ -140,10 +140,10 @@ RUN set -ex; \
     \
     # Set ownership
     chown -R demyx:demyx /home/demyx/.code; \
-    chown -R demyx:demyx "$CODE_CONFIG"; \
+    chown -R demyx:demyx "$OPENLITESPEED_CONFIG"; \
     \
     # Make a copy to demyx config directory
-    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    cp -rp /home/demyx/.code "$OPENLITESPEED_CONFIG"/code
 
 # Finalize
 RUN set -ex; \
