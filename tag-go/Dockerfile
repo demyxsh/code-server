@@ -88,10 +88,11 @@ COPY --from=demyx_go /usr/local/go /usr/local/go
 # Configure code-server
 RUN set -ex; \
     # Get code-server
-    CODE_BINARY=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_BINARY"/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz -o /tmp/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz; \
-    tar -xzf /tmp/code-server-"$CODE_BINARY"-linux-x86_64.tar.gz -C /tmp; \
-    mv /tmp/code-server-"$CODE_BINARY"-linux-x86_64 /usr/local/lib/code-server; \
+    CODE_VERSION=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
+    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \         
+    tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
+    mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
     \
     # Create code-server directories
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
@@ -101,7 +102,7 @@ RUN set -ex; \
     curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
     \
     # Symlink code-server
-    ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server; \
+    ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
     \
     # Install default extensions
     code-server --extensions-dir=/home/demyx/.code/extensions \
@@ -143,4 +144,4 @@ USER demyx
 
 ENTRYPOINT ["demyx-entrypoint"]
 
-CMD ["code-server", "/home/demyx", "--bind-addr=0.0.0.0:8080", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry", "--disable-updates"]
+CMD ["code-server", "/home/demyx", "--bind-addr=0.0.0.0:8080", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry"]

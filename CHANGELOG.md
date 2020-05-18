@@ -1,6 +1,14 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-17
+### Changed
+- Renamed variables for code-server version
+- Update symlink directory to match upstream
+### Removed
+- --disable-updates
+- --port
+
 ## 2020-05-10
 ### Changed
 - The openlitespeed tags do not use CODE_CONFIG variable

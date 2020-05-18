@@ -33,5 +33,5 @@ php-fpm -D
 if [[ "$(code-server --version | grep info || true)" ]]; then
     code-server ${CODE_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path=/demyx/cs
 else
-    code-server ${CODE_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --disable-updates --port=8080
+    code-server ${CODE_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
 fi
