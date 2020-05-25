@@ -19,6 +19,7 @@ before_install:
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":browse tag-browse
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":go tag-go
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
@@ -33,6 +34,7 @@ script:
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
   - docker push demyx/"$DEMYX_REPOSITORY"
+  - docker push demyx/"$DEMYX_REPOSITORY":browse
   - docker push demyx/"$DEMYX_REPOSITORY":go
   - docker push demyx/"$DEMYX_REPOSITORY":wp
   - docker push demyx/"$DEMYX_REPOSITORY":sage

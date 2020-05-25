@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-24
+### Added
+- New tag code-server:browse
+
 ## 2020-05-17
 ### Changed
 - Renamed variables for code-server version
