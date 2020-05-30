@@ -8,6 +8,10 @@ if [[ ! -d /home/demyx/.code ]]; then
     cp -r "$CODE_CONFIG"/code /home/demyx/.code
 fi
 
+# Auto update oh-my-zsh and its plugin
+cd /home/demyx/.oh-my-zsh && git pull
+cd /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions && git pull
+
 # TEMPORARY CODE
 # Replace symbolic link
 if [[ -n "$(stat /home/demyx/.zshrc | grep symbolic || true)" ]]; then
