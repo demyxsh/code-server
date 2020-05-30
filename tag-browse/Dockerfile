@@ -39,6 +39,7 @@ RUN set -ex; \
     nano \
     net-tools \
     openssh-client \
+    sudo \
     tzdata \
     util-linux \
     zsh; \
@@ -60,6 +61,17 @@ RUN set -ex; \
     \
     # Copy .zshrc to config directory
     cp /home/demyx/.zshrc "$CODE_CONFIG"
+
+# Configure sudo
+RUN set -ex; \
+    echo "demyx ALL=(ALL) NOPASSWD: /usr/local/bin/demyx-chown" > /etc/sudoers.d/demyx; \
+    \
+    echo '#!/bin/bash' > /usr/local/bin/demyx-chown; \
+    echo 'chown -R demyx:demyx /home/demyx' >> /usr/local/bin/demyx-chown; \
+    chmod +x /usr/local/bin/demyx-chown; \
+    \
+    # Supresses the sudo warning for now
+    echo "Set disable_coredump false" > /etc/sudo.conf
 
 # Copy binaries
 COPY src "$CODE_CONFIG"
