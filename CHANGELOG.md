@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-05-29
+### Changed
+- Re-added ssh/gnupg to the browse tag
+
 ## 2020-05-24
 ### Added
 - New tag code-server:browse

@@ -32,11 +32,13 @@ RUN set -ex; \
     curl \
     gcc \
     git \
+    gnupg \
     htop \
     jq \
     less \
     nano \
     net-tools \
+    openssh-client \
     tzdata \
     util-linux \
     zsh; \
@@ -52,6 +54,9 @@ RUN set -ex; \
     git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions; \
     sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
     sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
+    \
+    # gpg purposes
+    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
     # Copy .zshrc to config directory
     cp /home/demyx/.zshrc "$CODE_CONFIG"
