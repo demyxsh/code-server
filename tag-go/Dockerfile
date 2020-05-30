@@ -14,7 +14,8 @@ ENV CODE_ROOT    /demyx
 ENV CODE_CONFIG  /etc/demyx
 ENV CODE_LOG     /var/log/demyx
 ENV PASSWORD            demyx
-ENV PATH                "$PATH":/usr/local/go/bin
+ENV GOBIN               $CODE_ROOT/go/bin
+ENV PATH                "$PATH":$GOBIN:/usr/local/go/bin
 ENV TZ                  America/Los_Angeles
 
 # Configure Demyx
@@ -98,9 +99,6 @@ RUN set -ex; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     \
-    # Get settings.json
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
-    \
     # Symlink code-server
     ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
     \
@@ -115,7 +113,10 @@ RUN set -ex; \
     chown -R demyx:demyx "$CODE_CONFIG"; \
     \
     # Make a copy to demyx config directory
-    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    cp -rp /home/demyx/.code "$CODE_CONFIG"/code; \
+    GO111MODULE=on go get golang.org/x/tools/gopls@latest
+
+COPY settings.json /home/demyx/.code/data/User/settings.json
 
 # Finalize
 RUN set -ex; \
