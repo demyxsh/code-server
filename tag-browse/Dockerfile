@@ -60,7 +60,10 @@ RUN set -ex; \
     echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
     \
     # Copy .zshrc to config directory
-    cp /home/demyx/.zshrc "$CODE_CONFIG"
+    cp /home/demyx/.zshrc "$CODE_CONFIG"; \
+    \
+    # Symlink /demyx to user's home
+    ln -s "$CODE_ROOT" /home/demyx/demyx
 
 # Configure sudo
 RUN set -ex; \

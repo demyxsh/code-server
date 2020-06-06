@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-06-06
+### Changed
+- code-server:browse now has a symlink to /demyx from user's home
+
 ## 2020-05-29
 ### Added
 - Auto update oh-my-zsh and its plugin in the entrypoint
