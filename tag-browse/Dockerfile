@@ -42,6 +42,7 @@ RUN set -ex; \
     sudo \
     tzdata \
     util-linux \
+    wget \
     zsh; \
     \
     rm -rf /var/lib/apt/lists/*

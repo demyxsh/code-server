@@ -2,6 +2,8 @@
 Entries before tag-* affects all code-server tags. 
 
 ## 2020-06-06
+### Added
+- wget to packages
 ### Changed
 - code-server:browse now has a symlink to /demyx from user's home
 
