@@ -18,8 +18,8 @@ if [[ -n "$(stat /home/demyx/.zshrc | grep symbolic || true)" ]]; then
 fi
 
 # Auto update oh-my-zsh and its plugin
-cd /home/demyx/.oh-my-zsh && git pull
-cd /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions && git pull
+cd /home/demyx/.oh-my-zsh && git pull &
+cd /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions && git pull &
 
 # Start code-server
 code-server /home/demyx --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry

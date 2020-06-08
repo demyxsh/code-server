@@ -1,6 +1,11 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-06-07
+### Changed
+- tag-browse
+    - Run git pulls in the entrypoint to the background
+
 ## 2020-06-06
 ### Added
 - wget to packages
