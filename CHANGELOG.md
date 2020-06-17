@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-06-16
+### Changed
+- Updated travis version commands
+
 ## 2020-06-07
 ### Changed
 - tag-browse
