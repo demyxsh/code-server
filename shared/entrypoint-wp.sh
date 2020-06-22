@@ -31,8 +31,8 @@ sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$CODE_ROOT"/wp-config.php
 php-fpm -D
 
 # Support for v2
-if [[ "$(code-server --version | grep info || true)" ]]; then
-    code-server ${CODE_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path=/demyx/cs
-else
+if [[ "$(code-server --version | grep yaml || true)" ]]; then
     code-server ${CODE_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
+else
+    code-server ${CODE_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path=/demyx/cs    
 fi

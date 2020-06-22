@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-06-22
+### Changed
+- Update if statement for WP entrypoints
+
 ## 2020-06-16
 ### Changed
 - Updated travis version commands
