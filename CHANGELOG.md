@@ -1,6 +1,10 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-07-01
+### Changed
+- Remove font ligatures from the JSON setting files
+
 ## 2020-06-22
 ### Changed
 - Update if statement for WP entrypoints

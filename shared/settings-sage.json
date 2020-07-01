@@ -1,5 +1,4 @@
 {
-    "editor.fontLigatures": true,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.shell.linux": "/bin/zsh",
     "terminal.integrated.cursorBlinking": true,
