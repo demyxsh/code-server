@@ -10,9 +10,9 @@ LABEL sh.demyx.github       https://github.com/demyxco
 LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 # Set default variables
-ENV CODE_ROOT    /demyx
-ENV CODE_CONFIG  /etc/demyx
-ENV CODE_LOG     /var/log/demyx
+ENV CODE_ROOT           /demyx
+ENV CODE_CONFIG         /etc/demyx
+ENV CODE_LOG            /var/log/demyx
 ENV PASSWORD            demyx
 ENV PATH                "$PATH":/usr/local/go/bin:/home/demyx/go/bin
 ENV TZ                  America/Los_Angeles
