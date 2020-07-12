@@ -29,10 +29,10 @@ RUN set -ex; \
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
     bash \
+    build-essential \
     ca-certificates \
     curl \
     dumb-init \
-    gcc \
     git \
     gnupg \
     htop \
