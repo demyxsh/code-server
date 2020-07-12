@@ -14,7 +14,7 @@ ENV CODE_ROOT    /demyx
 ENV CODE_CONFIG  /etc/demyx
 ENV CODE_LOG     /var/log/demyx
 ENV PASSWORD            demyx
-ENV PATH                "$PATH":/usr/local/go/bin
+ENV PATH                "$PATH":/usr/local/go/bin:/home/demyx/go/bin
 ENV TZ                  America/Los_Angeles
 
 # Configure Demyx
