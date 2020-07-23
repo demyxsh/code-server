@@ -39,8 +39,10 @@ RUN set -ex; \
     nano \
     net-tools \
     openssh-client \
+    shellcheck \
     sudo \
     tzdata \
+    unzip \
     util-linux \
     wget \
     zsh; \
