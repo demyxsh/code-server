@@ -51,7 +51,7 @@ RUN set -ex; \
 # Set up user
 RUN set -ex; \
     sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
+    echo "demyx ALL=(ALL) NOPASSWD:SETENV:ALL" >> /etc/sudoers.d/demyx; \
     \
     # Oh My Zsh!
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
@@ -121,12 +121,12 @@ RUN set -ex; \
 RUN set -ex; \
     # ctop
     echo '#!/bin/bash' >> /usr/local/bin/ctop; \
-    echo 'sudo ctop-bin' >> /usr/local/bin/ctop; \
+    echo 'sudo -E ctop-bin' >> /usr/local/bin/ctop; \
     chmod +x /usr/local/bin/ctop; \
     \
     # docker
     echo '#!/bin/bash' >> /usr/local/bin/docker; \
-    echo 'sudo docker-bin "$@"' >> /usr/local/bin/docker; \
+    echo 'sudo -E docker-bin "$@"' >> /usr/local/bin/docker; \
     chmod +x /usr/local/bin/docker; \
     \
     # demyx-entrypoint
