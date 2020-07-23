@@ -1,6 +1,18 @@
 # CHANGELOG
 Entries before tag-* affects all code-server tags. 
 
+## 2020-07-23
+### Added
+- tag-*
+    - Set editor.quickSuggestions to true in settings.json
+- tag-browse
+    - Include shellcheck and unzip to default apps
+### Changed
+- tag-browse
+    - Clean up /tmp
+- tag-go
+    - Use sudo -E so envs will be passed
+
 ## 2020-07-01
 ### Changed
 - Remove font ligatures from the JSON setting files
