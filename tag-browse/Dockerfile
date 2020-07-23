@@ -113,7 +113,10 @@ RUN set -ex; \
     chown -R demyx:demyx "$CODE_CONFIG"; \
     \
     # Make a copy to demyx config directory
-    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    cp -rp /home/demyx/.code "$CODE_CONFIG"/code; \
+    \
+    # Clean out /tmp
+    rm -rf /tmp/*
 
 # Finalize
 RUN set -ex; \
