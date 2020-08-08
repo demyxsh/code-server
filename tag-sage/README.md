@@ -1,7 +1,7 @@
 # code-server:sage
 
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
-[![Debian](https://img.shields.io/badge/debian-10.4-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
+[![Debian](https://img.shields.io/badge/debian-10.5-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![code-server](https://img.shields.io/badge/code--server-3.4.1-informational?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 
