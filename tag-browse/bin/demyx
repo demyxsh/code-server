@@ -1,0 +1,6 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -euo pipefail
+
+docker exec -it demyx demyx "$@"
