@@ -32,15 +32,12 @@ script:
   - docker exec "$DEMYX_REPOSITORY" code-server --version
 
 after_success:
-  - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
-  - docker push demyx/"$DEMYX_REPOSITORY"
+  - /bin/echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
+  - docker push demyx/"$DEMYX_REPOSITORY":bedrock
   - docker push demyx/"$DEMYX_REPOSITORY":browse
   - docker push demyx/"$DEMYX_REPOSITORY":go
-  - docker push demyx/"$DEMYX_REPOSITORY":wp
-  - docker push demyx/"$DEMYX_REPOSITORY":sage
+  - docker push demyx/"$DEMYX_REPOSITORY":latest
   - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed
-  - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed-sage
-  #- docker push demyx/"$DEMYX_REPOSITORY":alpine
-  #- docker push demyx/"$DEMYX_REPOSITORY":wp-alpine
-  #- docker push demyx/"$DEMYX_REPOSITORY":sage-alpine
+  - docker push demyx/"$DEMYX_REPOSITORY":openlitespeed-bedrock
+  - docker push demyx/"$DEMYX_REPOSITORY":tag-wp
   - bash travis.sh
