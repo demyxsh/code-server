@@ -1,0 +1,12 @@
+[options]
+  columns = "status,name,cpu,mem,net,io"
+  filterStr = ""
+  shell = "sh"
+  sortField = "state"
+
+[toggles]
+  allContainers = true
+  enableHeader = true
+  fullRowCursor = true
+  scaleCpu = false
+  sortReversed = false

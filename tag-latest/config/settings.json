@@ -1,0 +1,36 @@
+{
+    "editor.fontFamily": "'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace",
+    "editor.quickSuggestions": true,
+    "files.autoSave": "onFocusChange",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/CVS": true,
+        "**/bower_components": true,
+        "**/node_modules": true,
+        "**/tmp": true
+    },
+    "files.watcherExclude": {
+        "**/*.img": true,
+        "**/*.tar.gz": true,
+        "**/*.tgz": true,
+        "**/*.zip": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/bower_components/**": true,
+        "**/dist/**": true,
+        "**/node_modules/**": true,
+        "**/tmp/**": true
+    },
+    "material-icon-theme.showReloadMessage": false,
+    "material-icon-theme.showUpdateMessage": false,
+    "material-icon-theme.showWelcomeMessage": false,
+    "materialTheme.accent": "Teal",
+    "shellcheck.enableQuickFix": true,
+    "telemetry.enableTelemetry": false,
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.shell.linux": "/bin/zsh",
+    "workbench.colorTheme": "Material Theme Darker High Contrast",
+    "workbench.iconTheme": "material-icon-theme"
+}

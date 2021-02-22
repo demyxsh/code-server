@@ -1,5 +1,6 @@
-FROM quay.io/vektorlab/ctop:0.7.1 as demyx_ctop
+FROM quay.io/vektorlab/ctop as demyx_ctop
 FROM docker as demyx_docker
+FROM koalaman/shellcheck as demyx_shellcheck
 FROM debian:buster-slim
 
 LABEL sh.demyx.image        demyx/code-server
@@ -9,131 +10,138 @@ LABEL sh.demyx.github       https://github.com/demyxco
 LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 # Set default variables
-ENV CODE_ROOT       /demyx
-ENV CODE_CONFIG     /etc/demyx
-ENV CODE_LOG        /var/log/demyx
-ENV PASSWORD        demyx
-ENV TZ              America/Los_Angeles
+ENV DEMYX                   /demyx
+ENV DEMYX_CODE_AUTH         password
+ENV DEMYX_CODE_BIND_ADDR    0.0.0.0:8080
+ENV DEMYX_CODE_CONFIG       /home/demyx/.config/code-server
+ENV DEMYX_CODE_PASSWORD     demyx
+ENV DEMYX_CONFIG            /etc/demyx
+ENV DEMYX_LOG               /var/log/demyx
+ENV DOCKER_HOST             tcp://demyx_socket:2375
+ENV TERM                    xterm-256color
+ENV TZ                      America/Los_Angeles
+# Support for old variables
+ENV CODE_ROOT               "$DEMYX"
+ENV CODE_CONFIG             "$DEMYX_CONFIG"
+ENV CODE_LOG                "$DEMYX_LOG"
 
-# Configure Demyx
-RUN set -ex; \
-    adduser --gecos '' --disabled-password demyx; \
-    \
-    install -d -m 0755 -o demyx -g demyx "$CODE_ROOT"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_CONFIG"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_LOG"
-
-# Install dependencies 
+# Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
     bash \
+    build-essential \
+    bsdmainutils \
     ca-certificates \
     curl \
-    dumb-init \
-    gcc \
+    dnsutils \
     git \
     gnupg \
     htop \
+    iputils-ping \
     jq \
     less \
     nano \
     net-tools \
     openssh-client \
+    procps \
     sudo \
     tzdata \
+    unzip \
     util-linux \
-    zsh; \
-    \
-    rm -rf /var/lib/apt/lists/*
+    wget \
+    zsh
 
-# Set up user
+# Configure Demyx
 RUN set -ex; \
-    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    # Configure sudo
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/demyx; \
+    # Create demyx user
+    adduser --gecos '' --disabled-password demyx; \
     \
-    # Oh My Zsh!
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /root/.zshrc; \
+    # Update .bashrc
+    echo 'PS1="$(whoami)@\h:\w \$ "' > /home/demyx/.bashrc; \
+    echo 'PS1="$(whoami)@\h:\w \$ "' > /root/.bashrc; \
     \
+    # Create demyx directories
+    install -d -m 0755 -o demyx -g demyx "$DEMYX"; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_LOG"; \
+    \
+    # Oh-My-Zsh
     su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
+    su -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k" -s /bin/sh demyx; \
+    su -c "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
+    su -c "git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate" -s /bin/sh demyx; \
+    sed -i 's|source $ZSH/oh-my-zsh.sh|source "$DEMYX_CONFIG"/.demyxrc\nsource $ZSH/oh-my-zsh.sh|g' /home/demyx/.zshrc; \
     \
-    # Symlink demyx command history with root
-    ln -s /home/demyx/.zsh_history /root; \
-    \
-    # Change root shell
-    sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
-    \
-    # gpg purposes
-    echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
-    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
-    \
-    # Copy .zshrc to config directory
-    cp /home/demyx/.zshrc "$CODE_CONFIG"
+    # Change user shell
+    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd
 
-# Copy binaries
-COPY --from=demyx_ctop /ctop /usr/local/bin/ctop-bin
-COPY --from=demyx_docker /usr/local/bin/docker /usr/local/bin/docker-bin
+# Imports
+COPY --from=demyx_ctop /ctop /usr/local/bin/ctop
+COPY --from=demyx_docker /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
+COPY --chown=root:root bin /usr/local/bin
+COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 
 # Configure code-server
 RUN set -ex; \
     # Get code-server
-    CODE_VERSION=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
+    CODE_VERSION="$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | jq -r .tag_name)"; \
+    if [ -z "$CODE_VERSION" ]; then CODE_VERSION=v3.8.0; fi; \
     CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \         
+    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
     tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
     mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
     \
     # Create code-server directories
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CODE_CONFIG"/data/User; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CODE_CONFIG"/extensions; \
     \
-    # Get settings.json
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
+    # Copy settings.json
+    cp "$DEMYX_CONFIG"/settings.json "$DEMYX_CODE_CONFIG"/data/User/settings.json; \
     \
     # Symlink code-server
     ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
     \
     # Install default extensions
-    code-server --extensions-dir=/home/demyx/.code/extensions \
-    --install-extension=equinusocio.vsc-material-theme \
-    --install-extension=pkief.material-icon-theme; \
+    code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
+        --install-extension=equinusocio.vsc-material-theme \
+        --install-extension=pkief.material-icon-theme \
+        --install-extension=remisa.shellman \
+        --install-extension=ryu1kn.partial-diff \
+        --install-extension=timonwong.shellcheck; \
     \
-    # Set ownership
-    chown -R demyx:demyx /home/demyx/.code; \
-    chown -R demyx:demyx "$CODE_CONFIG"; \
+    # Custom fonts
+    sed -i "s|</head>|\
+    <style> \n\
+        @font-face { \n\
+        font-family: 'MesloLGS NF'; \n\
+        font-style: normal; \n\
+        src: url('https://demyx.sh/fonts/meslolgs-nf-regular.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-bold.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-italic.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-bold-italic.woff') format('woff'); \n\
+    } \n\
+    \n\</style></head>|g" /usr/local/lib/code-server/src/browser/pages/vscode.html; \
     \
-    # Make a copy to demyx config directory
-    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    # Finalize code-server
+    chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \
+    chown -R demyx:demyx "$DEMYX_CONFIG"; \
+    cp -rp "$DEMYX_CODE_CONFIG" "$DEMYX_CONFIG"
 
 # Finalize
 RUN set -ex; \
-    # Support for demyx container
-    echo '#!/bin/bash' >> /usr/local/bin/demyx; \
-    echo 'docker exec -it demyx demyx "$@"' >> /usr/local/bin/demyx; \
-    chmod +x /usr/local/bin/demyx; \
+    # ctop 
+    cp "$DEMYX_CONFIG"/ctop /home/demyx/.ctop; \
     \
-    # ctop
-    echo '#!/bin/bash' >> /usr/local/bin/ctop; \
-    echo 'sudo ctop-bin' >> /usr/local/bin/ctop; \
-    chmod +x /usr/local/bin/ctop; \
-    \
-    # docker
-    echo '#!/bin/bash' >> /usr/local/bin/docker; \
-    echo 'sudo docker-bin "$@"' >> /usr/local/bin/docker; \
-    chmod +x /usr/local/bin/docker; \
-    \
-    # demyx-entrypoint
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint.sh -o /usr/local/bin/demyx-entrypoint; \
-    chmod +x /usr/local/bin/demyx-entrypoint; \
+    # sudo
+    echo "demyx ALL=(ALL) NOPASSWD: /usr/bin/apt" > /etc/sudoers.d/demyx; \
     \
     # Set ownership
-    chown -R root:root /usr/local/bin
+    chown -R root:root /usr/local/bin; \
+    \
+    # Cleanup
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /tmp/*
 
 EXPOSE 8080
 
@@ -142,5 +150,3 @@ WORKDIR /home/demyx
 USER demyx
 
 ENTRYPOINT ["demyx-entrypoint"]
-
-CMD ["code-server", "/home/demyx", "--bind-addr=0.0.0.0:8080", "--user-data-dir=/home/demyx/.code/data", "--extensions-dir=/home/demyx/.code/extensions", "--disable-telemetry"]
