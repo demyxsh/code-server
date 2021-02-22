@@ -15,8 +15,7 @@ demyx-config
 demyx-install
 
 # Install demyx helper plugin
-[[ ! -d "$CODE_ROOT"/wp-content/mu-plugins ]] && install -d -m 0755 -o demyx -g demyx "$CODE_ROOT"/wp-content/mu-plugins
-cp "$CODE_CONFIG"/bs.php "$CODE_ROOT"/wp-content/mu-plugins
+cp "$CODE_CONFIG"/bs.php "$CODE_ROOT"/web/app/mu-plugins
 
 # Configure xdebug
 if [[ ! -d "$CODE_ROOT"/.vscode ]]; then
@@ -24,8 +23,8 @@ if [[ ! -d "$CODE_ROOT"/.vscode ]]; then
     mv "$CODE_CONFIG"/launch.json "$CODE_ROOT"/.vscode
 fi
 
-# Set wp-config.php to debug mode
-sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$CODE_ROOT"/wp-config.php
+# Set Bedrock to debug mode
+sed -i "s|WP_ENV=.*|WP_ENV=development|g" "$CODE_ROOT"/.env
 
 # Start php-fpm in the background
 php-fpm -D
@@ -34,5 +33,5 @@ php-fpm -D
 if [[ "$(code-server --version | grep yaml || true)" ]]; then
     code-server ${CODE_ROOT} --bind-addr=0.0.0.0:8080 --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry
 else
-    code-server ${CODE_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry --base-path=/demyx/cs    
+    code-server ${CODE_ROOT} --user-data-dir=/home/demyx/.code/data --extensions-dir=/home/demyx/.code/extensions --disable-telemetry    
 fi
