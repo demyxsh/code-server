@@ -1,0 +1,86 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -euo pipefail
+
+# Support for old password variable
+[[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
+
+# Copy code directory/configs if it doesn't exist
+if [[ ! -d /home/demyx/.config ]]; then
+    mkdir -p /home/demyx/.config
+    cp -r "$DEMYX_CONFIG"/code-server /home/demyx/.config
+fi
+
+# Update oh-my-zsh
+DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
+if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
+    sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
+fi
+# Remove export GPG_TTY
+if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
+    sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
+fi
+# Move zsh-autosuggestions
+if [[ -d /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions ]]; then
+    mv /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions /home/demyx/.oh-my-zsh/custom/plugins
+fi
+# Move autoupdate
+if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
+    mv /home/demyx/.oh-my-zsh/plugins/autoupdate /home/demyx/.oh-my-zsh/custom/plugins
+fi
+# Clone autoupdate if not available
+if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/autoupdate ]]; then
+    git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate
+fi
+# Check for font-family
+DEMYX_SETTINGS_CHECK="$(cat < "$DEMYX_CODE_CONFIG"/data/User/settings.json)"
+if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
+    sed -i "s|\"editor.quickSuggestions\": true,|\
+    \"editor.fontFamily\": \"'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace\",\n\
+    \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
+fi
+
+# Generate config
+sudo -E demyx-config
+
+# Auto install WordPress if it's not installed already
+demyx-install
+
+# Install demyx helper plugin
+[[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
+cp "$DEMYX_CONFIG"/bs.php "$DEMYX"/wp-content/mu-plugins
+
+# Configure xdebug
+if [[ ! -d "$DEMYX"/.vscode ]]; then
+    install -d -m 0755 -o demyx -g demyx "$DEMYX"/.vscode
+    cp "$DEMYX_CONFIG"/launch.json "$DEMYX"/.vscode
+fi
+
+# Set wp-config.php to debug mode
+sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX"/wp-config.php
+
+# Migrate old configs to new directory
+[[ -d /home/demyx/.code/data ]] && mv /home/demyx/.code/data "$DEMYX_CODE_CONFIG"
+[[ -d /home/demyx/.code/extensions ]] && mv /home/demyx/.code/extensions "$DEMYX_CODE_CONFIG"
+
+# OpenLiteSpeed admin
+sudo -E demyx-admin
+
+# OpenLiteSpeed htpasswd
+sudo -E demyx-htpasswd
+
+# Start OLS
+sudo -E demyx-lsws
+
+# Generate code-server yaml
+echo "auth: $DEMYX_CODE_AUTH
+bind-addr: $DEMYX_CODE_BIND_ADDR
+cert: false
+disable-telemetry: true
+extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
+password: $DEMYX_CODE_PASSWORD
+user-data-dir: ${DEMYX_CODE_CONFIG}/data" > "$DEMYX_CODE_CONFIG"/config.yaml
+
+# Start code-server
+code-server "$DEMYX"
