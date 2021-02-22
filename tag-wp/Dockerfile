@@ -1,120 +1,114 @@
-FROM php:fpm-buster
+FROM koalaman/shellcheck as demyx_shellcheck
+FROM php:7-fpm-buster
 
-LABEL sh.demyx.image        demyx/code-server:wp
-LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
-LABEL sh.demyx.url          https://demyx.sh
-LABEL sh.demyx.github       https://github.com/demyxco
-LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
+LABEL sh.demyx.image                    demyx/code-server:wp
+LABEL sh.demyx.maintainer               Demyx <info@demyx.sh>
+LABEL sh.demyx.url                      https://demyx.sh
+LABEL sh.demyx.github                   https://github.com/demyxco
+LABEL sh.demyx.registry                 https://hub.docker.com/u/demyx
 
 # Set default variables
-ENV CODE_ROOT           /demyx
-ENV CODE_CONFIG         /etc/demyx
-ENV CODE_LOG            /var/log/demyx
-ENV PASSWORD            demyx
-ENV TZ                  America/Los_Angeles
-
-# Configure Demyx
-RUN set -ex; \
-    adduser --gecos '' --disabled-password demyx; \
-    \
-    install -d -m 0755 -o demyx -g demyx "$CODE_ROOT"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_CONFIG"; \
-    install -d -m 0755 -o demyx -g demyx "$CODE_LOG"
+ENV DEMYX                               /demyx
+ENV DEMYX_ADMIN_EMAIL                   info@localhost
+ENV DEMYX_ADMIN_PASSWORD                demyx
+ENV DEMYX_ADMIN_USERNAME                demyx
+ENV DEMYX_CODE_AUTH                     password
+ENV DEMYX_CODE_BIND_ADDR                0.0.0.0:8080
+ENV DEMYX_CODE_CONFIG                   /home/demyx/.config/code-server
+ENV DEMYX_CODE_PASSWORD                 demyx
+ENV DEMYX_CONFIG                        /etc/demyx
+ENV DEMYX_DB_HOST                       localhost
+ENV DEMYX_DB_NAME                       demyx
+ENV DEMYX_DB_PASSWORD                   demyx
+ENV DEMYX_DB_USER                       demyx
+ENV DEMYX_DOMAIN                        localhost
+ENV DEMYX_EMERGENCY_RESTART_INTERVAL    1m
+ENV DEMYX_EMERGENCY_RESTART_THRESHOLD   5
+ENV DEMYX_LOG                           /var/log/demyx
+ENV DEMYX_MAX_EXECUTION_TIME            300
+ENV DEMYX_MEMORY                        256M
+ENV DEMYX_OPCACHE                       true
+ENV DEMYX_PM                            ondemand
+ENV DEMYX_PM_MAX_CHILDREN               25
+ENV DEMYX_PM_MAX_REQUESTS               25000
+ENV DEMYX_PM_MAX_SPARE_SERVERS          20
+ENV DEMYX_PM_MIN_SPARE_SERVERS          5
+ENV DEMYX_PM_PROCESS_IDLE_TIMEOUT       3s
+ENV DEMYX_PM_START_SERVERS              5
+ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
+ENV DEMYX_UPLOAD_LIMIT                  128M
+ENV DEMYX_WP_CONFIG                     "${DEMYX}/wp-config.php"
+ENV TERM                                xterm-256color
+ENV TZ                                  America/Los_Angeles
+# Support for old variables
+ENV CODE_ROOT                           "$DEMYX"
+ENV CODE_CONFIG                         "$DEMYX_CONFIG"
+ENV CODE_LOG                            "$DEMYX_LOG"
 
 # Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
-    bash \
-    ca-certificates \
-    curl \
-    dumb-init \
-    git \
-    gnupg \
-    htop \
-    less \
-    jq \
-    nano \
-    net-tools \
-    openssh-client \
-    sudo \
-    unzip \
-    util-linux \
-    tzdata \
-    zsh; \
+        bash \
+        bsdmainutils \
+        ca-certificates \
+        curl \
+        dnsutils \
+        git \
+        gnupg \
+        htop \
+        iputils-ping \
+        jq \
+        less \
+        nano \
+        net-tools \
+        openssh-client \
+        procps \
+        sudo \
+        tzdata \
+        unzip \
+        util-linux \
+        wget \
+        zsh; \
     \
-    rm -rf /var/lib/apt/lists/*
-
-# Install php extensions
-RUN set -ex; \
+    # PHP extensions
     curl -sL https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions -o /usr/local/bin/install-php-extensions; \
     chmod uga+x /usr/local/bin/install-php-extensions; \
     sync; \
-    install-php-extensions exif gd imagick mysqli opcache pdo_mysql ssh2 sockets xdebug zip
+    install-php-extensions \
+        exif \
+        gd \
+        imagick \
+        mysqli \
+        opcache \
+        pdo_mysql \
+        ssh2 \
+        sockets \
+        xdebug \
+        zip
 
-# Set up user
+# Configure Demyx
 RUN set -ex; \
-    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd; \
-    echo "demyx ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/demyx; \
+    # Create demyx user
+    adduser --gecos '' --disabled-password demyx; \
+    \
+    # Update .bashrc
+    echo 'PS1="$(whoami)@\h:\w \$ "' > /home/demyx/.bashrc; \
+    echo 'PS1="$(whoami)@\h:\w \$ "' > /root/.bashrc; \
+    \
+    # Create demyx directories
+    install -d -m 0755 -o demyx -g demyx "$DEMYX"; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CONFIG"; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_LOG"; \
     \
     # Oh-My-Zsh
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; \
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /root/.oh-my-zsh/plugins/zsh-autosuggestions; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /root/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /root/.zshrc; \
-    \
     su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
-    su -c  "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
-    sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/demyx/.zshrc; \
-    sed -i "s/(git)/(git zsh-autosuggestions)/g" /home/demyx/.zshrc; \
+    su -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k" -s /bin/sh demyx; \
+    su -c "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
+    su -c "git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate" -s /bin/sh demyx; \
+    sed -i 's|source $ZSH/oh-my-zsh.sh|source "$DEMYX_CONFIG"/.demyxrc\nsource $ZSH/oh-my-zsh.sh|g' /home/demyx/.zshrc; \
     \
-    # Symlink demyx command history with root
-    ln -s /home/demyx/.zsh_history /root; \
-    \
-    # Change root shell
-    sed -i "s|/root:/bin/bash|/root:/bin/zsh|g" /etc/passwd; \
-    \
-    # gpg purposes
-    echo 'export GPG_TTY=$(tty)' >> /root/.zshrc; \
-    echo 'export GPG_TTY=$(tty)' >> /home/demyx/.zshrc; \
-    \
-    # Copy .zshrc to config directory
-    cp /home/demyx/.zshrc "$CODE_CONFIG"
-
-# Configure code-server
-RUN set -ex; \
-    # Get code-server
-    CODE_VERSION=$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | grep '"name"' | head -1 | awk -F '[:]' '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sed -e 's/\r//g'); \
-    CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \         
-    tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
-    mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
-    \
-    # Create code-server directories
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/extensions; \
-    install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
-    \
-    # Get remote files
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs.php -o "$CODE_CONFIG"/bs.php; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/launch.json -o "$CODE_CONFIG"/launch.json; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/shevaua.phpcs-1.0.8.vsix -o "$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings-wp.json -o /home/demyx/.code/data/User/settings.json; \
-    \
-    # Symlink code-server
-    ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
-    \
-    # Install default extensions
-    code-server --extensions-dir=/home/demyx/.code/extensions \
-    --install-extension=equinusocio.vsc-material-theme \
-    --install-extension=pkief.material-icon-theme \
-    --install-extension="$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix \
-    --install-extension=felixfbecker.php-debug; \
-    \
-    # Set ownership
-    chown -R demyx:demyx /home/demyx/.code; \
-    chown -R demyx:demyx "$CODE_CONFIG"; \
-    \
-    # Make a copy to demyx config directory
-    cp -rp /home/demyx/.code "$CODE_CONFIG"/code
+    # Change user shell
+    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd
 
 # Composer
 RUN set -ex; \
@@ -123,23 +117,84 @@ RUN set -ex; \
 
 # PHP CodeSniffer & WPCS
 RUN set -ex; \
-    su -c "mkdir \"$CODE_CONFIG\"/phpcs && cd \"$CODE_CONFIG\"/phpcs; \
+    su -c "mkdir \"$DEMYX_CONFIG\"/phpcs && cd \"$DEMYX_CONFIG\"/phpcs; \
     composer require \"squizlabs/php_codesniffer=*\"; \
-    cd .. && git clone https://github.com/WordPress/WordPress-Coding-Standards; \
-    \"$CODE_CONFIG\"/phpcs/vendor/bin/phpcs --config-set installed_paths ${CODE_CONFIG}/WordPress-Coding-Standards" -s /bin/sh demyx; \
-    ln -s "$CODE_CONFIG"/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs
+    cd .. && git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs; \
+    \"$DEMYX_CONFIG\"/phpcs/vendor/bin/phpcs --config-set installed_paths ${DEMYX_CONFIG}/wpcs" -s /bin/sh demyx; \
+    ln -s "$DEMYX_CONFIG"/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs
+
+# WordPress
+RUN set -ex; \
+    su -c "wget https://wordpress.org/latest.tar.gz -qO /tmp/latest.tar.gz; \
+        \
+        tar -xzf /tmp/latest.tar.gz -C /tmp; \
+        \
+        mv /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php; \
+        \
+        cp -r /tmp/wordpress/* ${DEMYX}; \
+        \
+        tar -czf ${DEMYX_CONFIG}/wordpress.tgz -C /tmp/wordpress ." -s /bin/sh demyx
 
 # wp-cli
 RUN set -ex; \
     curl -sL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
     chmod +x /usr/local/bin/wp
 
-# WordPress
+# Imports
+COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
+COPY --chown=root:root bin /usr/local/bin
+COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
+
+# Configure code-server
 RUN set -ex; \
-    curl -sL https://wordpress.org/latest.tar.gz -o /latest.tar.gz; \
-    tar -xzf /latest.tar.gz -C "$CODE_CONFIG"; \
-    rm -f /latest.tar.gz; \
-    chown -R demyx:demyx "$CODE_CONFIG"
+    # Get code-server
+    CODE_VERSION="$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | jq -r .tag_name)"; \
+    if [ -z "$CODE_VERSION" ]; then CODE_VERSION=v3.8.0; fi; \
+    CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
+    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
+    tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
+    mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
+    \
+    # Create code-server directories
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CODE_CONFIG"/data/User; \
+    install -d -m 0755 -o demyx -g demyx "$DEMYX_CODE_CONFIG"/extensions; \
+    \
+    # Copy settings.json
+    cp "$DEMYX_CONFIG"/settings.json "$DEMYX_CODE_CONFIG"/data/User/settings.json; \
+    \
+    # Symlink code-server
+    ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
+    \
+    # Install default extensions
+    code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
+        --install-extension=equinusocio.vsc-material-theme \
+        --install-extension=pkief.material-icon-theme \
+        --install-extension=remisa.shellman \
+        --install-extension=ryu1kn.partial-diff \
+        --install-extension=timonwong.shellcheck; \
+    \
+    # Custom fonts
+    sed -i "s|</head>|\
+    <style> \n\
+        @font-face { \n\
+        font-family: 'MesloLGS NF'; \n\
+        font-style: normal; \n\
+        src: url('https://demyx.sh/fonts/meslolgs-nf-regular.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-bold.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-italic.woff') format('woff'), \n\
+        url('https://demyx.sh/fonts/meslolgs-nf-bold-italic.woff') format('woff'); \n\
+    } \n\
+    \n\</style></head>|g" /usr/local/lib/code-server/src/browser/pages/vscode.html; \
+    \
+    # Tag specifc extensions
+    code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
+        --install-extension="$DEMYX_CONFIG"/shevaua.phpcs-1.0.8.vsix \
+        --install-extension=felixfbecker.php-debug; \
+    \
+    # Finalize code-server
+    chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \
+    chown -R demyx:demyx "$DEMYX_CONFIG"; \
+    cp -rp "$DEMYX_CODE_CONFIG" "$DEMYX_CONFIG"
 
 # Finalize
 RUN set -ex; \
@@ -147,27 +202,20 @@ RUN set -ex; \
     rm -f /usr/local/etc/php-fpm.d/*; \
     \
     # Use our php-fpm configs
-    ln -s "$CODE_CONFIG"/php.ini /usr/local/etc/php/php.ini; \
-    ln -s "$CODE_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
-    ln -s "$CODE_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
-    \
-    # demyx-config
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/config-wp.sh -o /usr/local/bin/demyx-config; \
-    chmod +x /usr/local/bin/demyx-config; \
-    # demyx-install
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/install-wp.sh -o /usr/local/bin/demyx-install; \
-    chmod +x /usr/local/bin/demyx-install; \
-    \
-    # demyx-entrypoint
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint-wp.sh -o /usr/local/bin/demyx-entrypoint; \
-    chmod +x /usr/local/bin/demyx-entrypoint; \
+    ln -s "$DEMYX_CONFIG"/php.ini /usr/local/etc/php/php.ini; \
+    ln -s "$DEMYX_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
+    ln -s "$DEMYX_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
     \
     # Set ownership
-    chown -R root:root /usr/local/bin
+    chown -R root:root /usr/local/bin; \
+    \
+    # Cleanup
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /tmp/*
 
 EXPOSE 8080 9000 9001
 
-WORKDIR "$CODE_ROOT"
+WORKDIR "$DEMYX"
 
 USER demyx
 
