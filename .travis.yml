@@ -13,9 +13,12 @@ env:
   - DEMYX_USERNAME=demyx DEMYX_REPOSITORY=code-server
 
 before_install:
-  - docker pull alpine
   - docker pull debian:buster-slim
-  - docker pull php:fpm-buster
+  - docker pull docker
+  - docker pull golang:buster
+  - docker pull koalaman/shellcheck
+  - docker pull php:7-fpm-buster
+  - docker pull quay.io/vektorlab/ctop
 
 script:
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
