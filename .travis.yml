@@ -21,18 +21,15 @@ before_install:
   - docker pull quay.io/vektorlab/ctop
 
 script:
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY" tag-latest
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":bedrock tag-bedrock
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":browse tag-browse
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":go tag-go
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage tag-sage
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":latest tag-latest
   - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed tag-openlitespeed
-  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed-sage tag-openlitespeed-sage
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":openlitespeed-bedrock tag-openlitespeed-bedrock
+  - docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp tag-wp
   - docker run -dit --name="$DEMYX_REPOSITORY" demyx/"$DEMYX_REPOSITORY"
   - docker exec "$DEMYX_REPOSITORY" code-server --version
-  #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":alpine tag-alpine
-  #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":wp-alpine tag-wp-alpine
-  #- docker build --no-cache -t demyx/"$DEMYX_REPOSITORY":sage-alpine tag-sage-alpine
 
 after_success:
   - echo "$DEMYX_PASSWORD" | docker login -u "$DEMYX_USERNAME" --password-stdin
