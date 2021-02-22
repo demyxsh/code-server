@@ -1,0 +1,286 @@
+# Demyx
+# https://demyx.sh
+#
+# This docker-compose.yml is designed for VPS use with SSL/TLS first.
+# Traefik requires no additional configurations and is ready to go.
+# Be sure to change all the domain.tld domains and credentials before running docker-compose up -d.
+#
+networks:
+  demyx:
+    name: demyx
+  demyx_socket:
+    name: demyx_socket
+services:
+  demyx_db:
+    container_name: demyx_db
+    depends_on:
+      - demyx_traefik
+    environment:
+      - DEMYX=/demyx
+      - DEMYX_CHARACTER_SET_SERVER=utf8
+      - DEMYX_COLLATION_SERVER=utf8_general_ci
+      - DEMYX_CONFIG=/etc/demyx
+      - DEMYX_DATABASE=demyx
+      - DEMYX_DEFAULT_CHARACTER_SET=utf8
+      - DEMYX_DOMAIN=domain.tld
+      - DEMYX_INNODB_BUFFER_POOL_SIZE=16M
+      - DEMYX_INNODB_DATA_FILE_PATH=ibdata1:10M:autoextend
+      - DEMYX_INNODB_FILE_PER_TABLE=1
+      - DEMYX_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
+      - DEMYX_INNODB_LOCK_WAIT_TIMEOUT=50
+      - DEMYX_INNODB_LOG_BUFFER_SIZE=8M
+      - DEMYX_INNODB_LOG_FILE_SIZE=5M
+      - DEMYX_INNODB_USE_NATIVE_AIO=1
+      - DEMYX_KEY_BUFFER_SIZE=20M
+      - DEMYX_LOG=/var/log/demyx
+      - DEMYX_MAX_ALLOWED_PACKET=16M
+      - DEMYX_MAX_CONNECTIONS=1000
+      - DEMYX_MYISAM_SORT_BUFFER_SIZE=8M
+      - DEMYX_NET_BUFFER_SIZE=8K
+      - DEMYX_PASSWORD=demyx
+      - DEMYX_READ_BUFFER=2M
+      - DEMYX_READ_BUFFER_SIZE=256K
+      - DEMYX_READ_RND_BUFFER_SIZE=512K
+      - DEMYX_ROOT_PASSWORD=demyx_root  # Mandatory
+      - DEMYX_SERVER_ID=1
+      - DEMYX_SORT_BUFFER_SIZE=20M
+      - DEMYX_TABLE_OPEN_CACHE=64
+      - DEMYX_USERNAME=demyx
+      - DEMYX_WRITE_BUFFER=2M
+      - TZ=America/Los_Angeles
+    image: demyx/mariadb
+    networks:
+      - demyx
+    restart: unless-stopped
+    volumes:
+      - demyx_db:/demyx
+      - demyx_log:/var/log/demyx
+  demyx_pma:
+    container_name: demyx_pma
+    environment:
+      - MYSQL_ROOT_PASSWORD=demyx_root
+      - PMA_ABSOLUTE_URI=https://domain.tld/demyx/pma/
+      - PMA_HOST=demyx_db
+    image: phpmyadmin/phpmyadmin
+    networks:
+      - demyx
+    restart: unless-stopped
+    depends_on:
+      - demyx_wp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.demyx-pma-prefix.stripprefix.prefixes=/demyx/pma/"
+      - "traefik.http.routers.demyx-pma.entrypoints=https"
+      - "traefik.http.routers.demyx-pma.middlewares=demyx-pma-prefix"
+      - "traefik.http.routers.demyx-pma.priority=99"
+      - "traefik.http.routers.demyx-pma.rule=Host(`domain.tld`) && PathPrefix(`/demyx/pma/`)" # phpMyAdmin https://domain.tld/demyx/pma/
+      - "traefik.http.routers.demyx-pma.service=demyx-pma-port"
+      - "traefik.http.routers.demyx-pma.tls.certresolver=demyx"
+      - "traefik.http.services.demyx-pma-port.loadbalancer.server.port=80"
+  demyx_socket:
+    container_name: demyx_socket
+    environment:
+      - CONTAINERS=1
+    image: demyx/docker-socket-proxy
+    networks:
+      - demyx_socket
+    # Uncomment below if your host OS is CentOS/RHEL/Fedora
+    #privileged: true
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  demyx_traefik:
+    container_name: demyx_traefik
+    depends_on:
+      - demyx_socket
+    environment:
+      # Uncomment below for Cloudflare DNS challenge
+      #- CF_API_EMAIL=info@domain.tld
+      #- CF_API_KEY=123456
+      - DEMYX_ACME_EMAIL=info@domain.tld
+      - DEMYX_TRAEFIK_LOG=INFO
+      - TRAEFIK_PROVIDERS_DOCKER_ENDPOINT=tcp://demyx_socket:2375
+    image: demyx/traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.demyx-traefik-auth.basicauth.users=demyx:$$apr1$$L91z3CIR$$m/BKZcnQGBP.Uo2cJm8I0/" # Basic auth password: demyx
+      - "traefik.http.middlewares.demyx-traefik-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.demyx-traefik-http.entrypoints=http"
+      - "traefik.http.routers.demyx-traefik-http.middlewares=demyx-traefik-redirect"
+      - "traefik.http.routers.demyx-traefik-http.rule=Host(`traefik.domain.tld`)"
+      - "traefik.http.routers.demyx-traefik-http.service=demyx-traefik-http-port"
+      - "traefik.http.routers.demyx-traefik-https.entrypoints=https"
+      - "traefik.http.routers.demyx-traefik-https.middlewares=demyx-traefik-auth"
+      - "traefik.http.routers.demyx-traefik-https.rule=Host(`traefik.domain.tld`)" # Traefik dashboard https://traefik.domain.tld
+      - "traefik.http.routers.demyx-traefik-https.service=api@internal"
+      - "traefik.http.routers.demyx-traefik-https.service=demyx-traefik-https-port"
+      - "traefik.http.routers.demyx-traefik-https.tls.certresolver=demyx"
+      - "traefik.http.services.demyx-traefik-http-port.loadbalancer.server.port=8080"
+      - "traefik.http.services.demyx-traefik-https-port.loadbalancer.server.port=8080"
+    networks:
+      - demyx
+      - demyx_socket
+    ports:
+      - 80:8081
+      - 443:8082
+    restart: unless-stopped
+    volumes:
+      - demyx_log:/var/log/demyx
+      - demyx_traefik:/demyx
+  demyx_wp:
+    container_name: demyx_wp
+    depends_on:
+      - demyx_db
+    environment:
+      - DEMYX=/demyx
+      - DEMYX_ADMIN=/demyx/ols
+      - DEMYX_ADMIN_EMAIL=info@domain.tld
+      - DEMYX_ADMIN_IP=ALL
+      - DEMYX_ADMIN_PASSWORD=demyx
+      - DEMYX_ADMIN_PREFIX=true
+      - DEMYX_ADMIN_USERNAME=demyx
+      - DEMYX_BASIC_AUTH_PASSWORD=demyx
+      - DEMYX_BASIC_AUTH_USERNAME=demyx
+      - DEMYX_BASIC_AUTH_WP=false
+      - DEMYX_BEDROCK=true
+      - DEMYX_BEDROCK_MODE=development
+      - DEMYX_CACHE=false
+      - DEMYX_CLIENT_THROTTLE_BANDWIDTH_IN=0
+      - DEMYX_CLIENT_THROTTLE_BANDWIDTH_OUT=0
+      - DEMYX_CLIENT_THROTTLE_BAN_PERIOD=60
+      - DEMYX_CLIENT_THROTTLE_BLOCK_BAD_REQUEST=1
+      - DEMYX_CLIENT_THROTTLE_DYNAMIC=1000
+      - DEMYX_CLIENT_THROTTLE_GRACE_PERIOD=30
+      - DEMYX_CLIENT_THROTTLE_HARD_LIMIT=2000
+      - DEMYX_CLIENT_THROTTLE_SOFT_LIMIT=1500
+      - DEMYX_CLIENT_THROTTLE_STATIC=1000
+      - DEMYX_CODE_AUTH=password
+      - DEMYX_CODE_BIND_ADDR=0.0.0.0:8080
+      - DEMYX_CODE_CONFIG=/home/demyx/.config/code-server
+      - DEMYX_CODE_PASSWORD=demyx
+      - DEMYX_CONFIG=/etc/demyx
+      - DEMYX_CRAWLER_LOAD_LIMIT=5.2
+      - DEMYX_CRAWLER_USLEEP=1000
+      - DEMYX_DB_HOST=demyx_db
+      - DEMYX_DB_NAME=demyx
+      - DEMYX_DB_PASSWORD=demyx
+      - DEMYX_DB_USER=demyx
+      - DEMYX_DOMAIN=domain.tld
+      - DEMYX_LOG=/var/log/demyx
+      - DEMYX_LSPHP_VERSION=lsphp74
+      - DEMYX_PHP_LSAPI_CHILDREN=2000
+      - DEMYX_PHP_MAX_EXECUTION_TIME=300
+      - DEMYX_PHP_MEMORY=256M
+      - DEMYX_PHP_OPCACHE=true
+      - DEMYX_PHP_UPLOAD_LIMIT=128M
+      - DEMYX_PROXY=demyx_wp
+      - DEMYX_RECAPTCHA_CONNECTION_LIMIT=500
+      - DEMYX_RECAPTCHA_ENABLE=1
+      - DEMYX_RECAPTCHA_TYPE=2
+      - DEMYX_SSL=true
+      - DEMYX_TUNING_CONNECTION_TIMEOUT=300
+      - DEMYX_TUNING_KEEP_ALIVE_TIMEOUT=300
+      - DEMYX_TUNING_MAX_CONNECTIONS=20000
+      - DEMYX_TUNING_MAX_KEEP_ALIVE=1000
+      - DEMYX_TUNING_SMART_KEEP_ALIVE=1000
+      - DEMYX_XMLRPC=false
+      - TZ=America/Los_Angeles
+    hostname: demyx-wp
+    image: demyx/code-server:openlitespeed-bedrock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.demyx-wp-bs-prefix.stripprefix.prefixes=/demyx/bs/"
+      - "traefik.http.middlewares.demyx-wp-hotupdate-js-prefix.stripprefix.prefixes=/demyx/bs/app/themes/[a-z0-9]/dist/[a-z.0-9].hot-update.js"
+      - "traefik.http.middlewares.demyx-wp-hotupdate-json-prefix.stripprefix.prefixes=/demyx/bs/app/themes/[a-z0-9]/dist/[a-z0-9].hot-update.json"
+      - "traefik.http.middlewares.demyx-wp-ols-assets-prefix.stripprefix.prefixes=/demyx/ols/"
+      - "traefik.http.middlewares.demyx-wp-ols-prefix.stripprefix.prefixes=/demyx/ols/"
+      - "traefik.http.middlewares.demyx-wp-prefix.stripprefix.prefixes=/demyx/cs/"
+      - "traefik.http.middlewares.demyx-wp-redirect.redirectregex.permanent=true"
+      - "traefik.http.middlewares.demyx-wp-redirect.redirectregex.regex=^https?:\/\/(?:www\\.)?(.+)"
+      - "traefik.http.middlewares.demyx-wp-redirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.demyx-wp-socket-prefix.stripprefix.prefixes=/demyx/bs/browser-sync/socket.io/"
+      - "traefik.http.middlewares.demyx-wp-webpack-prefix.stripprefix.prefixes=/demyx/bs/__webpack_hmr"
+      - "traefik.http.routers.demyx-wp-bs.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-bs.middlewares=demyx-wp-bs-prefix"
+      - "traefik.http.routers.demyx-wp-bs.priority=99"
+      - "traefik.http.routers.demyx-wp-bs.rule=Host(`domain.tld`) && PathPrefix(`/demyx/bs/`)" # browsersync https://domain.tld/demyx/bs/
+      - "traefik.http.routers.demyx-wp-bs.service=demyx-wp-bs"
+      - "traefik.http.routers.demyx-wp-bs.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.middlewares=demyx-wp-hotupdate-js-prefix"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.priority=99"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.rule=Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z.0-9]+}.hot-update.js`)"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.service=demyx-wp-hotupdate-js"
+      - "traefik.http.routers.demyx-wp-hotupdate-js.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.middlewares=demyx-wp-hotupdate-json-prefix"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.priority=99"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.rule=Host(`domain.tld`) && PathPrefix(`/app/themes/{path:[a-z0-9]+}/dist/{hash:[a-z0-9]+}.hot-update.json`)"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.service=demyx-wp-hotupdate-json"
+      - "traefik.http.routers.demyx-wp-hotupdate-json.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-http.entrypoints=http"
+      - "traefik.http.routers.demyx-wp-http.middlewares=demyx-wp-redirect"
+      - "traefik.http.routers.demyx-wp-http.rule=Host(`domain.tld`) || Host(`www.domain.tld`)"
+      - "traefik.http.routers.demyx-wp-http.service=demyx-wp-http-port"
+      - "traefik.http.routers.demyx-wp-https.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-https.rule=Host(`domain.tld`) || Host(`www.domain.tld`)" # https://domain.tld
+      - "traefik.http.routers.demyx-wp-https.service=demyx-wp-https-port"
+      - "traefik.http.routers.demyx-wp-https.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-ols-assets.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-ols-assets.priority=99"
+      - "traefik.http.routers.demyx-wp-ols-assets.rule=Host(`domain.tld`) && PathPrefix(`/res/`)"
+      - "traefik.http.routers.demyx-wp-ols-assets.service=demyx-wp-ols-assets-port"
+      - "traefik.http.routers.demyx-wp-ols-assets.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-ols.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-ols.middlewares=demyx-wp-ols-prefix"
+      - "traefik.http.routers.demyx-wp-ols.priority=99"
+      - "traefik.http.routers.demyx-wp-ols.rule=Host(`domain.tld`) && PathPrefix(`/demyx/ols/`)" # https://domain.tld/demyx/ols/
+      - "traefik.http.routers.demyx-wp-ols.service=demyx-wp-ols-port"
+      - "traefik.http.routers.demyx-wp-ols.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-socket.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-socket.middlewares=demyx-wp-socket-prefix"
+      - "traefik.http.routers.demyx-wp-socket.priority=99"
+      - "traefik.http.routers.demyx-wp-socket.rule=Host(`domain.tld`) && PathPrefix(`/browser-sync/socket.io/`)"
+      - "traefik.http.routers.demyx-wp-socket.service=demyx-wp-socket"
+      - "traefik.http.routers.demyx-wp-socket.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp-webpack.entrypoints=https"
+      - "traefik.http.routers.demyx-wp-webpack.middlewares=demyx-wp-webpack-prefix"
+      - "traefik.http.routers.demyx-wp-webpack.priority=99"
+      - "traefik.http.routers.demyx-wp-webpack.rule=Host(`domain.tld`) && PathPrefix(`/__webpack_hmr`)"
+      - "traefik.http.routers.demyx-wp-webpack.service=demyx-wp-webpack"
+      - "traefik.http.routers.demyx-wp-webpack.tls.certresolver=demyx"
+      - "traefik.http.routers.demyx-wp.entrypoints=https"
+      - "traefik.http.routers.demyx-wp.middlewares=demyx-wp-prefix"
+      - "traefik.http.routers.demyx-wp.priority=99"
+      - "traefik.http.routers.demyx-wp.rule=Host(`domain.tld`) && PathPrefix(`/demyx/cs/`)" # code-server https://domain.tld/demyx/cs/
+      - "traefik.http.routers.demyx-wp.service=demyx-wp-port"
+      - "traefik.http.routers.demyx-wp.tls.certresolver=demyx"
+      - "traefik.http.services.demyx-wp-bs.loadbalancer.server.port=3000"
+      - "traefik.http.services.demyx-wp-hotupdate-js.loadbalancer.server.port=3000"
+      - "traefik.http.services.demyx-wp-hotupdate-json.loadbalancer.server.port=3000"
+      - "traefik.http.services.demyx-wp-http-port.loadbalancer.server.port=80"
+      - "traefik.http.services.demyx-wp-https-port.loadbalancer.server.port=80"
+      - "traefik.http.services.demyx-wp-ols-assets-port.loadbalancer.server.port=8081"
+      - "traefik.http.services.demyx-wp-ols-port.loadbalancer.server.port=8081"
+      - "traefik.http.services.demyx-wp-port.loadbalancer.server.port=8080"
+      - "traefik.http.services.demyx-wp-socket.loadbalancer.server.port=3000"
+      - "traefik.http.services.demyx-wp-webpack.loadbalancer.server.port=3000"
+    networks:
+      - demyx
+    restart: unless-stopped
+    volumes:
+      - demyx_code:/home/demyx
+      - demyx_log:/var/log/demyx
+      - demyx_wp:/demyx
+version: "2.4"
+volumes:
+  demyx_code:
+    name: demyx_code
+  demyx_db:
+    name: demyx_db
+  demyx_log:
+    name: demyx_log
+  demyx_traefik:
+    name: demyx_traefik
+  demyx_wp:
+    name: demyx_wp
