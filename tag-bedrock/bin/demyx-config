@@ -1,0 +1,262 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -euo pipefail
+
+# Support for old variables
+[[ -n "${WORDPRESS_DOMAIN:-}" ]] && DEMYX_DOMAIN="$WORDPRESS_DOMAIN"
+[[ -n "${WORDPRESS_PHP_EMERGENCY_RESTART_INTERVAL:-}" ]] && DEMYX_EMERGENCY_RESTART_INTERVAL="$WORDPRESS_PHP_EMERGENCY_RESTART_INTERVAL"
+[[ -n "${WORDPRESS_PHP_EMERGENCY_RESTART_THRESHOLD:-}" ]] && DEMYX_EMERGENCY_RESTART_THRESHOLD="$WORDPRESS_PHP_EMERGENCY_RESTART_THRESHOLD"
+[[ -n "${WORDPRESS_PHP_MAX_EXECUTION_TIME:-}" ]] && DEMYX_MAX_EXECUTION_TIME="$WORDPRESS_PHP_MAX_EXECUTION_TIME"
+[[ -n "${WORDPRESS_PHP_MEMORY:-}" ]] && DEMYX_MEMORY="$WORDPRESS_PHP_MEMORY"
+[[ -n "${WORDPRESS_PHP_OPCACHE:-}" ]] && DEMYX_OPCACHE="$WORDPRESS_PHP_OPCACHE"
+[[ -n "${WORDPRESS_PHP_PM:-}" ]] && DEMYX_PM="$WORDPRESS_PHP_PM"
+[[ -n "${WORDPRESS_PHP_PM_MAX_CHILDREN:-}" ]] && DEMYX_PM_MAX_CHILDREN="$WORDPRESS_PHP_PM_MAX_CHILDREN"
+[[ -n "${WORDPRESS_PHP_PM_MAX_REQUESTS:-}" ]] && DEMYX_PM_MAX_REQUESTS="$WORDPRESS_PHP_PM_MAX_REQUESTS"
+[[ -n "${WORDPRESS_PHP_PM_MAX_SPARE_SERVERS:-}" ]] && DEMYX_PM_MAX_SPARE_SERVERS="$WORDPRESS_PHP_PM_MAX_SPARE_SERVERS"
+[[ -n "${WORDPRESS_PHP_PM_MIN_SPARE_SERVERS:-}" ]] && DEMYX_PM_MIN_SPARE_SERVERS="$WORDPRESS_PHP_PM_MIN_SPARE_SERVERS"
+[[ -n "${WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT:-}" ]] && DEMYX_PM_PROCESS_IDLE_TIMEOUT="$WORDPRESS_PHP_PM_PROCESS_IDLE_TIMEOUT"
+[[ -n "${WORDPRESS_PHP_PM_START_SERVERS:-}" ]] && DEMYX_PM_START_SERVERS="$WORDPRESS_PHP_PM_START_SERVERS"
+[[ -n "${WORDPRESS_PHP_PROCESS_CONTROL_TIMEOUT:-}" ]] && DEMYX_PROCESS_CONTROL_TIMEOUT="$WORDPRESS_PHP_PROCESS_CONTROL_TIMEOUT"
+[[ -n "${WORDPRESS_UPLOAD_LIMIT:-}" ]] && DEMYX_UPLOAD_LIMIT="$WORDPRESS_UPLOAD_LIMIT"
+
+# Default variables
+DEMYX_OPCACHE="${DEMYX_OPCACHE:-true}"
+
+# PHP opcache
+if [[ "$DEMYX_OPCACHE" = off || "$DEMYX_OPCACHE" = false ]]; then
+    DEMYX_OPCACHE_ENABLE=0
+    DEMYX_OPCACHE_ENABLE_CLI=0
+fi
+
+# Generate www.conf
+echo "[${DEMYX_DOMAIN:-www}]
+catch_workers_output        = yes
+chdir                       = $DEMYX
+listen                      = 9000
+php_admin_value[error_log]  = ${DEMYX_LOG}/${DEMYX_DOMAIN}.error.log
+pm                          = $DEMYX_PM
+pm.max_children             = $DEMYX_PM_MAX_CHILDREN
+pm.max_requests             = $DEMYX_PM_MAX_REQUESTS
+pm.max_spare_servers        = $DEMYX_PM_MAX_SPARE_SERVERS
+pm.min_spare_servers        = $DEMYX_PM_MIN_SPARE_SERVERS
+pm.process_idle_timeout     = $DEMYX_PM_PROCESS_IDLE_TIMEOUT
+pm.start_servers            = $DEMYX_PM_START_SERVERS
+
+[global]
+emergency_restart_interval  = $DEMYX_EMERGENCY_RESTART_INTERVAL
+emergency_restart_threshold = $DEMYX_EMERGENCY_RESTART_THRESHOLD
+process_control_timeout     = $DEMYX_PROCESS_CONTROL_TIMEOUT
+" > "$DEMYX_CONFIG"/www.conf
+
+# Generate docker.conf
+echo "[global]
+error_log = /proc/self/fd/2
+
+; https://github.com/docker-library/php/pull/725#issuecomment-443540114
+log_limit = 8192
+
+[${DEMYX_DOMAIN}]
+; if we send this to /proc/self/fd/1, it never appears
+access.log = /proc/self/fd/2
+
+clear_env = no
+
+; Ensure worker stdout and stderr are sent to the main error log.
+catch_workers_output = yes
+decorate_workers_output = no
+" > "$DEMYX_CONFIG"/docker.conf
+
+# Generate php.ini
+echo "[Assertion]
+zend.assertions = -1
+
+[CLI Server]
+cli_server.color = On
+
+[COM]
+
+[Date]
+date.timezone = $TZ
+
+[Interbase]
+ibase.allow_persistent = 1
+ibase.dateformat = \"%Y-%m-%d\"
+ibase.max_links = -1
+ibase.max_persistent = -1
+ibase.timeformat = \"%H:%M:%S\"
+ibase.timestampformat = \"%Y-%m-%d %H:%M:%S\"
+
+[MySQLi]
+mysqli.allow_persistent = On
+mysqli.default_host =
+mysqli.default_port = 3306
+mysqli.default_pw =
+mysqli.default_socket =
+mysqli.default_user =
+mysqli.max_links = -1
+mysqli.max_persistent = -1
+mysqli.reconnect = Off
+
+[OCI8]
+
+[ODBC]
+odbc.allow_persistent = On
+odbc.check_persistent = On
+odbc.defaultbinmode = 1
+odbc.defaultlrl = 4096
+odbc.max_links = -1
+odbc.max_persistent = -1
+
+[PHP]
+allow_url_fopen = On
+allow_url_include = Off
+auto_append_file =
+auto_globals_jit = On
+auto_prepend_file =
+default_charset = \"UTF-8\"
+default_mimetype = \"text/html\"
+default_socket_timeout = 60
+disable_classes =
+disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,
+display_errors = Off
+display_startup_errors = Off
+doc_root =
+enable_dl = Off
+engine = On
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+expose_php = Off
+file_uploads = On
+html_errors = On
+ignore_repeated_errors = Off
+ignore_repeated_source = Off
+implicit_flush = Off
+log_errors = On
+log_errors_max_len = 1024
+max_execution_time = $DEMYX_MAX_EXECUTION_TIME
+max_file_uploads = 20
+max_input_time = 600
+max_input_vars = 20000
+memory_limit = $DEMYX_MEMORY
+output_buffering = 4096
+post_max_size = $DEMYX_UPLOAD_LIMIT
+precision = 14
+register_argc_argv = Off
+report_memleaks = On
+request_order = \"GP\"
+sendmail_path =
+serialize_precision = -1
+short_open_tag = Off
+unserialize_callback_func =
+upload_max_filesize = $DEMYX_UPLOAD_LIMIT
+upload_tmp_dir = /tmp
+user_dir =
+variables_order = \"GPCS\"
+zend.enable_gc = On
+zlib.output_compression = Off
+
+[Pcre]
+
+[Pdo]
+
+[Pdo_mysql]
+pdo_mysql.default_socket=
+
+[Phar]
+
+[PostgreSQL]
+pgsql.allow_persistent = On
+pgsql.auto_reset_persistent = Off
+pgsql.max_persistent = -1
+pgsql.max_links = -1
+pgsql.ignore_notice = 0
+pgsql.log_notice = 0
+
+[Session]
+session.auto_start = 0
+session.cache_expire = 180
+session.cache_limiter = nocache
+session.cookie_domain =
+session.cookie_httponly =
+session.cookie_lifetime = 0
+session.cookie_path = /
+session.cookie_samesite =
+session.gc_divisor = 1000
+session.gc_maxlifetime = 1440
+session.gc_probability = 0
+session.name = PHPSESSID
+session.referer_check =
+session.save_handler = files
+session.serialize_handler = php
+session.sid_bits_per_character = 5
+session.sid_length = 26
+session.trans_sid_tags = \"a=href,area=href,frame=src,form=\"
+session.use_cookies = 1
+session.use_only_cookies = 1
+session.use_strict_mode = 0
+session.use_trans_sid = 0
+
+[Tidy]
+tidy.clean_output = Off
+
+[XDebug]
+xdebug.client_port = 9001
+xdebug.mode = debug
+xdebug.start_with_request = trigger
+xdebug.trigger_value = 1
+
+[bcmath]
+bcmath.scale = 0
+
+[browscap]
+
+[curl]
+
+[dba]
+
+[exif]
+
+[filter]
+
+[gd]
+
+[iconv]
+
+[intl]
+
+[ldap]
+ldap.max_links = -1
+
+[mail function]
+SMTP = localhost
+mail.add_x_header = On
+smtp_port = 25
+
+[mbstring]
+
+[mysqlnd]
+mysqlnd.collect_memory_statistics = Off
+mysqlnd.collect_statistics = On
+
+[opcache]
+opcache.consistency_checks=0
+opcache.enable=${DEMYX_OPCACHE_ENABLE:-1}
+opcache.enable_cli=${DEMYX_OPCACHE_ENABLE_CLI:-1}
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.max_wasted_percentage=10
+opcache.memory_consumption=256
+opcache.revalidate_freq=0
+opcache.save_comments=1
+opcache.validate_timestamps=1
+
+[openssl]
+
+[soap]
+soap.wsdl_cache_dir=\"/tmp\"
+soap.wsdl_cache_enabled=1
+soap.wsdl_cache_limit = 5
+soap.wsdl_cache_ttl=86400
+
+[sqlite3]
+" > "$DEMYX_CONFIG"/php.ini
