@@ -1,8 +1,6 @@
 #!/bin/bash
 # Demyx
 # https://demyx.sh
-# https://github.com/peter-evans/dockerhub-description/blob/master/entrypoint.sh
-IFS=$'\n\t'
 
 # Get versions
 #DEMYX_ALPINE_VERSION="$(docker run --rm --entrypoint=cat demyx/code-server:alpine /etc/os-release | grep VERSION_ID | cut -c 12- | sed 's/\r//g')"
