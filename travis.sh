@@ -25,7 +25,7 @@ DEMYX_CODE_VERSION=$DEMYX_CODE_VERSION
 DEMYX_CODE_GO_VERSION=$DEMYX_CODE_GO_VERSION" > VERSION
 
 # Push back to GitHub
-git config --global user.email "travis@travis-ci.org"
+git config --global user.email "travis@travis-ci.com"
 git config --global user.name "Travis CI"
 git remote set-url origin https://${DEMYX_GITHUB_TOKEN}@github.com/demyxco/"$DEMYX_REPOSITORY".git
 # Commit VERSION file first
