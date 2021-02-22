@@ -1,5 +1,386 @@
 # CHANGELOG
-Entries before tag-* affects all code-server tags. 
+
+## 2021-02-21
+- Moved old/outdated tags and files to archive. 
+### tag-bedrock
+- Added
+    - `bin/demyx-config`
+    - `bin/demyx-entrypoint`
+    - `bin/demyx-install`
+    - `bin/demyx-sage`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/bs.js`
+    - `config/bs.php`
+    - `config/launch.json`
+    - `config/settings.json`
+    - `config/shevaua.phpcs-1.0.8.vsix`
+- Changed
+    - Renamed from demyx/code-server:sage.
+    - Update directory structure.
+    - `bin/demyx-config`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+        - Alphabetize php.ini config generator.
+        - Update XDebug configuration.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `bin/demyx-install`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-sage`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+        - Organize code by putting each into its own function.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/launch.json`
+        - Remove unused items.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `docker-compose.yml`
+        - Downgrade version to 2.4.
+        - Alphabetize keys.
+        - Update variables with DEMYX_ prefix.
+        - Various misc updates.
+    - `Dockerfile`
+        - Add shellcheck.
+        - Set FROM image to a fixed PHP version.
+        - All main variables are now prefixed with DEMYX_.
+        - Import ENVs from demyx/wordpress image.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update bash PS1.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+    - `README.md`
+        - Use relative screenshot.
+        - Update table.
+        - Update usage.
+- Removed
+
+### tag-browse
+- Added
+    - `bin/demyx`
+    - `bin/demyx-entrypoint`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/ctop`
+    - `config/settings.json`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `Dockerfile`
+        - Update ctop to latest version.
+        - Add shellcheck.
+        - All main variables are now prefixed with DEMYX_.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update packages.
+        - Update bash PS1.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+- Removed
+
+### tag-go
+- Added
+    - `bin/demyx`
+    - `bin/demyx-entrypoint`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/ctop`
+    - `config/settings.json`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `Dockerfile`
+        - Update ctop to latest version.
+        - Add shellcheck.
+        - All main variables are now prefixed with DEMYX_.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update packages.
+        - Update bash PS1.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+- Removed
+
+### tag-latest
+- Added
+    - `bin/demyx-entrypoint`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/ctop`
+    - `config/settings.json`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `Dockerfile`
+        - Update ctop to latest version.
+        - Add shellcheck.
+        - All main variables are now prefixed with DEMYX_.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update packages.
+        - Update bash PS1.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+    - `README.md`
+        - Update screenshot.
+        - Update tags.
+        - Update theme.
+        - Update sample docker-compose.yml.
+- Removed
+
+### tag-openlitespeed
+- Added
+    - `bin/demyx-admin`
+    - `bin/demyx-config`
+    - `bin/demyx-entrypoint`
+    - `bin/demyx-htpasswd`
+    - `bin/demyx-install`
+    - `bin/demyx-lsws`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/bs.php`
+    - `config/launch.json`
+    - `config/settings.json`
+    - `config/shevaua.phpcs-1.0.8.vsix`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-admin`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-config`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-encrypt`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `bin/demyx-htpasswd`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+    - `bin/demyx-install`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-lsws`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/launch.json`
+        - Remove unused items.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `docker-compose.yml`
+        - Downgrade version to 2.4.
+        - Alphabetize keys.
+        - Update variables with DEMYX_ prefix.
+        - Various misc updates.
+    - `Dockerfile`
+        - Remove FROM demyx/openlitespeed.
+        - Add shellcheck.
+        - All main variables are now prefixed with DEMYX_.
+        - Import ENVs from demyx/wordpress image.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update packages.
+        - Update bash PS1.
+        - Update Xdebug to 3.x.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+- Removed
+
+### tag-openlitespeed-bedrock
+- Added
+    - `bin/demyx-admin`
+    - `bin/demyx-config`
+    - `bin/demyx-entrypoint`
+    - `bin/demyx-htpasswd`
+    - `bin/demyx-install`
+    - `bin/demyx-lsws`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/bs.php`
+    - `config/launch.json`
+    - `config/settings.json`
+    - `config/shevaua.phpcs-1.0.8.vsix`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-admin`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-config`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-encrypt`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `bin/demyx-htpasswd`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+    - `bin/demyx-install`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `bin/demyx-lsws`
+        - Replace OPENLITESPEED_ with DEMYX_ prefix for variables.
+    - `bin/demyx-sage`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+        - Organize code by putting each into its own function.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/launch.json`
+        - Remove unused items.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `docker-compose.yml`
+        - Downgrade version to 2.4.
+        - Alphabetize keys.
+        - Update variables with DEMYX_ prefix.
+        - Various misc updates.
+    - `Dockerfile`
+        - Remove FROM demyx/openlitespeed.
+        - Add shellcheck.
+        - All main variables are now prefixed with DEMYX_.
+        - Import ENVs from demyx/wordpress image.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update packages.
+        - Update bash PS1.
+        - Update Xdebug to 3.x.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+- Removed
+
+### tag-wp
+- Added
+    - `bin/demyx-config`
+    - `bin/demyx-entrypoint`
+    - `bin/demyx-install`
+    - `config/.demyxrc`
+    - `config/.p10k.zsh`
+    - `config/bs.php`
+    - `config/launch.json`
+    - `config/settings.json`
+    - `config/shevaua.phpcs-1.0.8.vsix`
+- Changed
+    - Update directory structure.
+    - `bin/demyx-config`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+        - Alphabetize php.ini config generator.
+        - Update XDebug configuration.
+    - `bin/demyx-entrypoint`
+        - Update code-server variables.
+        - Support for old variables.
+        - Migrate oh-my-zsh plugins to custom directory.
+        - Make oh-my-zsh, custom themes, and plugins auto update.
+        - Source `.demyxrc` in .zshrc.
+        - Migrate code-server data and extensions directory.
+        - code-server now uses config.yaml for its configs.
+    - `bin/demyx-install`
+        - Replace WORDPRESS_ with DEMYX_ prefix for variables.
+        - Support for old variables.
+    - `config/.demyxrc`
+        - oh-my-zsh config variables.
+        - Other misc variables.
+    - `config/launch.json`
+        - Remove unused items.
+    - `config/settings.json`
+        - Set default font family.
+        - Removed some items.
+    - `docker-compose.yml`
+        - Downgrade version to 2.4.
+        - Alphabetize keys.
+        - Update variables with DEMYX_ prefix.
+        - Various misc updates.
+    - `Dockerfile`
+        - Add shellcheck.
+        - Set FROM image to a fixed PHP version.
+        - All main variables are now prefixed with DEMYX_.
+        - Import ENVs from demyx/wordpress image.
+        - Update ENVs with additional variables.
+        - Rearrange RUN commands.
+        - Update bash PS1.
+        - Set default theme to powerlevel10k.
+        - Dynamically update code-server version by curling its GitHub repo.
+        - Support custom fonts needed by powerlevel10k theme.
+    - `README.md`
+        - Use relative screenshot.
+        - Update table.
+        - Update usage.
+- Removed
 
 ## 2020-07-23
 ### Added
