@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2021-02-22
+### tag-openlitespeed
+- Download only stable versions.
+- Have a fallback version.
+
+### tag-openlitespeed-bedrock
+- Download only stable versions.
+- Have a fallback version.
+
 ## 2021-02-21
 - Moved old/outdated tags and files to archive. 
 ### tag-bedrock
