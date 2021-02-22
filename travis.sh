@@ -8,12 +8,16 @@ DEMYX_CODE_VERSION="$(docker exec "$DEMYX_REPOSITORY" cat --version | awk -F '[ 
 DEMYX_CODE_GO_VERSION="$(docker run --rm --entrypoint=go demyx/"$DEMYX_REPOSITORY":go version | awk -F '[ ]' '{print $3}' | sed 's/go//g' | sed 's/\r//g')"
 
 # Replace versions
+# tag-bedrock
+sed -i "s|debian-.*.-informational|debian-${DEMYX_CODE_DEBIAN_VERSION}-informational|g" tag-bedrock/README.md
+sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-bedrock/README.md
+# tag-latest
 sed -i "s|debian-.*.-informational|debian-${DEMYX_CODE_DEBIAN_VERSION}-informational|g" README.md
 sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" README.md
 sed -i "s|go-.*.-informational|go-${DEMYX_CODE_GO_VERSION}-informational|g" README.md
-
+# tag-wp
 sed -i "s|debian-.*.-informational|debian-${DEMYX_CODE_DEBIAN_VERSION}-informational|g" tag-wp/README.md
-sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_DEBIAN_VERSION}-informational|g" tag-wp/README.md
+sed -i "s|code--server-.*.-informational|code--server-${DEMYX_CODE_VERSION}-informational|g" tag-wp/README.md
 
 # Echo versions to file
 echo "DEMYX_CODE_DEBIAN_VERSION=$DEMYX_CODE_DEBIAN_VERSION
