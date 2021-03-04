@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2021-03-03
+### tag-openlitespeed
+- Added
+- Changed
+    - Move WordPress rewrite rules to the bottom so the security rules works again.
+- Removed
+
+### tag-openlitespeed-bedrock
+- Added
+- Changed
+    - Move WordPress rewrite rules to the bottom so the security rules works again.
+- Removed
+
 ## 2021-02-22
 ### tag-openlitespeed
 - Download only stable versions.
