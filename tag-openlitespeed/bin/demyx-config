@@ -378,15 +378,6 @@ context / {
         rules                               <<<END_rules
             AddDefaultCharset UTF-8
 
-            # BEGIN WordPress
-            RewriteEngine On
-            RewriteBase /
-            RewriteRule ^/index.php$ - [L]
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteCond %{REQUEST_FILENAME} !-d
-            RewriteRule . /index.php [L]
-            # END WordPress
-
             # Block null user agent
             <IfModule LiteSpeed>
                 RewriteEngine On
@@ -455,6 +446,15 @@ context / {
                 RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
                 RewriteRule .* index.php [F,L]
             </IfModule>
+
+            # BEGIN WordPress
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^/index.php$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.php [L]
+            # END WordPress
         END_rules
     }
 }
