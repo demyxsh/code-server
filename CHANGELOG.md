@@ -1,5 +1,49 @@
 # CHANGELOG
 
+## 2021-03-08
+### tag-bedrock
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-browse
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-go
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-latest
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-openlitespeed
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-openlitespeed-bedrock
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+### tag-wp
+- Added
+- Changed
+    - Move export GPG_TTY variable to the bottom.
+    - Make GPG_TTY variable use the TTY variable.
+- Removed
+
 ## 2021-03-03
 ### tag-openlitespeed
 - Added
