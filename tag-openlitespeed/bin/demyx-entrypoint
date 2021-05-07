@@ -6,33 +6,50 @@ set -euo pipefail
 # Support for old password variable
 [[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
 
-# Copy code directory/configs if it doesn't exist
+# Create new code-server config directory
 if [[ ! -d /home/demyx/.config ]]; then
     mkdir -p /home/demyx/.config
     cp -r "$DEMYX_CONFIG"/code-server /home/demyx/.config
 fi
+
+# Migrate old configs to new directory
+[[ -d /home/demyx/.code/data ]] && mv /home/demyx/.code/data "$DEMYX_CODE_CONFIG"
+[[ -d /home/demyx/.code/extensions ]] && mv /home/demyx/.code/extensions "$DEMYX_CODE_CONFIG"
 
 # Update oh-my-zsh
 DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
 if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
     sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
 fi
+
 # Remove export GPG_TTY
 if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
     sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
 fi
+
 # Move zsh-autosuggestions
 if [[ -d /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions ]]; then
     mv /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions /home/demyx/.oh-my-zsh/custom/plugins
 fi
+# Double check zsh-autosuggestions
+if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+fi
+
 # Move autoupdate
 if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
     mv /home/demyx/.oh-my-zsh/plugins/autoupdate /home/demyx/.oh-my-zsh/custom/plugins
 fi
-# Clone autoupdate if not available
+# Double check autoupdate
 if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/autoupdate ]]; then
     git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate
 fi
+
+# Double check powerlevel10k theme
+if [[ ! -d /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k ]]; then
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k
+fi
+
 # Check for font-family
 DEMYX_SETTINGS_CHECK="$(cat < "$DEMYX_CODE_CONFIG"/data/User/settings.json)"
 if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
@@ -59,10 +76,6 @@ fi
 
 # Set wp-config.php to debug mode
 sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX"/wp-config.php
-
-# Migrate old configs to new directory
-[[ -d /home/demyx/.code/data ]] && mv /home/demyx/.code/data "$DEMYX_CODE_CONFIG"
-[[ -d /home/demyx/.code/extensions ]] && mv /home/demyx/.code/extensions "$DEMYX_CODE_CONFIG"
 
 # OpenLiteSpeed admin
 sudo -E demyx-admin

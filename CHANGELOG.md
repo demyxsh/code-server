@@ -1,5 +1,49 @@
 # CHANGELOG
 
+## 2021-05-06
+### tag-bedrock
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-browse
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-go
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-latest
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-openlitespeed
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-openlitespeed-bedrock
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+### tag-wp
+- Added
+- Changed
+    - Rearrange order of entrypoint commands.
+    - Add double checks for missing git repos.
+- Removed
+
 ## 2021-03-08
 ### tag-bedrock
 - Added
