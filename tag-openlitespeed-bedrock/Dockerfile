@@ -129,8 +129,8 @@ RUN set -ex; \
 # OpenLiteSpeed
 RUN set -ex; \
     DEMYX_OLS_VERSION="$(wget -qO- https://api.github.com/repos/litespeedtech/openlitespeed/tags 2>&1 | jq -r '.[].name' | grep v1.6 | head -n 1 | sed 's|v||g' || true)"; \
-    if [ "$DEMYX_OLS_VERSION" = 1.6.20.1 ]; then DEMYX_OLS_VERSION=1.6.20; fi; \
-    if [ -z "$DEMYX_OLS_VERSION" ]; then DEMYX_OLS_VERSION=1.6.20; fi; \
+    if [ "$DEMYX_OLS_VERSION" = 1.6.20.1 ]; then DEMYX_OLS_VERSION=1.6.21; fi; \
+    if [ -z "$DEMYX_OLS_VERSION" ]; then DEMYX_OLS_VERSION=1.6.21; fi; \
     wget https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -qO /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
