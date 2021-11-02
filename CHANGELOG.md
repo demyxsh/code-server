@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2021-11-02
+- Use wildcard when replacing shell path [afde53f](https://github.com/demyxco/code-server/commit/afde53f8428e24efb26e500f6e6fb562393f69fa)
+
 ## 2021-07-14
 ### tag-openlitespeed
 - Update OLS default version [7a88aaa](https://github.com/demyxco/code-server/commit/7a88aaa8f30af3daf91c2cdeb0b1a94909814ea9)
