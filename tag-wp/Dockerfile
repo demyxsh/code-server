@@ -108,7 +108,7 @@ RUN set -ex; \
     sed -i 's|source $ZSH/oh-my-zsh.sh|source "$DEMYX_CONFIG"/.demyxrc\nsource $ZSH/oh-my-zsh.sh|g' /home/demyx/.zshrc; \
     \
     # Change user shell
-    sed -i "s|/home/demyx:/sbin/nologin|/home/demyx:/bin/zsh|g" /etc/passwd
+    sed -i "s|/home/demyx.*|/home/demyx:/bin/zsh|g" /etc/passwd
 
 # Composer
 RUN set -ex; \
