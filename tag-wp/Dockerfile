@@ -172,19 +172,6 @@ RUN set -ex; \
         --install-extension=remisa.shellman \
         --install-extension=timonwong.shellcheck; \
     \
-    # Custom fonts
-    sed -i "s|</head>|\
-    <style> \n\
-        @font-face { \n\
-        font-family: 'MesloLGS NF'; \n\
-        font-style: normal; \n\
-        src: url('https://demyx.sh/fonts/meslolgs-nf-regular.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-bold.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-italic.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-bold-italic.woff') format('woff'); \n\
-    } \n\
-    \n\</style></head>|g" /usr/local/lib/code-server/src/browser/pages/vscode.html; \
-    \
     # Tag specifc extensions
     code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
         --install-extension="$DEMYX_CONFIG"/shevaua.phpcs-1.0.8.vsix \

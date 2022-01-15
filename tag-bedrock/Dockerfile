@@ -202,19 +202,6 @@ RUN set -ex; \
         --install-extension=cjhowe7.laravel-blade \
         --install-extension=felixfbecker.php-debug; \
     \
-    # Custom fonts
-    sed -i "s|</head>|\
-    <style> \n\
-        @font-face { \n\
-        font-family: 'MesloLGS NF'; \n\
-        font-style: normal; \n\
-        src: url('https://demyx.sh/fonts/meslolgs-nf-regular.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-bold.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-italic.woff') format('woff'), \n\
-        url('https://demyx.sh/fonts/meslolgs-nf-bold-italic.woff') format('woff'); \n\
-    } \n\
-    \n\</style></head>|g" /usr/local/lib/code-server/src/browser/pages/vscode.html; \
-    \
     # Finalize code-server
     chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \
     chown -R demyx:demyx "$DEMYX_CONFIG"; \
