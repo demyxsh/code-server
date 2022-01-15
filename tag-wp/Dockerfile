@@ -170,7 +170,6 @@ RUN set -ex; \
         --install-extension=equinusocio.vsc-material-theme \
         --install-extension=pkief.material-icon-theme \
         --install-extension=remisa.shellman \
-        --install-extension=ryu1kn.partial-diff \
         --install-extension=timonwong.shellcheck; \
     \
     # Custom fonts
