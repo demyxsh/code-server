@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2022-01-14
+- Update SHELL THEME [7bcfff6](https://github.com/demyxco/code-server/commit/7bcfff684b90c96b28ac9f52e6c373c65fc6d034)
+- Remove custom font injection for now [144771e](https://github.com/demyxco/code-server/commit/144771e0214d0776076b9ef822b3a42f76d5105e)
+- Remove extension ryu1kn.partial-diff [8b58972](https://github.com/demyxco/code-server/commit/8b589721c446ad3a94d9610c20cdfa90bd0c146f)
+- Change theme to ys for now [5b7affa](https://github.com/demyxco/code-server/commit/5b7affa1e994b2613ca43a90a7ad1fcae6926aac)
+
 ## 2021-11-02
 - Use wildcard when replacing shell path [afde53f](https://github.com/demyxco/code-server/commit/afde53f8428e24efb26e500f6e6fb562393f69fa)
 
