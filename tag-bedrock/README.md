@@ -17,7 +17,7 @@ WORKDIR | /demyx
 CONFIG | /etc/demyx
 ENTRYPOINT | demyx-entrypoint
 SHELL | zsh
-SHELL THEME | powerlevel10k
+SHELL THEME | ys
 WORDPRESS | https://domain.tld
 CODE-SERVER | https://domain.tld/demyx/cs/
 BROWSER-SYNC | https://domain.tld/demyx/bs/
