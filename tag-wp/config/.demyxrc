@@ -4,7 +4,7 @@ EDITOR="nano"
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 TERM="xterm-256color"
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#444444"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="ys"
 plugins=(git zsh-autosuggestions autoupdate)
 source "$DEMYX_CONFIG"/.p10k.zsh
 export GPG_TTY="$TTY"
