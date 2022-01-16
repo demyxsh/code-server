@@ -176,6 +176,22 @@ RUN set -ex; \
         --install-extension="$DEMYX_CONFIG"/shevaua.phpcs-1.0.8.vsix \
         --install-extension=felixfbecker.php-debug; \
     \
+    # Custom fonts
+    cd /usr/local/lib/code-server/src/browser/pages; \
+    curl -O "https://demyx.sh/fonts/{meslolgs-nf-regular.woff,meslolgs-nf-bold.woff,meslolgs-nf-italic.woff,meslolgs-nf-bold-italic.woff}"; \
+    \
+    sed -i "s|</head>|\
+    <style> \n\
+        @font-face { \n\
+        font-family: 'MesloLGS NF'; \n\
+        font-style: normal; \n\
+        src: url('_static/src/browser/pages/meslolgs-nf-regular.woff') format('woff'), \n\
+        url('_static/src/browser/pages/meslolgs-nf-bold.woff') format('woff'), \n\
+        url('_static/src/browser/pages/meslolgs-nf-italic.woff') format('woff'), \n\
+        url('_static/src/browser/pages/meslolgs-nf-bold-italic.woff') format('woff'); \n\
+    } \n\
+    \n\</style></head>|g" /usr/local/lib/code-server/vendor/modules/code-oss-dev/out/vs/code/browser/workbench/workbench.html; \
+    \
     # Finalize code-server
     chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \
     chown -R demyx:demyx "$DEMYX_CONFIG"; \
