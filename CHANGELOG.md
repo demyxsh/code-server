@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2022-01-15
+- Put back code to inject custom fonts [e233d22](https://github.com/demyxco/code-server/commit/e233d22eb9b5de07ed4bf857a0a03e0fce0f4fe3)
+- Change ZSH_THEME back to powerlevel10k/powerlevel10k [8b8c20c](https://github.com/demyxco/code-server/commit/8b8c20c481630dab61a00a3634866993b6cd4bde)
+- Remove default code-server version [8b9ae13](https://github.com/demyxco/code-server/commit/8b9ae13ff342c4b6f67026c550643a6353abc446)
+- Change back SHELL THEME to powerlevel10k [dc63c21](https://github.com/demyxco/code-server/commit/dc63c21ae2a21502598c33ba248a19b65ef6751e)
+
 ## 2022-01-14
 - Update SHELL THEME [7bcfff6](https://github.com/demyxco/code-server/commit/7bcfff684b90c96b28ac9f52e6c373c65fc6d034)
 - Remove custom font injection for now [144771e](https://github.com/demyxco/code-server/commit/144771e0214d0776076b9ef822b3a42f76d5105e)
