@@ -22,7 +22,7 @@ WORKDIR | /demyx
 CONFIG | /etc/demyx
 ENTRYPOINT | ["demyx-entrypoint"]
 SHELL | zsh
-SHELL THEME | ys
+SHELL THEME | powerlevel10k
 
 ## Usage
 * SSL/TLS first!
