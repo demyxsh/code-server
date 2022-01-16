@@ -149,7 +149,6 @@ COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 RUN set -ex; \
     # Get code-server
     CODE_VERSION="$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | jq -r .tag_name)"; \
-    if [ -z "$CODE_VERSION" ]; then CODE_VERSION=v3.8.0; fi; \
     CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
     curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
     tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
