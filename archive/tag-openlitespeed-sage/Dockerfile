@@ -3,7 +3,7 @@ FROM demyx/openlitespeed:bedrock
 LABEL sh.demyx.image        demyx/code-server:openlitespeed-sage
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
 LABEL sh.demyx.url          https://demyx.sh
-LABEL sh.demyx.github       https://github.com/demyxco
+LABEL sh.demyx.github       https://github.com/demyxsh
 LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 ENV CODE_PHP     php7.4
@@ -106,11 +106,11 @@ RUN set -ex; \
 # Copy source & binary
 COPY --chown=demyx:demyx src "$OPENLITESPEED_CONFIG"
 # Add shared files
-ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/"$CODE_ICONS" "$OPENLITESPEED_CONFIG"
-ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js "$OPENLITESPEED_CONFIG"/bs.js
-ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php "$OPENLITESPEED_CONFIG"/bs.php
-ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json "$OPENLITESPEED_CONFIG"/settings.json
-ADD --chown=demyx:demyx https://github.com/demyxco/code-server/raw/master/shared/sage.sh "$OPENLITESPEED_CONFIG"
+ADD --chown=demyx:demyx https://github.com/demyxsh/code-server/raw/master/shared/"$CODE_ICONS" "$OPENLITESPEED_CONFIG"
+ADD --chown=demyx:demyx https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.js "$OPENLITESPEED_CONFIG"/bs.js
+ADD --chown=demyx:demyx https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.php "$OPENLITESPEED_CONFIG"/bs.php
+ADD --chown=demyx:demyx https://github.com/demyxsh/code-server/raw/master/shared/settings-sage.json "$OPENLITESPEED_CONFIG"/settings.json
+ADD --chown=demyx:demyx https://github.com/demyxsh/code-server/raw/master/shared/sage.sh "$OPENLITESPEED_CONFIG"
 
 # Configure code-server
 RUN set -ex; \
@@ -126,9 +126,9 @@ RUN set -ex; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     \
     # Get remote files
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js -o "$OPENLITESPEED_CONFIG"/bs.js; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php -o "$OPENLITESPEED_CONFIG"/bs.php; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.js -o "$OPENLITESPEED_CONFIG"/bs.js; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.php -o "$OPENLITESPEED_CONFIG"/bs.php; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
     \
     # Symlink code-server
     ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
@@ -149,7 +149,7 @@ RUN set -ex; \
 # Finalize
 RUN set -ex; \
     # sage
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage.sh; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage.sh; \
     chmod +x /usr/local/bin/sage.sh; \
     \
     # demyx-install

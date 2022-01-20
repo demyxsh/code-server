@@ -5,7 +5,7 @@ FROM alpine
 LABEL sh.demyx.image        demyx/code-server:alpine
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
 LABEL sh.demyx.url          https://demyx.sh
-LABEL sh.demyx.github       https://github.com/demyxco
+LABEL sh.demyx.github       https://github.com/demyxsh
 LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 # Set default variables
@@ -97,7 +97,7 @@ RUN set -ex; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     \
     # Get settings.json
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/settings.json -o /home/demyx/.code/data/User/settings.json; \
     \
     # Install default extensions
     code-server --extensions-dir=/home/demyx/.code/extensions \
@@ -132,7 +132,7 @@ RUN set -ex; \
     chmod +x /usr/local/bin/docker; \
     \
     # demyx-entrypoint
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint.sh -o /usr/local/bin/demyx-entrypoint; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/entrypoint.sh -o /usr/local/bin/demyx-entrypoint; \
     chmod +x /usr/local/bin/demyx-entrypoint; \
     \
     # Set ownership

@@ -3,7 +3,7 @@ FROM php:fpm-buster
 LABEL sh.demyx.image        demyx/code-server:sage
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
 LABEL sh.demyx.url          https://demyx.sh
-LABEL sh.demyx.github       https://github.com/demyxco
+LABEL sh.demyx.github       https://github.com/demyxsh
 LABEL sh.demyx.registry     https://hub.docker.com/u/demyx
 
 # Set default variables
@@ -96,11 +96,11 @@ RUN set -ex; \
     install -d -m 0755 -o demyx -g demyx /home/demyx/.code/data/User; \
     \
     # Get remote files
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.js -o "$CODE_CONFIG"/bs.js; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/bs-sage.php -o "$CODE_CONFIG"/bs.php; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/launch.json -o "$CODE_CONFIG"/launch.json; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/shevaua.phpcs-1.0.8.vsix -o "$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix; \
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.js -o "$CODE_CONFIG"/bs.js; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/bs-sage.php -o "$CODE_CONFIG"/bs.php; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/launch.json -o "$CODE_CONFIG"/launch.json; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/shevaua.phpcs-1.0.8.vsix -o "$CODE_CONFIG"/shevaua.phpcs-1.0.8.vsix; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/settings-sage.json -o /home/demyx/.code/data/User/settings.json; \
     \
     # Symlink code-server
     ln -s /usr/local/lib/code-server/bin/code-server /usr/local/bin/code-server; \
@@ -182,19 +182,19 @@ RUN set -ex; \
     ln -s "$CODE_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
     \
     # sage
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/sage.sh -o /usr/local/bin/sage; \
     chmod +x /usr/local/bin/sage; \
     \
     # demyx-config
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/config-wp.sh -o /usr/local/bin/demyx-config; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/config-wp.sh -o /usr/local/bin/demyx-config; \
     chmod +x /usr/local/bin/demyx-config; \
     \
     # demyx-install
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/install-sage.sh -o /usr/local/bin/demyx-install; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/install-sage.sh -o /usr/local/bin/demyx-install; \
     chmod +x /usr/local/bin/demyx-install; \
     \
     # demyx-entrypoint
-    curl -sL https://github.com/demyxco/code-server/raw/master/shared/entrypoint-sage.sh -o /usr/local/bin/demyx-entrypoint; \
+    curl -sL https://github.com/demyxsh/code-server/raw/master/shared/entrypoint-sage.sh -o /usr/local/bin/demyx-entrypoint; \
     chmod +x /usr/local/bin/demyx-entrypoint; \
     \
     # Set ownership
