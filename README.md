@@ -9,7 +9,7 @@
 [![Architecture](https://img.shields.io/badge/linux-amd64-important?style=flat&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Debian](https://img.shields.io/badge/dynamic/json?url=https://github.com/demyxsh/code-server/raw/master/version.json&label=debian&query=$.debian&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Go](https://img.shields.io/badge/dynamic/json?url=https://github.com/demyxsh/code-server/raw/master/version.json&label=go&query=$.go&color=blue)](https://hub.docker.com/r/demyx/code-server)
-[![code-server](https://img.shields.io/badge/dynamic/json?url=https://github.com/demyxsh/code-server/raw/master/version.json&label=code-server&query=$.code-server&color=blue)](https://hub.docker.com/r/demyx/code-server)
+[![code-server](https://img.shields.io/badge/dynamic/json?url=https://github.com/demyxsh/code-server/raw/master/version.json&label=code-server&query=$.code_server&color=blue)](https://hub.docker.com/r/demyx/code-server)
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 [![Become a Patron!](https://img.shields.io/badge/become%20a%20patron-$5-informational?style=flat&color=blue)](https://www.patreon.com/bePatron?u=23406156)
 

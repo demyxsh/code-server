@@ -1,5 +1,5 @@
 {
   "debian": "init",
   "go": "init",
-  "code-server": "init"
+  "code_server": "init"
 }
