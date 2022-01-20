@@ -80,4 +80,4 @@ jobs:
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:latest
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:tag-wp
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:wp
