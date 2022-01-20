@@ -1,0 +1,5 @@
+{
+  "debian": "init",
+  "go": "init",
+  "code-server": "init"
+}
