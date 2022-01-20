@@ -351,4 +351,4 @@ networks:
 
 * Auto built weekly on Saturdays (America/Los_Angeles)
 * Rolling release updates
-* For support: [#demyx](https://webchat.freenode.net/?channel=#demyx)
+* For support: [#demyx](https://web.libera.chat/?channel=#demyx)
