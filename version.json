@@ -1,5 +1,5 @@
 {
-  "debian": "init",
-  "go": "init",
-  "code_server": "init"
+  "debian": "10.11",
+  "go": "1.17.6",
+  "code_server": "4.0.1"
 }
