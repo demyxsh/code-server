@@ -29,6 +29,8 @@ BROWSER-SYNC | https://domain.tld/demyx/bs/
 PHPMYADMIN | https://domain.tld/demyx/pma/
 
 ## Usage
+* To update all code-server extensions, run this command: `demyx-extension` or `demyx-extension --no-prompt`
+
 ```
 # Demyx
 # https://demyx.sh

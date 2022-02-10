@@ -1,0 +1,41 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -euo pipefail
+#
+#   Deletes all extensions and reinstalls.
+#
+demyx_code() {
+    local DEMYX_CODE_ARG="$*"
+    local DEMYX_CODE_CONFIRM=
+    local DEMYX_CODE_PLUGIN=
+    local DEMYX_CODE_PLUGIN_LIST=
+
+    # Warn user first or skip
+    if [[ "$DEMYX_CODE_ARG" != *"--no-prompt"* ]]; then
+        echo -en "\e[33m[WARNING]\e[39m "
+        # shellcheck disable=SC2153
+        read -rep "Everything in ${DEMYX_CODE_CONFIG}/extensions will be purged. Continue? [yY]: " DEMYX_CODE_CONFIRM
+
+        # Exit if not y or Y
+        if [[ "$DEMYX_CODE_CONFIRM" != [yY] ]]; then
+            echo -e "\e[34m[INFO]\e[39m Update cancelled!"
+            exit 1
+        fi
+    fi
+
+    # Append each plugin to a new variable
+    DEMYX_CODE_PLUGIN_LIST="$(code-server --list-extensions)"
+    rm -rf "$DEMYX_CODE_CONFIG"/extensions/*
+    for i in $DEMYX_CODE_PLUGIN_LIST; do
+        DEMYX_CODE_PLUGIN+="--install-extension=${i} "
+    done
+
+    # Do the actual update
+    echo -e "\e[34m[INFO]\e[39m code-server $DEMYX_CODE_PLUGIN"
+    eval code-server "$DEMYX_CODE_PLUGIN"
+}
+#
+#   Init.
+#
+demyx_code "$@"

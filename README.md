@@ -38,6 +38,7 @@ SHELL THEME | powerlevel10k
 * SSL/TLS first!
 * Requires no config file for Traefik and is ready to go when running: `docker-compose up -d`
 * Upgrading from Traefik v1 to v2? You will need to convert your [acme.json](https://github.com/containous/traefik-migration-tool)
+* To update all code-server extensions, run this command: `demyx-extension` or `demyx-extension --no-prompt`
 
 ```
 # Demyx

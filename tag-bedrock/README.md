@@ -65,6 +65,7 @@ info    - Not serving HTTPS
 * Configured for remote VPS
 * Ports 80 and 443 must be open when using Traefik
 * TLS/SSL enabled by default
+* To update all code-server extensions, run this command: `demyx-extension` or `demyx-extension --no-prompt`
 
 ```
 # Demyx
