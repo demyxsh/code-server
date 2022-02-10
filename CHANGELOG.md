@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2022-02-10
+- New script to update all code-server extensions [caff5aa](https://github.com/demyxsh/code-server/commit/caff5aa0a9e7cf48475a1f7937f74a307cf1ae31)
+
 ## 2022-01-15
 - Put back code to inject custom fonts [e233d22](https://github.com/demyxsh/code-server/commit/e233d22eb9b5de07ed4bf857a0a03e0fce0f4fe3)
 - Change ZSH_THEME back to powerlevel10k/powerlevel10k [8b8c20c](https://github.com/demyxsh/code-server/commit/8b8c20c481630dab61a00a3634866993b6cd4bde)
