@@ -66,7 +66,6 @@ RUN set -ex; \
         less \
         nano \
         net-tools \
-        npm \
         openssh-client \
         procps \
         sudo \
@@ -90,10 +89,7 @@ RUN set -ex; \
         ssh2 \
         sockets \
         xdebug \
-        zip; \
-    \
-    # Install yarn
-    npm -g install yarn
+        zip
 
 # Configure Demyx
 RUN set -ex; \
@@ -131,6 +127,16 @@ RUN set -ex; \
     cd .. && git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs; \
     \"$DEMYX_CONFIG\"/phpcs/vendor/bin/phpcs --config-set installed_paths ${DEMYX_CONFIG}/wpcs" -s /bin/sh demyx; \
     ln -s "$DEMYX_CONFIG"/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs
+
+# NPM & Yarn
+RUN set -ex; \
+    su -c "curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh -o install.sh; \
+        bash install.sh; \
+        source /home/demyx/.nvm/nvm.sh; \
+        nvm install --lts; \
+        npm install --global yarn; \
+        tar -czf ${DEMYX_CONFIG}/nvm.tgz -C /home/demyx .nvm" -s /bin/bash demyx; \
+    rm install.sh
 
 # Bedrock
 RUN set -ex; \

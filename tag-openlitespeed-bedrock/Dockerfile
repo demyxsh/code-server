@@ -88,7 +88,6 @@ RUN set -ex; \
         lsb-release \
         nano \
         net-tools \
-        npm \
         openssh-client \
         procps \
         ruby \
@@ -97,10 +96,7 @@ RUN set -ex; \
         unzip \
         util-linux \
         wget \
-        zsh; \
-    \
-    # Install yarn
-    npm -g install yarn
+        zsh
 
 # Configure Demyx
 RUN set -ex; \
@@ -182,6 +178,18 @@ RUN set -ex; \
     \
     apt-get purge -y "$DEMYX_LSPHP_VERSION"-pear; \
     apt-get autoremove -y
+
+# NPM & Yarn
+RUN set -ex; \
+    curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh -o install.sh; \
+    \
+    su -c "bash install.sh; \
+        source /home/demyx/.nvm/nvm.sh; \
+        nvm install --lts; \
+        npm install --global yarn; \
+        tar -czf ${DEMYX_CONFIG}/nvm.tgz -C /home/demyx .nvm" -s /bin/bash demyx; \
+    \
+    rm install.sh
 
 # Bedrock
 RUN set -ex; \

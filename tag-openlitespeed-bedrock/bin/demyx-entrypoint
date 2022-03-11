@@ -58,6 +58,11 @@ if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
     \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
 fi
 
+# Check for NVM directory
+if [[ ! -d /home/demyx/.nvm ]]; then
+    tar -xzf "$DEMYX_CONFIG"/nvm.tgz -C /home/demyx
+fi
+
 # Generate config
 sudo -E demyx-config
 
