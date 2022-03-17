@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2022-03-16
+- Symlink /demyx directory [fbe89c1](https://github.com/demyxsh/code-server/commit/fbe89c1e40df180801d92e31a869ef60740bde44)
+
 ## 2022-02-10
 - New script to update all code-server extensions [caff5aa](https://github.com/demyxsh/code-server/commit/caff5aa0a9e7cf48475a1f7937f74a307cf1ae31)
 
