@@ -63,6 +63,11 @@ if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
     \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
 fi
 
+# Symlink /demyx directory
+if [[ ! -L /home/demyx/demyx ]]; then
+    ln -sf "$DEMYX" /home/demyx/demyx
+fi
+
 # Generate code-server yaml
 echo "auth: $DEMYX_CODE_AUTH
 bind-addr: $DEMYX_CODE_BIND_ADDR
