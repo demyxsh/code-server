@@ -180,6 +180,7 @@ RUN set -ex; \
     cd /usr/local/lib/code-server/src/browser/pages; \
     curl -O "https://demyx.sh/fonts/{meslolgs-nf-regular.woff,meslolgs-nf-bold.woff,meslolgs-nf-italic.woff,meslolgs-nf-bold-italic.woff}"; \
     \
+    CODE_WORKBENCH="$(find /usr/local/lib/code-server -name "*workbench.html")"; \
     sed -i "s|</head>|\
     <style> \n\
         @font-face { \n\
@@ -190,7 +191,7 @@ RUN set -ex; \
         url('_static/src/browser/pages/meslolgs-nf-italic.woff') format('woff'), \n\
         url('_static/src/browser/pages/meslolgs-nf-bold-italic.woff') format('woff'); \n\
     } \n\
-    \n\</style></head>|g" /usr/local/lib/code-server/vendor/modules/code-oss-dev/out/vs/code/browser/workbench/workbench.html; \
+    \n\</style></head>|g" "$CODE_WORKBENCH"; \
     \
     # Finalize code-server
     chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \
