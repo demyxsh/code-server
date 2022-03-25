@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2022-03-24
+- Use find to find the workbench.html since it's been relocating in recent code-server updates [297d5b8](https://github.com/demyxsh/code-server/commit/297d5b828aceba3ccc412c785efccdc03974ff50)
+- Use canvas as the default gpu acceleration for the terminal [e8f981c](https://github.com/demyxsh/code-server/commit/e8f981c12e4b4990fe977256dddf631bfbc9f669)
+- Remove old directories [a97f44f](https://github.com/demyxsh/code-server/commit/a97f44f27e1a442f0f74afcc6bd171681919d327)
+- Use cp instead of rm [081d551](https://github.com/demyxsh/code-server/commit/081d5516f5a8d2f273918f0f2490c57a23f2cce0)
+
 ## 2022-03-16
 - Symlink /demyx directory [fbe89c1](https://github.com/demyxsh/code-server/commit/fbe89c1e40df180801d92e31a869ef60740bde44)
 
