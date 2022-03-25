@@ -32,6 +32,7 @@
     "telemetry.enableTelemetry": false,
     "terminal.integrated.cursorBlinking": true,
     "terminal.integrated.cursorStyle": "line",
+	"terminal.integrated.gpuAcceleration": "canvas",
     "terminal.integrated.shell.linux": "/bin/zsh",
     "workbench.colorTheme": "Material Theme Darker High Contrast",
     "workbench.iconTheme": "material-icon-theme"
