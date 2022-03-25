@@ -41,18 +41,18 @@ if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
     sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
 fi
 
-# Move zsh-autosuggestions
-if [[ -d /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions ]]; then
-    mv /home/demyx/.oh-my-zsh/plugins/zsh-autosuggestions /home/demyx/.oh-my-zsh/custom/plugins
+# Remove autoupdate
+if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
+    rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
 fi
 # Double check zsh-autosuggestions
 if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
 
-# Move autoupdate
+# Remove autoupdate
 if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
-    mv /home/demyx/.oh-my-zsh/plugins/autoupdate /home/demyx/.oh-my-zsh/custom/plugins
+    rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
 fi
 # Double check autoupdate
 if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/autoupdate ]]; then
