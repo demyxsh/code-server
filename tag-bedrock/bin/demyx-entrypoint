@@ -13,8 +13,17 @@ if [[ ! -d /home/demyx/.config ]]; then
 fi
 
 # Migrate old configs to new directory
-[[ -d /home/demyx/.code/data ]] && mv /home/demyx/.code/data "$DEMYX_CODE_CONFIG"
-[[ -d /home/demyx/.code/extensions ]] && mv /home/demyx/.code/extensions "$DEMYX_CODE_CONFIG"
+if [[ -d /home/demyx/.code/data ]]; then
+    mkdir -p "$DEMYX_CODE_CONFIG"/data
+    cp -r /home/demyx/.code/data/. "$DEMYX_CODE_CONFIG"
+    rm -rf /home/demyx/.code/data
+fi
+
+if [[ -d /home/demyx/.code/extensions ]]; then
+    mkdir -p "$DEMYX_CODE_CONFIG"/extensions
+    cp -r /home/demyx/.code/extensions/. "$DEMYX_CODE_CONFIG"
+    rm -rf /home/demyx/.code/extensions
+fi
 
 # Update oh-my-zsh
 DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
