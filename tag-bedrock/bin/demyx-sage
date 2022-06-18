@@ -12,6 +12,8 @@ set -euo pipefail
 SAGE_COMMAND="${1:-help}"
 SAGE_THEME="${2:-sage}"
 SAGE_WEBPACK_CONFIG="$DEMYX"/web/app/themes/"$SAGE_THEME"/resources/assets/build/webpack.config.watch.js
+# shellcheck disable=2034
+NODE_OPTIONS=
 
 sage_cmd() {
     echo -e "[\e[34m${SAGE_THEME}\e[39m] yarn ${SAGE_COMMAND}"
