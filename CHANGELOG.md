@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2022-06-17
+- tag-wp - add missing package default-mysql-client for wp-cli [32fb748](https://github.com/demyxsh/code-server/commit/32fb748b84a5703b4fd5746c635f144079f237b4)
+- tag-bedrock/tag-openlitespeed-bedrock - echo out useful information about demyx-sage commands [8561d3a](https://github.com/demyxsh/code-server/commit/8561d3ab52698514df194a1cded5026aa4ed9c05)
+- tag-bedrock/tag-openlitespeed-bedrock - create new sage project with a fixed version, add yard cache clean, add --no-interaction flag to both composer commands [7deda1a](https://github.com/demyxsh/code-server/commit/7deda1a7c2c7cc0e5af9708ebf4e73d08eeeabd8)
+- tag-bedrock/tag-openlitespeed-bedrock - update demyx-sage help menu [38547c0](https://github.com/demyxsh/code-server/commit/38547c09675ed184ed25f71ad64cad66a133d0a3)
+- tag-bedrock/tag-openlitespeed-bedrock - remove the error "--max-old-space-size=2048 is not allowed" [2f389c9](https://github.com/demyxsh/code-server/commit/2f389c94d67adb15cebb8a4468ab5e4bacffee86)
+- Update the README with new demyx-sage usage [25f31d6](https://github.com/demyxsh/code-server/commit/25f31d6bf636f668280f9e3ae537e48c410c1f02)
+- tag-openlitespeed-bedrock - use su for the npm and yarn RUN commands [e8baf7b](https://github.com/demyxsh/code-server/commit/e8baf7b85f14713a6107cedbfa3acaf47b72027f)
+- tag-bedrock/tag-openlitespeed-bedrock - use a different sage code-server extension [bba0ef1](https://github.com/demyxsh/code-server/commit/bba0ef164cd70b16d6fa55ea600cd451cbea5792)
+- tag-bedrock/tag-openlitespeed-bedrock - remove adding sage to the image [0513b20](https://github.com/demyxsh/code-server/commit/0513b209b067121e55b3faa713df33f8b89329bb)
+- tag-bedrock/tag-openlitespeed-bedrock - replace node lts version with a fixed version [416ef8c](https://github.com/demyxsh/code-server/commit/416ef8c4facbace151d4eeaac59406d0705b16c1)
+- tag-bedrock/tag-openlitespeed-bedrock - add missing package default-mysql-client for wp-cli [d4218b5](https://github.com/demyxsh/code-server/commit/d4218b5bda90342b7b2672f36c3f4c80bc73924c)
+- tag-bedrock/tag-openlitespeed-bedrock - add new environment variables: DEMYX_NODE_VERSION DEMYX_SAGE_VERSION [a946d0f](https://github.com/demyxsh/code-server/commit/a946d0f146a3f5866308b883443561a4e39317ed)
+
 ## 2022-03-24
 - Use find to find the workbench.html since it's been relocating in recent code-server updates [297d5b8](https://github.com/demyxsh/code-server/commit/297d5b828aceba3ccc412c785efccdc03974ff50)
 - Use canvas as the default gpu acceleration for the terminal [e8f981c](https://github.com/demyxsh/code-server/commit/e8f981c12e4b4990fe977256dddf631bfbc9f669)
