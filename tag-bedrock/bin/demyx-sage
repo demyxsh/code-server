@@ -59,8 +59,11 @@ sage_new() {
         exit 1
     fi
 
-    composer create-project roots/sage "$DEMYX"/web/app/themes/"$SAGE_THEME"
+    composer create-project roots/sage:"$DEMYX_SAGE_VERSION" "$DEMYX"/web/app/themes/"$SAGE_THEME" || true
     yarn --cwd="$DEMYX"/web/app/themes/"$SAGE_THEME"
+    yarn cache clean
+    composer update --working-dir="$DEMYX"/web/app/themes/"$SAGE_THEME" --no-interaction
+    composer install --working-dir="$DEMYX"/web/app/themes/"$SAGE_THEME" --no-interaction
     wp theme activate "$SAGE_THEME"/resources
     sage_init "$SAGE_THEME"
 }
