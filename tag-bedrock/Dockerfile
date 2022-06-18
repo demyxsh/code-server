@@ -136,7 +136,7 @@ RUN set -ex; \
     su -c "curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh -o install.sh; \
         bash install.sh; \
         source /home/demyx/.nvm/nvm.sh; \
-        nvm install --lts; \
+        nvm install ${DEMYX_NODE_VERSION}; \
         npm install --global yarn; \
         tar -czf ${DEMYX_CONFIG}/nvm.tgz -C /home/demyx .nvm" -s /bin/bash demyx; \
     rm install.sh

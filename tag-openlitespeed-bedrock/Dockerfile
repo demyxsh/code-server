@@ -188,7 +188,7 @@ RUN set -ex; \
     \
     su -c "bash install.sh; \
         source /home/demyx/.nvm/nvm.sh; \
-        nvm install --lts; \
+        nvm install ${DEMYX_NODE_VERSION}; \
         npm install --global yarn; \
         tar -czf ${DEMYX_CONFIG}/nvm.tgz -C /home/demyx .nvm" -s /bin/bash demyx; \
     \
