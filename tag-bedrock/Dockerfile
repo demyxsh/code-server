@@ -195,7 +195,7 @@ RUN set -ex; \
     # Tag specifc extensions
     code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
         --install-extension="$DEMYX_CONFIG"/shevaua.phpcs-1.0.8.vsix \
-        --install-extension=cjhowe7.laravel-blade \
+        --install-extension=shufo.vscode-blade-formatter \
         --install-extension=felixfbecker.php-debug; \
     \
     # Custom fonts
