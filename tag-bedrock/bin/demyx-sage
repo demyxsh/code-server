@@ -41,16 +41,16 @@ sage_help() {
     echo "sage <arg>       Sage helper script"
     echo
     echo "     cmd         Run yarn commands"
-    echo "                 Ex: sage cmd theme-name yarn-commands"
+    echo "                 Ex: demyx-sage cmd theme-name yarn-commands"
     echo
     echo "     init        Initializes fixes for webpack"
-    echo "                 Ex: sage init theme-name"
+    echo "                 Ex: demyx-sage init theme-name"
     echo
     echo "     help        Help menu for sage helper script"
-    echo "                 Ex: sage help"
+    echo "                 Ex: demyx-sage help"
     echo
     echo "     new         Executes composer create-project, yarn, and sage init theme-name"
-    echo "                 Ex: sage new theme-name"
+    echo "                 Ex: demyx-sage new theme-name"
 }
 
 sage_new() {
