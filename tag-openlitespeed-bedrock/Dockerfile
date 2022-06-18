@@ -184,15 +184,13 @@ RUN set -ex; \
 
 # NPM & Yarn
 RUN set -ex; \
-    curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh -o install.sh; \
-    \
-    su -c "bash install.sh; \
+    su -c "curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh -o /tmp/install.sh; \
+        bash /tmp/install.sh; \
         source /home/demyx/.nvm/nvm.sh; \
         nvm install ${DEMYX_NODE_VERSION}; \
         npm install --global yarn; \
         tar -czf ${DEMYX_CONFIG}/nvm.tgz -C /home/demyx .nvm" -s /bin/bash demyx; \
-    \
-    rm install.sh
+    rm /tmp/install.sh
 
 # Bedrock
 RUN set -ex; \
