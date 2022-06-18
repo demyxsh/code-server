@@ -32,19 +32,19 @@ PHPMYADMIN | https://domain.tld/demyx/pma/
 `code-server:sage` comes with a helper script that wraps yarn commands and also does other things.
 
 ```
-demyx-sage <arg>        Sage helper script
+sage <arg>       Sage helper script
 
-           init         Initializes fixes for webpack
-                        Ex: sage -t <theme> init
+     cmd         Run yarn commands
+                 Ex: demyx-sage cmd theme-name yarn-commands
 
-           help         Help menu for sage helper script
-                        Ex: sage help
+     init        Initializes fixes for webpack
+                 Ex: demyx-sage init theme-name
 
-           new          Executes composer create-project, yarn, and sage -t <theme> init
-                        Ex: sage -t <theme> new
+     help        Help menu for sage helper script
+                 Ex: demyx-sage help
 
-           -t           Set the theme
-                        Ex: sage -t <theme> add <package>
+     new         Executes composer create-project, yarn, and sage init theme-name
+                 Ex: demyx-sage new theme-name
 ```
 
 When you run `docker-compose up -d`, it will probably take up to 10 seconds or less on the first time to initialize the container. You can see the output in real time by running `docker logs demyx_sage -f` to see what's installing in that moment.
