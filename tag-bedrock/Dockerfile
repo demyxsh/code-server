@@ -156,18 +156,6 @@ RUN set -ex; \
         \
         tar -czf ${DEMYX_CONFIG}/bedrock.tgz -C /tmp/bedrock ." -s /bin/sh demyx
 
-# Install Sage
-RUN set ex; \
-    su -c "composer create-project -n roots/sage /tmp/sage; \
-    \
-    yarn --cwd=/tmp/sage; \
-    yarn --cwd=/tmp/sage build; \
-    yarn cache clean; \
-    \
-    composer clearcache; \
-    \
-    tar -czf /tmp/sage.tgz -C /tmp sage" -s /bin/sh demyx
-
 # wp-cli
 RUN set -ex; \
     curl -sL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
