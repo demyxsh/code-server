@@ -58,6 +58,7 @@ RUN set -ex; \
         bsdmainutils \
         ca-certificates \
         curl \
+        default-mysql-client \
         dnsutils \
         ed \
         git \
