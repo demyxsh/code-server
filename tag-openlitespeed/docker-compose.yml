@@ -205,7 +205,7 @@ services:
       - DEMYX_DB_USER=demyx
       - DEMYX_DOMAIN=domain.tld
       - DEMYX_LOG=/var/log/demyx
-      - DEMYX_LSPHP_VERSION=lsphp74
+      - DEMYX_LSPHP=lsphp80
       - DEMYX_PHP_LSAPI_CHILDREN=2000
       - DEMYX_PHP_MAX_EXECUTION_TIME=300
       - DEMYX_PHP_MEMORY=256M

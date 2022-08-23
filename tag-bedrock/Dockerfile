@@ -163,7 +163,7 @@ RUN set -ex; \
 
 # Imports
 COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
-COPY --chown=root:root bin /usr/local/bin
+COPY bin /usr/local/bin
 COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 
 # Configure code-server

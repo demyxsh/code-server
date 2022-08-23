@@ -24,12 +24,11 @@ SHELL | zsh
 SHELL THEME | powerlevel10k
 WORDPRESS | https://domain.tld
 CODE-SERVER | https://domain.tld/demyx/cs/
-BROWSER-SYNC | https://domain.tld/demyx/bs/
 PHPMYADMIN | https://domain.tld/demyx/pma/
 
 ## Usage
 
-`code-server:sage` comes with a helper script that wraps yarn commands and also does other things.
+`demyx/code-server:bedrock` comes with a helper script that wraps yarn commands and also does other things.
 
 ```
 sage <arg>       Sage helper script
@@ -48,19 +47,6 @@ sage <arg>       Sage helper script
 ```
 
 When you run `docker-compose up -d`, it will probably take up to 10 seconds or less on the first time to initialize the container. You can see the output in real time by running `docker logs demyx_sage -f` to see what's installing in that moment.
-
-```
-# docker logs demyx_sage -f
-Creating demyx_cs    ... done
-Success: WordPress installed successfully.
-Success: Rewrite structure set.
-Success: Rewrite rules flushed.
-"[demyx] installing Sage..."
-Success: Switched to 'Sage Starter Theme' theme.
-info  Server listening on http://localhost:8080
-info    - Using custom password for authentication
-info    - Not serving HTTPS
-```
 
 * Configured for remote VPS
 * Ports 80 and 443 must be open when using Traefik

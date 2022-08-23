@@ -41,7 +41,7 @@ ENV DEMYX_DB_PASSWORD                           demyx
 ENV DEMYX_DB_USER                               demyx
 ENV DEMYX_DOMAIN                                localhost
 ENV DEMYX_LOG                                   /var/log/demyx
-ENV DEMYX_LSPHP_VERSION                         lsphp74
+ENV DEMYX_LSPHP                                 lsphp80
 ENV DEMYX_PHP_LSAPI_CHILDREN                    2000
 ENV DEMYX_PHP_MAX_EXECUTION_TIME                300
 ENV DEMYX_PHP_MEMORY                            256M
@@ -57,7 +57,7 @@ ENV DEMYX_TUNING_MAX_KEEP_ALIVE                 1000
 ENV DEMYX_TUNING_SMART_KEEP_ALIVE               1000
 ENV DEMYX_WP_CONFIG                             "${DEMYX}/wp-config.php"
 ENV DEMYX_XMLRPC                                false
-ENV PATH                                        "${PATH}:/usr/local/lsws/${DEMYX_LSPHP_VERSION}/bin"
+ENV PATH                                        "${PATH}:/usr/local/lsws/${DEMYX_LSPHP}/bin"
 ENV TERM                                        xterm-256color
 ENV TZ                                          America/Los_Angeles
 # Support for old variables
@@ -119,23 +119,20 @@ RUN set -ex; \
 
 # OpenLiteSpeed
 RUN set -ex; \
-    DEMYX_OLS_VERSION="$(wget -qO- https://api.github.com/repos/litespeedtech/openlitespeed/tags 2>&1 | jq -r '.[].name' | grep v1.6 | head -n 1 | sed 's|v||g' || true)"; \
-    if [ "$DEMYX_OLS_VERSION" = 1.6.20.1 ]; then DEMYX_OLS_VERSION=1.6.21; fi; \
-    if [ -z "$DEMYX_OLS_VERSION" ]; then DEMYX_OLS_VERSION=1.6.21; fi; \
-    wget https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -qO /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
+    DEMYX_OLS_VERSION="$(wget -qO- https://api.github.com/repos/litespeedtech/openlitespeed/tags 2>&1 | jq -r '.[].name' | head -n 1 | sed 's|v||g' || true)"; \
+    curl -sL https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -o /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
     \
     wget -O - https://rpms.litespeedtech.com/debian/enable_lst_debian_repo.sh | bash; \
     \
     apt-get update && apt-get install -y \
-        "$DEMYX_LSPHP_VERSION" \
-        "$DEMYX_LSPHP_VERSION"-curl \
-        "$DEMYX_LSPHP_VERSION"-imagick \
-        "$DEMYX_LSPHP_VERSION"-json \
-        "$DEMYX_LSPHP_VERSION"-mysql; \
+        "$DEMYX_LSPHP" \
+        "$DEMYX_LSPHP"-curl \
+        "$DEMYX_LSPHP"-imagick \
+        "$DEMYX_LSPHP"-mysql; \
     \
-    ln -sf /usr/local/lsws/"$DEMYX_LSPHP_VERSION"/bin/lsphp /usr/local/lsws/fcgi-bin/lsphp5; \
+    ln -sf /usr/local/lsws/"$DEMYX_LSPHP"/bin/lsphp /usr/local/lsws/fcgi-bin/lsphp5; \
     \
     # Create directory for lsadm user
     install -d -m 0755 -o lsadm -g lsadm "$DEMYX_CONFIG"/ols; \
@@ -160,7 +157,7 @@ RUN set -ex; \
 
 # Xdebug
 RUN set -ex; \
-    apt-get install -y "$DEMYX_LSPHP_VERSION"-pear; \
+    apt-get install -y "$DEMYX_LSPHP"-pear; \
     \
     ln -s /bin/sed /usr/bin/sed; \
     \
@@ -171,7 +168,7 @@ RUN set -ex; \
     \
     echo "[XDebug]\nzend_extension = ${DEMYX_FIND_XDEBUG}\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1" >> "$DEMYX_FIND_INI"; \
     \
-    apt-get purge -y "$DEMYX_LSPHP_VERSION"-pear; \
+    apt-get purge -y "$DEMYX_LSPHP"-pear; \
     apt-get autoremove -y
 
 # WordPress
@@ -193,7 +190,7 @@ RUN set -ex; \
 
 # Imports
 COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
-COPY --chown=root:root bin /usr/local/bin
+COPY bin /usr/local/bin
 COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 
 # Configure code-server
