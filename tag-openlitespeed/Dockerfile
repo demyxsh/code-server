@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 LABEL sh.demyx.image                            demyx/code-server:openlitespeed
 LABEL sh.demyx.maintainer                       Demyx <info@demyx.sh>
