@@ -3,17 +3,10 @@
 # https://demyx.sh
 set -euo pipefail
 
-# Support for old variables
-[[ -n "${BROWSERSYNC_PROXY:-}" ]] && DEMYX_PROXY="$BROWSERSYNC_PROXY"
-[[ -n "${OPENLITESPEED_CONFIG:-}" ]] && DEMYX_CONFIG="$OPENLITESPEED_ROOT"
-[[ -n "${OPENLITESPEED_ROOT:-}" ]] && DEMYX="$OPENLITESPEED_ROOT"
-
 # Define variables
 SAGE_COMMAND="${1:-help}"
 SAGE_THEME="${2:-sage}"
-SAGE_WEBPACK_CONFIG="$DEMYX"/web/app/themes/"$SAGE_THEME"/resources/assets/build/webpack.config.watch.js
-# shellcheck disable=2034
-NODE_OPTIONS=
+SAGE_BUD_CONFIG="$DEMYX"/web/app/themes/"$SAGE_THEME"/bud.config.mjs
 
 sage_cmd() {
     echo -e "[\e[34m${SAGE_THEME}\e[39m] yarn ${SAGE_COMMAND}"
@@ -22,19 +15,14 @@ sage_cmd() {
 
 sage_init() {
     WP_HOME="$(grep WP_HOME= "$DEMYX"/.env | awk -F '[=]' '{print $2}')"
-    WP_DOMAIN="$(echo "$WP_HOME" | awk -F/ '{print $3}')"
 
     if [[ ! -d "$DEMYX"/web/app/themes/"$SAGE_THEME" ]]; then
         echo -e "\n\e[31m${SAGE_THEME} doesn't exist\e[39m\n"
         sage_help
     fi
 
-    echo -e "$(cat "$DEMYX_CONFIG"/bs.js)\n$(cat "$SAGE_WEBPACK_CONFIG")" > "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|delay: 500|delay: 500, advanced: demyxBS|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|config.proxyUrl +|'$WP_HOME' +|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|domain.tld|$WP_DOMAIN|g" "$SAGE_WEBPACK_CONFIG"
-    sed -i "s|\"devUrl\": .*|\"devUrl\": \"${DEMYX_PROXY:-}\",|g" "$DEMYX"/web/app/themes/"$SAGE_THEME"/resources/assets/config.json
-    echo -e "\nmodule.hot.accept();" >> "$DEMYX"/web/app/themes/"$SAGE_THEME"/resources/assets/scripts/main.js
+    sed -i "s|.proxy.*|.proxy(\"${WP_HOME}\")|g" "$SAGE_BUD_CONFIG"
+    sed -i "s|.serve.*|.serve(\"http://${DEMYX_PROXY}:3000\")|g" "$SAGE_BUD_CONFIG"
 }
 
 sage_help() {
@@ -59,13 +47,13 @@ sage_new() {
         exit 1
     fi
 
-    composer create-project roots/sage:"$DEMYX_SAGE_VERSION" "$DEMYX"/web/app/themes/"$SAGE_THEME" || true
+    composer create-project roots/sage "$DEMYX"/web/app/themes/"$SAGE_THEME"
     yarn --cwd="$DEMYX"/web/app/themes/"$SAGE_THEME"
+    yarn --cwd="$DEMYX"/web/app/themes/"$SAGE_THEME" build
     yarn cache clean
-    composer update --working-dir="$DEMYX"/web/app/themes/"$SAGE_THEME" --no-interaction
-    composer install --working-dir="$DEMYX"/web/app/themes/"$SAGE_THEME" --no-interaction
-    wp theme activate "$SAGE_THEME"/resources
     sage_init "$SAGE_THEME"
+    wp theme activate "$SAGE_THEME"
+    yarn --cwd="$DEMYX"/web/app/themes/"$SAGE_THEME" dev
 }
 
 case "$SAGE_COMMAND" in
