@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2022-08-23
+- Misc updates [582844b](https://github.com/demyxsh/code-server/commit/582844ba521b68c781dac610d38332f45954e983)
+- Install roots/acorn into bedrock's composer.json [ec5fbd3](https://github.com/demyxsh/code-server/commit/ec5fbd34547c546eb7ac00702c67fde1be649c2a)
+- Use latest LTS version for nvm/npm [fa47753](https://github.com/demyxsh/code-server/commit/fa477534dadab5b3f7e7d9bf6f47d9fd5d0002ff)
+- Replace php extension install script [5979a67](https://github.com/demyxsh/code-server/commit/5979a67bad143538db67a887676562c96457b7e5)
+- Update default packages [e897bb6](https://github.com/demyxsh/code-server/commit/e897bb6627835fa14c6ca8ce33a4dd1bc8e4092d)
+- Update environment variables [6ad04a6](https://github.com/demyxsh/code-server/commit/6ad04a6c61967d223c7c8476820ad733a0b89e25)
+- Update to php8 and bullseye [3c0d2cd](https://github.com/demyxsh/code-server/commit/3c0d2cda4fce47677a54ebb4bd9f49f1dc64fd92)
+- Update to bullseye [2878681](https://github.com/demyxsh/code-server/commit/2878681e806ce94df91724f9bec99d8e01e8c754)
+- Update traefik rules for Sage 10 [572fc87](https://github.com/demyxsh/code-server/commit/572fc87e4027e1ffff5a0ca10ea2ccd4efa99350)
+- Update echo strings when opening terminal for the first time [9c7bc1a](https://github.com/demyxsh/code-server/commit/9c7bc1ac3e0e07ceecb52bd6c6a7c24d09749144)
+- Update sage helper script for sage 10 [4b1c311](https://github.com/demyxsh/code-server/commit/4b1c3114bc694771732a879ccce93689ba6c1319)
+
 ## 2022-06-17
 - tag-wp - add missing package default-mysql-client for wp-cli [32fb748](https://github.com/demyxsh/code-server/commit/32fb748b84a5703b4fd5746c635f144079f237b4)
 - tag-bedrock/tag-openlitespeed-bedrock - echo out useful information about demyx-sage commands [8561d3a](https://github.com/demyxsh/code-server/commit/8561d3ab52698514df194a1cded5026aa4ed9c05)
