@@ -15,6 +15,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
 # Echo out demyx-sage commands
-echo -e "\n\e[33m[INFO]\e[39m To install sage theme: demyx-sage new [theme name]"
-echo -e "\e[33m[INFO]\e[39m To start browsersync after sage theme is installed: demyx-sage cmd [theme name] start"
+echo -e "\n\e[33m[INFO]\e[39m To install sage theme and start dev: demyx-sage new [theme name]"
+echo -e "\e[33m[INFO]\e[39m For yarn command shortcuts: demyx-sage cmd [theme name] <command>"
 echo -e "\e[33m[INFO]\e[39m For more info: demyx-sage help\n"
