@@ -198,9 +198,7 @@ RUN set -ex; \
     # Upgrade WordPress to latest version
     sed -i 's|"roots/wordpress": .*|"roots/wordpress": ">5",|g' /tmp/bedrock/composer.json; \
     \
-    su -c "cd /tmp/bedrock && composer update; \
-        \
-        composer clearcache; \
+    su -c "cd /tmp/bedrock && composer require roots/acorn; \
         \
         cp -r . ${DEMYX}; \
         \
