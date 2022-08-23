@@ -77,20 +77,18 @@ RUN set -ex; \
         zsh; \
     \
     # PHP extensions
-    curl -sL https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions -o /usr/local/bin/install-php-extensions; \
-    chmod uga+x /usr/local/bin/install-php-extensions; \
-    sync; \
-    install-php-extensions \
+    docker-php-ext-install \
         exif \
         gd \
-        imagick \
         mysqli \
         opcache \
         pdo_mysql \
-        ssh2 \
         sockets \
-        xdebug \
-        zip
+        zip; \
+    \
+    pecl install imagick ssh2 xdebug; \
+    \
+    docker-php-ext-enable imagick xdebug
 
 # Configure Demyx
 RUN set -ex; \
