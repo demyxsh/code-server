@@ -65,6 +65,10 @@ RUN set -ex; \
         iputils-ping \
         jq \
         less \
+        libpng-dev \
+        libzip-dev \
+        libmagickwand-dev \
+        libmagickcore-dev \
         nano \
         net-tools \
         openssh-client \
@@ -74,6 +78,7 @@ RUN set -ex; \
         unzip \
         util-linux \
         wget \
+        zlib1g-dev \
         zsh; \
     \
     # PHP extensions
