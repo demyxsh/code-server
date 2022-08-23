@@ -29,7 +29,6 @@ ENV DEMYX_EMERGENCY_RESTART_THRESHOLD   5
 ENV DEMYX_LOG                           /var/log/demyx
 ENV DEMYX_MAX_EXECUTION_TIME            300
 ENV DEMYX_MEMORY                        256M
-ENV DEMYX_NODE_VERSION                  8.0.0
 ENV DEMYX_OPCACHE                       true
 ENV DEMYX_PM                            ondemand
 ENV DEMYX_PM_MAX_CHILDREN               25
@@ -40,7 +39,6 @@ ENV DEMYX_PM_PROCESS_IDLE_TIMEOUT       3s
 ENV DEMYX_PM_START_SERVERS              5
 ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
 ENV DEMYX_PROXY                         localhost
-ENV DEMYX_SAGE_VERSION                  9.0.9
 ENV DEMYX_SSL                           false
 ENV DEMYX_UPLOAD_LIMIT                  128M
 ENV TERM                                xterm-256color

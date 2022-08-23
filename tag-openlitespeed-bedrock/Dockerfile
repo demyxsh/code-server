@@ -43,8 +43,7 @@ ENV DEMYX_DB_PASSWORD                           demyx
 ENV DEMYX_DB_USER                               demyx
 ENV DEMYX_DOMAIN                                localhost
 ENV DEMYX_LOG                                   /var/log/demyx
-ENV DEMYX_LSPHP_VERSION                         lsphp74
-ENV DEMYX_NODE_VERSION                          8.0.0
+ENV DEMYX_LSPHP                                 lsphp80
 ENV DEMYX_PHP_LSAPI_CHILDREN                    2000
 ENV DEMYX_PHP_MAX_EXECUTION_TIME                300
 ENV DEMYX_PHP_MEMORY                            256M
@@ -54,7 +53,6 @@ ENV DEMYX_PROXY                                 localhost
 ENV DEMYX_RECAPTCHA_CONNECTION_LIMIT            500
 ENV DEMYX_RECAPTCHA_ENABLE                      1
 ENV DEMYX_RECAPTCHA_TYPE                        2
-ENV DEMYX_SAGE_VERSION                          9.0.9
 ENV DEMYX_SSL                                   false
 ENV DEMYX_TUNING_CONNECTION_TIMEOUT             300
 ENV DEMYX_TUNING_KEEP_ALIVE_TIMEOUT             300
