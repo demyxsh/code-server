@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2022-08-29
+- Make sure file exist [c155ae7](https://github.com/demyxsh/code-server/commit/c155ae79444ffaac3c4404f9a1542ba7c6dd5da5)
+
 ## 2022-08-23
 - Misc updates [582844b](https://github.com/demyxsh/code-server/commit/582844ba521b68c781dac610d38332f45954e983)
 - Install roots/acorn into bedrock's composer.json [ec5fbd3](https://github.com/demyxsh/code-server/commit/ec5fbd34547c546eb7ac00702c67fde1be649c2a)
