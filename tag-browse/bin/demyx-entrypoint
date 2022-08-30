@@ -31,9 +31,11 @@ if [[ -d /home/demyx/.code/extensions ]]; then
 fi
 
 # Update oh-my-zsh
-DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
-if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
-    sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
+if [[ -f /home/demyx/.zshrc ]]; then
+    DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
+    if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
+        sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
+    fi
 fi
 
 # Remove export GPG_TTY
