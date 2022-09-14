@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2022-09-14
+- Put if statement inside the others [f7742d0](https://github.com/demyxsh/code-server/commit/f7742d04109ed11ed8ee88ee2297a6be4706c1bd)
+
 ## 2022-08-29
 - Make sure file exist [c155ae7](https://github.com/demyxsh/code-server/commit/c155ae79444ffaac3c4404f9a1542ba7c6dd5da5)
 
