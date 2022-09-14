@@ -31,11 +31,11 @@ if [[ -f /home/demyx/.zshrc ]]; then
     if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
         sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
     fi
-fi
 
-# Remove export GPG_TTY
-if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
-    sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
+    # Remove export GPG_TTY
+    if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
+        sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
+    fi
 fi
 
 # Remove autoupdate
