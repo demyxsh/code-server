@@ -1,5 +1,5 @@
 {
   "debian": "10.13",
   "go": "1.19.1",
-  "code_server": "4.7.0"
+  "code_server": "4.7.1"
 }
