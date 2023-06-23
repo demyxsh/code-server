@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-06-23
+- Enable auto update for ohmyzsh [5059abb](https://github.com/demyxsh/code-server/commit/5059abbba09886fa93494d968f22e9e0ce116b1d)
+
 ## 2022-09-14
 - Put if statement inside the others [f7742d0](https://github.com/demyxsh/code-server/commit/f7742d04109ed11ed8ee88ee2297a6be4706c1bd)
 
