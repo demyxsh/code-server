@@ -66,6 +66,8 @@ RUN set -ex; \
         jq \
         less \
         libpng-dev \
+        libssh2-1-dev \
+        libssh2-1 \
         libzip-dev \
         libmagickwand-dev \
         libmagickcore-dev \
@@ -79,9 +81,10 @@ RUN set -ex; \
         util-linux \
         wget \
         zlib1g-dev \
-        zsh; \
-    \
-    # PHP extensions
+        zsh
+
+# PHP extensions
+RUN set -ex; \
     docker-php-ext-install \
         exif \
         gd \
@@ -89,11 +92,15 @@ RUN set -ex; \
         opcache \
         pdo_mysql \
         sockets \
-        zip; \
-    \
-    pecl install imagick ssh2 xdebug; \
-    \
-    docker-php-ext-enable imagick xdebug
+        zip
+
+# PECL
+RUN set -ex; \
+    pecl install imagick ssh2 xdebug
+
+# Enable extensions
+RUN set -ex; \
+    docker-php-ext-enable imagick xdebug ssh2
 
 # Configure Demyx
 RUN set -ex; \
