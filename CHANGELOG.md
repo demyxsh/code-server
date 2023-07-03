@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-07-02
+- Fix libssh2 library was not found error [7078b23](https://github.com/demyxsh/code-server/commit/7078b238307f0b5dbee753aada260bce56fb8733)
+
 ## 2023-06-23
 - Enable auto update for ohmyzsh [5059abb](https://github.com/demyxsh/code-server/commit/5059abbba09886fa93494d968f22e9e0ce116b1d)
 
