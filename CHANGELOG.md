@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-07-03
+- Fix pecl install error [e197cd8](https://github.com/demyxsh/code-server/commit/e197cd8d3528ddfe453bb8c41b8813db089e77cd)
+
 ## 2023-07-02
 - Fix libssh2 library was not found error [7078b23](https://github.com/demyxsh/code-server/commit/7078b238307f0b5dbee753aada260bce56fb8733)
 
