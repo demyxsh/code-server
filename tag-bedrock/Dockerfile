@@ -6,46 +6,15 @@ LABEL sh.demyx.url                      https://demyx.sh
 LABEL sh.demyx.github                   https://github.com/demyxsh
 LABEL sh.demyx.registry                 https://hub.docker.com/u/demyx
 
-# Set default variables
-ENV DEMYX                               /demyx
-ENV DEMYX_ADMIN_EMAIL                   info@localhost
-ENV DEMYX_ADMIN_PASSWORD                demyx
-ENV DEMYX_ADMIN_USERNAME                demyx
-ENV DEMYX_BEDROCK                       true
-ENV DEMYX_BEDROCK_MODE                  development
-ENV DEMYX_CODE_AUTH                     password
-ENV DEMYX_CODE_BIND_ADDR                0.0.0.0:8080
-ENV DEMYX_CODE_CONFIG                   /home/demyx/.config/code-server
-ENV DEMYX_CODE_PASSWORD                 demyx
-ENV DEMYX_CONFIG                        /etc/demyx
-ENV DEMYX_DB_HOST                       localhost
-ENV DEMYX_DB_NAME                       demyx
-ENV DEMYX_DB_PASSWORD                   demyx
-ENV DEMYX_DB_USER                       demyx
-ENV DEMYX_DOMAIN                        localhost
-ENV DEMYX_EMERGENCY_RESTART_INTERVAL    1m
-ENV DEMYX_EMERGENCY_RESTART_THRESHOLD   5
-ENV DEMYX_LOG                           /var/log/demyx
-ENV DEMYX_MAX_EXECUTION_TIME            300
-ENV DEMYX_MEMORY                        256M
-ENV DEMYX_OPCACHE                       true
-ENV DEMYX_PM                            ondemand
-ENV DEMYX_PM_MAX_CHILDREN               25
-ENV DEMYX_PM_MAX_REQUESTS               25000
-ENV DEMYX_PM_MAX_SPARE_SERVERS          20
-ENV DEMYX_PM_MIN_SPARE_SERVERS          5
-ENV DEMYX_PM_PROCESS_IDLE_TIMEOUT       3s
-ENV DEMYX_PM_START_SERVERS              5
-ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
-ENV DEMYX_PROXY                         localhost
-ENV DEMYX_SSL                           false
-ENV DEMYX_UPLOAD_LIMIT                  128M
-ENV TERM                                xterm-256color
-ENV TZ                                  America/Los_Angeles
+# Default bedrock to production
+ENV DEMYX_BEDROCK               true
+ENV DEMYX_BEDROCK_MODE          production
+ENV DEMYX_SSL                   false
+ENV DEMYX_WP_CONFIG             "${DEMYX}/web/wp-config.php"
 # Support for old variables
-ENV CODE_ROOT                           "$DEMYX"
-ENV CODE_CONFIG                         "$DEMYX_CONFIG"
-ENV CODE_LOG                            "$DEMYX_LOG"
+ENV CODE_ROOT                                   "$DEMYX"
+ENV CODE_CONFIG                                 "$DEMYX_CONFIG"
+ENV CODE_LOG                                    "$DEMYX_LOG"
 
 # Packages
 RUN set -ex; \
