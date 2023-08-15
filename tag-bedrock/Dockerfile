@@ -16,40 +16,8 @@ ENV CODE_ROOT                                   "$DEMYX"
 ENV CODE_CONFIG                                 "$DEMYX_CONFIG"
 ENV CODE_LOG                                    "$DEMYX_LOG"
 
-# Packages
-RUN set -ex; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        bash \
-        build-essential \
-        bsdmainutils \
-        ca-certificates \
-        curl \
-        default-mysql-client \
-        dnsutils \
-        ed \
-        git \
-        gnupg \
-        htop \
-        iputils-ping \
-        jq \
-        less \
-        libpng-dev \
-        libssh2-1-dev \
-        libssh2-1 \
-        libzip-dev \
-        libmagickwand-dev \
-        libmagickcore-dev \
-        nano \
-        net-tools \
-        openssh-client \
-        procps \
-        sudo \
-        tzdata \
-        unzip \
-        util-linux \
-        wget \
-        zlib1g-dev \
-        zsh
+# Need root stuff
+USER root
 
 # PHP extensions
 RUN set -ex; \

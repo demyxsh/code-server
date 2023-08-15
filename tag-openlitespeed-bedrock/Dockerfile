@@ -16,35 +16,8 @@ ENV CODE_ROOT                                   "$DEMYX"
 ENV CODE_CONFIG                                 "$DEMYX_CONFIG"
 ENV CODE_LOG                                    "$DEMYX_LOG"
 
-# Packages
-RUN set -ex; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        bash \
-        build-essential \
-        bsdmainutils \
-        ca-certificates \
-        curl \
-        default-mysql-client \
-        dnsutils \
-        ed \
-        git \
-        gnupg \
-        htop \
-        iputils-ping \
-        jq \
-        less \
-        lsb-release \
-        nano \
-        net-tools \
-        openssh-client \
-        procps \
-        ruby \
-        sudo \
-        tzdata \
-        unzip \
-        util-linux \
-        wget \
-        zsh
+# Need root stuff
+USER root
 
 # Configure Demyx
 RUN set -ex; \
