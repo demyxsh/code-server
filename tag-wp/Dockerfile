@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8-fpm-bullseye
+FROM php:8.0-fpm-bullseye
 
 LABEL sh.demyx.image                    demyx/code-server:wp
 LABEL sh.demyx.maintainer               Demyx <info@demyx.sh>
