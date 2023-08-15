@@ -211,11 +211,18 @@ RUN set -ex; \
     apt-get purge -y build-essential $DEMYX_XDEBUG_DEPS; \
     apt-get autoremove -y
 
+# Configure Xdebug
+RUN set -ex; \
+    DEMYX_FIND_XDEBUG="$(find /usr/local/lib/php/extensions -name 'xdebug.so')"; \
+    DEMYX_FIND_SO="$(find /usr/local/lsws/lsphp* -name 'opcache.so' 2>/dev/null)"; \
+    DEMYX_FIND_INI="$(find /usr/local/lsws/lsphp* -name 'php.ini' 2>/dev/null)"; \
+    DEMYX_FIND_MODS="$(find /usr/local/lsws/lsphp*/etc/php/*/mods-available -name 'opcache.ini' 2>/dev/null)"; \
     \
-    echo "[XDebug]\nzend_extension = ${DEMYX_FIND_XDEBUG}\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1" >> "$DEMYX_FIND_INI"; \
+    DEMYX_ECHO_XDEBUG="[XDebug]\nzend_extension = ${DEMYX_FIND_XDEBUG}\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1"; \
     \
-    apt-get purge -y build-essential $DEMYX_XDEBUG_DEPS; \
-    apt-get autoremove -y
+    for i in $DEMYX_FIND_SO; do DEMYX_SED="$(echo "$i" | sed 's|opcache.so||g')" && cp "$DEMYX_FIND_XDEBUG" "$DEMYX_SED"; done; \
+    for i in $DEMYX_FIND_INI; do echo "$DEMYX_ECHO_XDEBUG" >> "$i"; done; \
+    for i in $DEMYX_FIND_MODS; do DEMYX_SED="$(echo "$i" | sed 's|opcache.ini||g')" && echo "zend_extension=xdebug" > "$DEMYX_SED"/xdebug.ini; done
 
 # WordPress
 RUN set -ex; \
