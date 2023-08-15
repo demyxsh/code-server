@@ -108,6 +108,25 @@ RUN set -ex; \
         zlib1g-dev \
         zsh
 
+# PHP extensions
+RUN set -ex; \
+    docker-php-ext-install \
+        exif \
+        gd \
+        mysqli \
+        opcache \
+        pdo_mysql \
+        sockets \
+        zip
+
+# PECL
+RUN set -ex; \
+    pecl install imagick ssh2
+
+# Enable extensions
+RUN set -ex; \
+    docker-php-ext-enable imagick ssh2
+
 # Configure Demyx
 RUN set -ex; \
     # Create demyx user
