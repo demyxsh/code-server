@@ -239,7 +239,10 @@ RUN set -ex; \
 # wp-cli
 RUN set -ex; \
     curl -sL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp; \
-    chmod +x /usr/local/bin/wp
+    chmod +x /usr/local/bin/wp; \
+    \
+    su -c "wp package install aaemnnosttv/wp-cli-login-command; \
+        wget https://raw.githubusercontent.com/aaemnnosttv/wp-cli-login-command/master/plugin/wp-cli-login-server.php -qO ${DEMYX_CONFIG}/wp-cli-login-server.php" -s /bin/sh demyx
 
 # Imports
 COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
