@@ -2,103 +2,127 @@
 # Demyx
 # https://demyx.sh
 set -euo pipefail
+#
+#   Main.
+#
+demyx_entrypoint() {
+    # Support for old password variable
+    [[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
 
-# Support for old password variable
-[[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
+    # Generate config
+    demyx-config
 
-# Create new code-server config directory
-if [[ ! -d /home/demyx/.config ]]; then
-    mkdir -p /home/demyx/.config
-    cp -r "$DEMYX_CONFIG"/code-server /home/demyx/.config
-fi
+    # Auto install WordPress if it's not installed already
+    demyx-install
 
-# Migrate old configs to new directory
-if [[ -d /home/demyx/.code/data ]]; then
-    mkdir -p "$DEMYX_CODE_CONFIG"/data
-    cp -r /home/demyx/.code/data/. "$DEMYX_CODE_CONFIG"
-    rm -rf /home/demyx/.code/data
-fi
+    # Start crond
+    sudo -E demyx-sudo cron
 
-if [[ -d /home/demyx/.code/extensions ]]; then
-    mkdir -p "$DEMYX_CODE_CONFIG"/extensions
-    cp -r /home/demyx/.code/extensions/. "$DEMYX_CODE_CONFIG"
-    rm -rf /home/demyx/.code/extensions
-fi
+    # Default to php version 8 if user inputs an incorrect version
+    case "$DEMYX_PHP" in
+        8|8.0)
+            DEMYX_PHP=8
+        ;;
+        8.1)
+            DEMYX_PHP=81
+        ;;
+        *)
+            DEMYX_PHP=8
+        ;;
+    esac
 
-# Update oh-my-zsh
-if [[ -f /home/demyx/.zshrc ]]; then
-    DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
-    if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
-        sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
+    # Start php-fpm in the background
+    php-fpm -D
+
+    # Create new code-server config directory
+    if [[ ! -d /home/demyx/.config ]]; then
+        mkdir -p /home/demyx/.config
+        cp -r "$DEMYX_CONFIG"/code-server /home/demyx/.config
     fi
 
-    # Remove export GPG_TTY
-    if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
-        sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
+    # Migrate old configs to new directory
+    if [[ -d /home/demyx/.code/data ]]; then
+        mkdir -p "$DEMYX_CODE_CONFIG"/data
+        cp -r /home/demyx/.code/data/. "$DEMYX_CODE_CONFIG"
+        rm -rf /home/demyx/.code/data
     fi
-fi
 
-# Remove autoupdate
-if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
-    rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
-fi
-# Double check zsh-autosuggestions
-if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-fi
+    if [[ -d /home/demyx/.code/extensions ]]; then
+        mkdir -p "$DEMYX_CODE_CONFIG"/extensions
+        cp -r /home/demyx/.code/extensions/. "$DEMYX_CODE_CONFIG"
+        rm -rf /home/demyx/.code/extensions
+    fi
 
-# Remove autoupdate
-if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
-    rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
-fi
-# Double check autoupdate
-if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/autoupdate ]]; then
-    git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate
-fi
+    # Update oh-my-zsh
+    if [[ -f /home/demyx/.zshrc ]]; then
+        DEMYX_ZSHRC_CHECK="$(cat < /home/demyx/.zshrc)"
+        if [[ "$DEMYX_ZSHRC_CHECK" != *"source \"\$DEMYX_CONFIG\""* ]]; then
+            sed -i "s|source \$ZSH/oh-my-zsh.sh|source \"\$DEMYX_CONFIG\"/.demyxrc\nsource \$ZSH/oh-my-zsh.sh|g" /home/demyx/.zshrc
+        fi
 
-# Double check powerlevel10k theme
-if [[ ! -d /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k ]]; then
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k
-fi
+        # Remove export GPG_TTY
+        if [[ "$DEMYX_ZSHRC_CHECK" == *"export GPG_TTY"* ]]; then
+            sed -i "/export GPG_TTY/d" /home/demyx/.zshrc
+        fi
+    fi
 
-# Check for font-family
-DEMYX_SETTINGS_CHECK="$(cat < "$DEMYX_CODE_CONFIG"/data/User/settings.json)"
-if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
-    sed -i "s|\"editor.quickSuggestions\": true,|\
-    \"editor.fontFamily\": \"'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace\",\n\
-    \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
-fi
+    # Remove autoupdate
+    if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
+        rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
+    fi
+    # Double check zsh-autosuggestions
+    if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
+        git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    fi
 
-# Generate config
-demyx-config
+    # Remove autoupdate
+    if [[ -d /home/demyx/.oh-my-zsh/plugins/autoupdate ]]; then
+        rm -rf /home/demyx/.oh-my-zsh/plugins/autoupdate
+    fi
+    # Double check autoupdate
+    if [[ ! -d /home/demyx/.oh-my-zsh/custom/plugins/autoupdate ]]; then
+        git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate
+    fi
 
-# Auto install WordPress if it's not installed already
-demyx-install
+    # Double check powerlevel10k theme
+    if [[ ! -d /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k ]]; then
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k
+    fi
 
-# Install demyx helper plugin
-[[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
-cp "$DEMYX_CONFIG"/bs.php "$DEMYX"/wp-content/mu-plugins
+    # Check for font-family
+    DEMYX_SETTINGS_CHECK="$(cat < "$DEMYX_CODE_CONFIG"/data/User/settings.json)"
+    if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
+        sed -i "s|\"editor.quickSuggestions\": true,|\
+        \"editor.fontFamily\": \"'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace\",\n\
+        \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
+    fi
 
-# Configure xdebug
-if [[ ! -d "$DEMYX"/.vscode ]]; then
-    install -d -m 0755 -o demyx -g demyx "$DEMYX"/.vscode
-    cp "$DEMYX_CONFIG"/launch.json "$DEMYX"/.vscode
-fi
+    # Install demyx helper plugin
+    [[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
+    cp "$DEMYX_CONFIG"/bs.php "$DEMYX"/wp-content/mu-plugins
 
-# Set wp-config.php to debug mode
-sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX"/wp-config.php
+    # Configure xdebug
+    if [[ ! -d "$DEMYX"/.vscode ]]; then
+        install -d -m 0755 -o demyx -g demyx "$DEMYX"/.vscode
+        cp "$DEMYX_CONFIG"/launch.json "$DEMYX"/.vscode
+    fi
 
-# Start php-fpm in the background
-php-fpm -D
+    # Set wp-config.php to debug mode
+    sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX_WP_CONFIG"
 
-# Generate code-server yaml
-echo "auth: $DEMYX_CODE_AUTH
-bind-addr: $DEMYX_CODE_BIND_ADDR
-cert: false
-disable-telemetry: true
-extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
-password: $DEMYX_CODE_PASSWORD
-user-data-dir: ${DEMYX_CODE_CONFIG}/data" > "$DEMYX_CODE_CONFIG"/config.yaml
+    # Generate code-server yaml
+    echo "auth: $DEMYX_CODE_AUTH
+    bind-addr: $DEMYX_CODE_BIND_ADDR
+    cert: false
+    disable-telemetry: true
+    extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
+    password: $DEMYX_CODE_PASSWORD
+    user-data-dir: ${DEMYX_CODE_CONFIG}/data" | sed 's|    ||g' > "$DEMYX_CODE_CONFIG"/config.yaml
 
-# Start code-server
-code-server "$DEMYX"
+    # Start code-server
+    code-server "$DEMYX"
+}
+#
+#   Init.
+#
+demyx_entrypoint

@@ -2,18 +2,26 @@
 # Demyx
 # https://demyx.sh
 set -euo pipefail
+#
+#   Main.
+#
+demyx_encrypt() {
+    # Default to null of first argument is missing
+    local DEMYX_ENCRYPT="${1:-}"
 
-# Default to null of first argument is missing
-DEMYX_ENCRYPT_PASSWORD="${1:-}"
+    # Exit script if empty
+    if [[ -z "$DEMYX_ENCRYPT" ]]; then
+        echo "First argument requires a value!"
+        exit 1
+    fi
 
-# Exit script if empty
-if [[ -z "$DEMYX_ENCRYPT_PASSWORD" ]]; then
-    echo "First argument requires a value!"
-    exit 1
-fi
+    # Encrypt password using OLS core script
+    DEMYX_ENCRYPT="$(/usr/local/lsws/admin/fcgi-bin/admin_php -q /usr/local/lsws/admin/misc/htpasswd.php "$DEMYX_ENCRYPT")"
 
-# Encrypt password using OLS core script
-DEMYX_ENCRYPT="$(/usr/local/lsws/admin/fcgi-bin/admin_php -q /usr/local/lsws/admin/misc/htpasswd.php "$DEMYX_ENCRYPT_PASSWORD")"
-
-# Output encrypted password
-echo "$DEMYX_ENCRYPT"
+    # Output encrypted password
+    echo "$DEMYX_ENCRYPT"
+}
+#
+#   Init.
+#
+demyx_encrypt "$@"
