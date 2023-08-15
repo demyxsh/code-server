@@ -232,6 +232,9 @@ RUN set -ex; \
     ln -s "$DEMYX_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
     ln -s "$DEMYX_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
     \
+    # Configure sudo
+    echo "demyx ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/demyx-sudo" > /etc/sudoers.d/demyx; \
+    \
     # Set ownership
     chown -R root:root /usr/local/bin; \
     \
