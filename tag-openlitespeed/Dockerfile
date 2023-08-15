@@ -35,12 +35,18 @@ ENV DEMYX_CODE_PASSWORD                         demyx
 ENV DEMYX_CONFIG                                /etc/demyx
 ENV DEMYX_CRAWLER_LOAD_LIMIT                    5.2
 ENV DEMYX_CRAWLER_USLEEP                        1000
+ENV DEMYX_CRON                                  true
+ENV DEMYX_CRON_LOGROTATE_INTERVAL               "0 0 * * *"
+ENV DEMYX_CRON_WP_INTERVAL                      "*/5 * * * *"
 ENV DEMYX_DB_HOST                               localhost
 ENV DEMYX_DB_NAME                               demyx
 ENV DEMYX_DB_PASSWORD                           demyx
-ENV DEMYX_DB_USER                               demyx
+ENV DEMYX_DB_USERNAME                           demyx
 ENV DEMYX_DOMAIN                                localhost
 ENV DEMYX_LOG                                   /var/log/demyx
+ENV DEMYX_LOGROTATE                             daily
+ENV DEMYX_LOGROTATE_INTERVAL                    7
+ENV DEMYX_LOGROTATE_SIZE                        10M
 ENV DEMYX_LSPHP                                 lsphp80
 ENV DEMYX_PHP_LSAPI_CHILDREN                    2000
 ENV DEMYX_PHP_MAX_EXECUTION_TIME                300
@@ -56,6 +62,9 @@ ENV DEMYX_TUNING_MAX_CONNECTIONS                20000
 ENV DEMYX_TUNING_MAX_KEEP_ALIVE                 1000
 ENV DEMYX_TUNING_SMART_KEEP_ALIVE               1000
 ENV DEMYX_WP_CONFIG                             "${DEMYX}/wp-config.php"
+ENV DEMYX_WP_EMAIL                              info@domain.tld
+ENV DEMYX_WP_PASSWORD                           demyx
+ENV DEMYX_WP_USERNAME                           demyx
 ENV DEMYX_XMLRPC                                false
 ENV PATH                                        "${PATH}:/usr/local/lsws/${DEMYX_LSPHP}/bin"
 ENV TERM                                        xterm-256color

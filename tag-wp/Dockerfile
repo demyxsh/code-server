@@ -17,17 +17,24 @@ ENV DEMYX_CODE_BIND_ADDR                0.0.0.0:8080
 ENV DEMYX_CODE_CONFIG                   /home/demyx/.config/code-server
 ENV DEMYX_CODE_PASSWORD                 demyx
 ENV DEMYX_CONFIG                        /etc/demyx
+ENV DEMYX_CRON                          true
+ENV DEMYX_CRON_LOGROTATE_INTERVAL       "0 0 * * *"
+ENV DEMYX_CRON_WP_INTERVAL              "*/5 * * * *"
 ENV DEMYX_DB_HOST                       localhost
 ENV DEMYX_DB_NAME                       demyx
 ENV DEMYX_DB_PASSWORD                   demyx
-ENV DEMYX_DB_USER                       demyx
+ENV DEMYX_DB_USERNAME                   demyx
 ENV DEMYX_DOMAIN                        localhost
 ENV DEMYX_EMERGENCY_RESTART_INTERVAL    1m
 ENV DEMYX_EMERGENCY_RESTART_THRESHOLD   5
 ENV DEMYX_LOG                           /var/log/demyx
+ENV DEMYX_LOGROTATE                     daily
+ENV DEMYX_LOGROTATE_INTERVAL            7
+ENV DEMYX_LOGROTATE_SIZE                10M
 ENV DEMYX_MAX_EXECUTION_TIME            300
 ENV DEMYX_MEMORY                        256M
 ENV DEMYX_OPCACHE                       true
+ENV DEMYX_PHP                           8.0
 ENV DEMYX_PM                            ondemand
 ENV DEMYX_PM_MAX_CHILDREN               25
 ENV DEMYX_PM_MAX_REQUESTS               25000
@@ -38,6 +45,9 @@ ENV DEMYX_PM_START_SERVERS              5
 ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
 ENV DEMYX_UPLOAD_LIMIT                  128M
 ENV DEMYX_WP_CONFIG                     "${DEMYX}/wp-config.php"
+ENV DEMYX_WP_EMAIL                      info@domain.tld
+ENV DEMYX_WP_PASSWORD                   demyx
+ENV DEMYX_WP_USERNAME                   demyx
 ENV TERM                                xterm-256color
 ENV TZ                                  America/Los_Angeles
 # Support for old variables
