@@ -1,0 +1,66 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -euo pipefail
+#
+#	Main.
+#
+demyx_sudo() {
+	local DEMYX_SUDO="${1:-}"
+
+	case "$DEMYX_SUDO" in
+		cron)
+			demyx_sudo_cron
+		;;
+		logrotate)
+			demyx_sudo_logrotate
+		;;
+	esac
+}
+#
+#	Cron.
+#
+demyx_sudo_cron() {
+	local DEMYX_SUDO_CRON=
+	DEMYX_SUDO_CRON="$(pgrep cron || true)"
+	local DEMYX_SUDO_CRON_FILE=/etc/cron.d/demyx
+
+	{
+		printenv | sed 's/^\(.*\)$/\1/g'
+		echo "$DEMYX_CRON_WP_INTERVAL demyx-cron wp"
+		echo "$DEMYX_CRON_LOGROTATE_INTERVAL sudo -E demyx-sudo logrotate"
+	} | sed 's|"||g' >> "$DEMYX_SUDO_CRON_FILE"
+
+	chmod 0644 "$DEMYX_SUDO_CRON_FILE"
+	crontab -u demyx "$DEMYX_SUDO_CRON_FILE"
+
+	[[ "$DEMYX_CRON" = true && -z "$DEMYX_SUDO_CRON" ]] && cron
+}
+#
+#	Logs.
+#
+demyx_sudo_logrotate() {
+	local DEMYX_SUDO_LOGROTATE=
+	DEMYX_SUDO_LOGROTATE="$DEMYX_CONFIG"/logrotate.conf
+
+	if [[ ! -f "$DEMYX_SUDO_LOGROTATE" ]]; then
+		echo "${DEMYX_LOG}/*.log {
+    missingok
+	notifempty
+	$DEMYX_LOGROTATE
+	rotate $DEMYX_LOGROTATE_INTERVAL
+	compress
+	delaycompress
+	size $DEMYX_LOGROTATE_SIZE
+	endscript
+}
+    	" > "$DEMYX_SUDO_LOGROTATE"
+		chown root:root "$DEMYX_SUDO_LOGROTATE"
+	fi
+
+	logrotate --log="$DEMYX_LOG"/logrotate.log "$DEMYX_SUDO_LOGROTATE"
+}
+#
+#	Init.
+#
+demyx_sudo "$@"
