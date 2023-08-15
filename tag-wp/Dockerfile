@@ -58,7 +58,6 @@ ENV CODE_LOG                            "$DEMYX_LOG"
 # Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
-        bash \
         build-essential \
         bsdmainutils \
         ca-certificates \
@@ -78,6 +77,7 @@ RUN set -ex; \
         libzip-dev \
         libmagickwand-dev \
         libmagickcore-dev \
+        logrotate \
         nano \
         net-tools \
         openssh-client \

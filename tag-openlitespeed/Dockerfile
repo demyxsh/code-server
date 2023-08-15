@@ -77,29 +77,35 @@ ENV CODE_LOG                                    "$DEMYX_LOG"
 # Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
-        apt-transport-https \
-        bash \
         bsdmainutils \
         ca-certificates \
         curl \
+        default-mysql-client \
         dnsutils \
+        ed \
         git \
         gnupg \
         htop \
         iputils-ping \
         jq \
         less \
-        lsb-release \
+        libpng-dev \
+        libssh2-1-dev \
+        libssh2-1 \
+        libzip-dev \
+        libmagickwand-dev \
+        libmagickcore-dev \
+        logrotate \
         nano \
         net-tools \
         openssh-client \
         procps \
-        ruby \
         sudo \
         tzdata \
         unzip \
         util-linux \
         wget \
+        zlib1g-dev \
         zsh
 
 # Configure Demyx
