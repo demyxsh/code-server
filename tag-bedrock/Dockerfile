@@ -1,5 +1,4 @@
-FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8.0-fpm-bullseye
+FROM demyx/code-server:wp
 
 LABEL sh.demyx.image                    demyx/code-server:bedrock
 LABEL sh.demyx.maintainer               Demyx <info@demyx.sh>
