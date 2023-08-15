@@ -154,6 +154,8 @@ RUN set -ex; \
 # OpenLiteSpeed
 RUN set -ex; \
     DEMYX_OLS_VERSION="$(wget -qO- https://api.github.com/repos/litespeedtech/openlitespeed/tags 2>&1 | jq -r '.[].name' | head -n 1 | sed 's|v||g' || true)"; \
+    DEMYX_OLS_VERSION_CHECK="$(curl -s -o /dev/null -w "%{http_code}" https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz)"; \
+    if [ "$DEMYX_OLS_VERSION_CHECK" = 404 ]; then DEMYX_OLS_VERSION=1.7.17; fi; \
     curl -sL https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -o /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
