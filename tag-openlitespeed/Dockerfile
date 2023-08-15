@@ -208,8 +208,9 @@ RUN set -ex; \
     \
     pecl install xdebug; \
     \
-    DEMYX_FIND_XDEBUG="$(find /usr/local/lsws -name 'xdebug.so')"; \
-    DEMYX_FIND_INI="$(find /usr/local/lsws/${DEMYX_LSPHP} -name 'php.ini' 2>&1 | grep lsphp)"; \
+    apt-get purge -y build-essential $DEMYX_XDEBUG_DEPS; \
+    apt-get autoremove -y
+
     \
     echo "[XDebug]\nzend_extension = ${DEMYX_FIND_XDEBUG}\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1" >> "$DEMYX_FIND_INI"; \
     \
