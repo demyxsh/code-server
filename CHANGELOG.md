@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2023-08-15
+- Update/remove RUN commands since most of the updates are from the FROM image [af12ddf](https://github.com/demyxsh/code-server/commit/af12ddf10af9abb508e720e5dbaf04ebd5ade0e6)
+- Set to root user for temporary mods [27b2be9](https://github.com/demyxsh/code-server/commit/27b2be96bb25dd1afafbabf04a8393b3a1068c4f)
+- Update ENVs [ddee7e4](https://github.com/demyxsh/code-server/commit/ddee7e4a98902a565548ff847c51a123088a323e)
+- Update FROM [7308cac](https://github.com/demyxsh/code-server/commit/7308cac34663981a9c3ef03646686d144bf708a7)
+- Install wp-cli login package [4eba04c](https://github.com/demyxsh/code-server/commit/4eba04ca19461301c3507562c65e3dba8fc4bb62)
+- Update xdebug configuration commands [6db3626](https://github.com/demyxsh/code-server/commit/6db3626caf87981d8a9ab10262216a80847d716b)
+- Purge xdebug deps [0805236](https://github.com/demyxsh/code-server/commit/08052368cecb3591ba80a86add71ff01db046c18)
+- Add lsphp packages and replicate for lsphp81 [69b2a63](https://github.com/demyxsh/code-server/commit/69b2a637a57a6cc19139604b69b3d2bc3320c012)
+- Set fallback [b4a7230](https://github.com/demyxsh/code-server/commit/b4a7230a57f6bde1e3ecc499102c59f28baee8cc)
+- Configure php extensions [8e02fa1](https://github.com/demyxsh/code-server/commit/8e02fa1f8f99770baf00b18b5eca8c2beb9c1404)
+- Add new files [e2f3cf5](https://github.com/demyxsh/code-server/commit/e2f3cf5280331c53150b6c22ca5335292440efca)
+- Delete [db767fe](https://github.com/demyxsh/code-server/commit/db767fed38e77d7b9fbb1aadbae31802625e45d4)
+- Use new format and misc updates [4114a5b](https://github.com/demyxsh/code-server/commit/4114a5b848ff4231b0dc8978138f562c9b9cfe0c)
+- Configure sudo [6f4ebe1](https://github.com/demyxsh/code-server/commit/6f4ebe1c3c4ef7ab56215b9153e108d3a8d68792)
+- Combine RUN commands and add wp-cli login package [e9d190b](https://github.com/demyxsh/code-server/commit/e9d190b7f8841fb7e539e12c52ac7df576b29538)
+- Update installed packages [cb417ac](https://github.com/demyxsh/code-server/commit/cb417ac267b27cc546a0f4dee9711956b3188a8d)
+- Update ENVs [e638110](https://github.com/demyxsh/code-server/commit/e6381105c57736b0edfc6ca0eb42b2c6e649a841)
+- Update FROM to official php image and set version to 8.0 [bdbdc1d](https://github.com/demyxsh/code-server/commit/bdbdc1d5aadb586a65a6a78050912fd25f73f7b6)
+
 ## 2023-07-03
 - Fix pecl install error [e197cd8](https://github.com/demyxsh/code-server/commit/e197cd8d3528ddfe453bb8c41b8813db089e77cd)
 
