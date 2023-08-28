@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-08-28
+- Update logrotate conf [9a6b6f9](https://github.com/demyxsh/code-server/commit/9a6b6f9a02aaa64b1565ddd6e8928eb42456566c)
+
 ## 2023-08-15
 - Update/remove RUN commands since most of the updates are from the FROM image [af12ddf](https://github.com/demyxsh/code-server/commit/af12ddf10af9abb508e720e5dbaf04ebd5ade0e6)
 - Set to root user for temporary mods [27b2be9](https://github.com/demyxsh/code-server/commit/27b2be96bb25dd1afafbabf04a8393b3a1068c4f)
