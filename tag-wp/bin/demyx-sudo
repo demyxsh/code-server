@@ -52,7 +52,6 @@ demyx_sudo_logrotate() {
 	compress
 	delaycompress
 	size $DEMYX_LOGROTATE_SIZE
-	endscript
 }
     	" > "$DEMYX_SUDO_LOGROTATE"
 		chown root:root "$DEMYX_SUDO_LOGROTATE"
