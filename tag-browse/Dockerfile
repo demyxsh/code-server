@@ -33,6 +33,7 @@ RUN set -ex; \
     bsdmainutils \
     ca-certificates \
     curl \
+    docker-compose \
     dnsutils \
     git \
     gnupg \
