@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-08-29
+- Add docker-compose package [24f6206](https://github.com/demyxsh/code-server/commit/24f620659e68dcc96a2d2954c48c821d892374a0)
+
 ## 2023-08-28
 - Update logrotate conf [9a6b6f9](https://github.com/demyxsh/code-server/commit/9a6b6f9a02aaa64b1565ddd6e8928eb42456566c)
 
