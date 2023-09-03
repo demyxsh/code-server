@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2023-09-03
+- Add new variable DEMYX_CRON_TYPE [61b723c](https://github.com/demyxsh/code-server/commit/61b723c2028a65e83b1d35e1945e4d9d2c7ba3b0)
+- Update to bullseye image [04a0886](https://github.com/demyxsh/code-server/commit/04a08863d6b5746567c9c939ae502c301c356e1b)
+
 ## 2023-08-29
 - Add docker-compose package [24f6206](https://github.com/demyxsh/code-server/commit/24f620659e68dcc96a2d2954c48c821d892374a0)
 
