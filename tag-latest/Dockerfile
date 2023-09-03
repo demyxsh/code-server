@@ -1,7 +1,7 @@
 FROM quay.io/vektorlab/ctop as demyx_ctop
 FROM docker as demyx_docker
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 LABEL sh.demyx.image        demyx/code-server
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
