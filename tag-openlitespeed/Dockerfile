@@ -37,6 +37,7 @@ ENV DEMYX_CRAWLER_LOAD_LIMIT                    5.2
 ENV DEMYX_CRAWLER_USLEEP                        1000
 ENV DEMYX_CRON                                  true
 ENV DEMYX_CRON_LOGROTATE_INTERVAL               "0 0 * * *"
+ENV DEMYX_CRON_TYPE                             wget
 ENV DEMYX_CRON_WP_INTERVAL                      "*/5 * * * *"
 ENV DEMYX_DB_HOST                               localhost
 ENV DEMYX_DB_NAME                               demyx
