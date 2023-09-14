@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-09-14
+- Install wp-cli login package if missing [80970e2](https://github.com/demyxsh/code-server/commit/80970e222a2479bbc3c09136c5cb9b4a275b34fb)
+
 ## 2023-09-03
 - Add new variable DEMYX_CRON_TYPE [61b723c](https://github.com/demyxsh/code-server/commit/61b723c2028a65e83b1d35e1945e4d9d2c7ba3b0)
 - Update to bullseye image [04a0886](https://github.com/demyxsh/code-server/commit/04a08863d6b5746567c9c939ae502c301c356e1b)
