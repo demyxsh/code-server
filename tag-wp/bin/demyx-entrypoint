@@ -110,6 +110,11 @@ demyx_entrypoint() {
     # Set wp-config.php to debug mode
     sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX_WP_CONFIG"
 
+    # Check for wp-cli login package
+    if [[ ! -d "$HOME"/.wp-cli/packages/vendor/aaemnnosttv ]]; then
+        wp package install aaemnnosttv/wp-cli-login-command
+    fi
+
     # Generate code-server yaml
     echo "auth: $DEMYX_CODE_AUTH
     bind-addr: $DEMYX_CODE_BIND_ADDR
