@@ -141,11 +141,10 @@ RUN set -ex; \
 
 # PHP CodeSniffer & WPCS
 RUN set -ex; \
-    su -c "mkdir \"$DEMYX_CONFIG\"/phpcs && cd \"$DEMYX_CONFIG\"/phpcs; \
-    composer require \"squizlabs/php_codesniffer=*\"; \
-    cd .. && git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs; \
-    \"$DEMYX_CONFIG\"/phpcs/vendor/bin/phpcs --config-set installed_paths ${DEMYX_CONFIG}/wpcs" -s /bin/sh demyx; \
-    ln -s "$DEMYX_CONFIG"/phpcs/vendor/bin/phpcs /usr/local/bin/phpcs
+    su -c "composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true; \
+    composer global require --dev wp-coding-standards/wpcs:\"^3.0\"; \
+    /home/demyx/.composer/vendor/bin/phpcs --config-set installed_paths /home/demyx/.composer/vendor/wp-coding-standards/wpcs --standard=WordPress" -s /bin/sh demyx; \
+    ln -s /home/demyx/.composer/vendor/bin/phpcs /usr/local/bin/phpcs
 
 # WordPress
 RUN set -ex; \

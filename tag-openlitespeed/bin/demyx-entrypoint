@@ -101,8 +101,11 @@ demyx_entrypoint() {
 
     # Check for wp-cli login package
     if [[ ! -d "$HOME"/.wp-cli/packages/vendor/aaemnnosttv ]]; then
-        wp package install aaemnnosttv/wp-cli-login-command
+        wp package install aaemnnosttv/wp-cli-login-command &
     fi
+
+    # TEMPORARY - Fixes WPCS
+    composer global require --dev wp-coding-standards/wpcs:"^3.0" &
 
     # Generate code-server yaml
     echo "auth: $DEMYX_CODE_AUTH
