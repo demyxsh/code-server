@@ -2,6 +2,7 @@
 
 ## 2023-09-14
 - Install wp-cli login package if missing [80970e2](https://github.com/demyxsh/code-server/commit/80970e222a2479bbc3c09136c5cb9b4a275b34fb)
+- Fix WPCS and run it in the background [0f0846e](https://github.com/demyxsh/code-server/commit/0f0846edbf2cabfbc132d4bfcc875e67ea571a7b)
 
 ## 2023-09-03
 - Add new variable DEMYX_CRON_TYPE [61b723c](https://github.com/demyxsh/code-server/commit/61b723c2028a65e83b1d35e1945e4d9d2c7ba3b0)
