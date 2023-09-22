@@ -71,7 +71,13 @@ Demyx customizations for wp-config.php.
 @link     https://demyx.sh
  */
 
-// Coming Soon™
+// Redis Cache - https://wordpress.org/plugins/redis-cache/
+define( 'WP_REDIS_HOST', '${DEMYX_DB_HOST/db/rd}' );
+define( 'WP_REDIS_PORT', 6379 );
+define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
+define( 'WP_REDIS_DATABASE', 0 );
+define( 'WP_REDIS_TIMEOUT', 1 );
+define( 'WP_REDIS_READ_TIMEOUT', 1 );
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
@@ -126,6 +132,14 @@ define( 'WP_SITEURL', \$demyx_url );
 
 // Disable WordPress cron.
 define( 'DISABLE_WP_CRON', true );
+
+// Redis Cache - https://wordpress.org/plugins/redis-cache/
+define( 'WP_REDIS_HOST', '${DEMYX_DB_HOST/db/rd}' );
+define( 'WP_REDIS_PORT', 6379 );
+define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
+define( 'WP_REDIS_DATABASE', 0 );
+define( 'WP_REDIS_TIMEOUT', 1 );
+define( 'WP_REDIS_READ_TIMEOUT', 1 );
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
