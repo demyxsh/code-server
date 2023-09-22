@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-09-21
+- Add support for redis [ba6f1c1](https://github.com/demyxsh/code-server/commit/ba6f1c11ebfdc3b3689f6795d03d028ebcdc20bd)
+
 ## 2023-09-14
 - Install wp-cli login package if missing [80970e2](https://github.com/demyxsh/code-server/commit/80970e222a2479bbc3c09136c5cb9b4a275b34fb)
 - Fix WPCS and run it in the background [0f0846e](https://github.com/demyxsh/code-server/commit/0f0846edbf2cabfbc132d4bfcc875e67ea571a7b)
