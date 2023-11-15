@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2023-11-14
+- Disable installation of default themes/plugins when upgrading [3b1c5df](https://github.com/demyxsh/code-server/commit/3b1c5dfd186497395a98379e2f01581b5ab079c6)
+
 ## 2023-09-21
 - Add support for redis [ba6f1c1](https://github.com/demyxsh/code-server/commit/ba6f1c11ebfdc3b3689f6795d03d028ebcdc20bd)
 
