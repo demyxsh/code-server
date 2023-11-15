@@ -66,7 +66,7 @@ if ( file_exists( getenv( 'DEMYX_CONFIG' ) . '/demyx.php' ) ) {\n\
 Demyx customizations for wp-config.php.
 
 @package  Demyx
-@version  1.0.0
+@version  1.1.0
 @author   Demyx <info@demyx.sh>
 @link     https://demyx.sh
  */
@@ -78,6 +78,10 @@ define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
 define( 'WP_REDIS_DATABASE', 0 );
 define( 'WP_REDIS_TIMEOUT', 1 );
 define( 'WP_REDIS_READ_TIMEOUT', 1 );
+
+// Disable installation of default themes/plugins when upgrading
+define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
+
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
@@ -107,7 +111,7 @@ if ( file_exists( getenv( 'DEMYX_CONFIG' ) . '/demyx.php' ) ) {\n\
 Demyx customizations for wp-config.php.
 
 @package  Demyx
-@version  1.0.0
+@version  1.1.0
 @author   Demyx <info@demyx.sh>
 @link     https://demyx.sh
  */
@@ -140,6 +144,10 @@ define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
 define( 'WP_REDIS_DATABASE', 0 );
 define( 'WP_REDIS_TIMEOUT', 1 );
 define( 'WP_REDIS_READ_TIMEOUT', 1 );
+
+// Disable installation of default themes/plugins when upgrading
+define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
+
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
