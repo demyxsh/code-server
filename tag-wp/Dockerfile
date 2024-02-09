@@ -9,9 +9,7 @@ LABEL sh.demyx.registry                 https://hub.docker.com/u/demyx
 
 # Set default variables
 ENV DEMYX                               /demyx
-ENV DEMYX_ADMIN_EMAIL                   info@localhost
-ENV DEMYX_ADMIN_PASSWORD                demyx
-ENV DEMYX_ADMIN_USERNAME                demyx
+ENV DEMYX_BEDROCK                       false
 ENV DEMYX_CODE_AUTH                     password
 ENV DEMYX_CODE_BIND_ADDR                0.0.0.0:8080
 ENV DEMYX_CODE_CONFIG                   /home/demyx/.config/code-server

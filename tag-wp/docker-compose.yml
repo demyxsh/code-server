@@ -219,9 +219,6 @@ services:
       - demyx_db
     environment:
       - DEMYX=/demyx
-      - DEMYX_ADMIN_EMAIL=info@domain.tld
-      - DEMYX_ADMIN_PASSWORD=demyx
-      - DEMYX_ADMIN_USERNAME=demyx
       - DEMYX_CODE_AUTH=password
       - DEMYX_CODE_BIND_ADDR=0.0.0.0:8080
       - DEMYX_CODE_CONFIG=/home/demyx/.config/code-server

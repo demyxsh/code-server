@@ -10,7 +10,6 @@ LABEL sh.demyx.registry                         https://hub.docker.com/u/demyx
 # Set default variables
 ENV DEMYX                                       /demyx
 ENV DEMYX_ADMIN                                 /demyx/ols
-ENV DEMYX_ADMIN_EMAIL                           info@localhost
 ENV DEMYX_ADMIN_IP                              ALL
 ENV DEMYX_ADMIN_PASSWORD                        demyx
 ENV DEMYX_ADMIN_PREFIX                          true
@@ -37,7 +36,6 @@ ENV DEMYX_CRAWLER_LOAD_LIMIT                    5.2
 ENV DEMYX_CRAWLER_USLEEP                        1000
 ENV DEMYX_CRON                                  true
 ENV DEMYX_CRON_LOGROTATE_INTERVAL               "0 0 * * *"
-ENV DEMYX_CRON_TYPE                             wget
 ENV DEMYX_CRON_WP_INTERVAL                      "*/5 * * * *"
 ENV DEMYX_DB_HOST                               localhost
 ENV DEMYX_DB_NAME                               demyx

@@ -235,9 +235,6 @@ services:
       - demyx_db
     environment:
       - DEMYX=/demyx
-      - DEMYX_ADMIN_EMAIL=info@domain.tld
-      - DEMYX_ADMIN_PASSWORD=demyx
-      - DEMYX_ADMIN_USERNAME=demyx
       - DEMYX_BEDROCK=true
       - DEMYX_BEDROCK_MODE=development
       - DEMYX_CODE_AUTH=password
