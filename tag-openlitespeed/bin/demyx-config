@@ -636,8 +636,7 @@ context / {
                 RewriteRule (^\.) - [F,L]
 
                 # Return 403 forbidden for readme.(txt|html) or license.(txt|html) or example.(txt|html) or other common git repository files
-                RewriteRule \.(txt|html|md${DEMYX_VHCONF_BLADE:-})$ - [F,L]
-                RewriteRule ^(readme|license|example|changelog|README|LEGALNOTICE|INSTALLATION|CHANGELOG|html|md)$ - [F,L]
+                RewriteRule ^(readme|license|legalnotice|example|installation|changelog|README|LICENSE|LEGALNOTICE|EXAMPLE|INSTALLATION|CHANGELOG)\.(txt|html|md)$ - [F,L]
 
                 # Deny backup extensions & log files and return 403 forbidden
                 RewriteRule \.(old|orig|original|php#|php~|php_bak|save|swo|aspx?|tpl|sh|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rdf)$ - [F,L]
