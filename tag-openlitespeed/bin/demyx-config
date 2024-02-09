@@ -142,6 +142,32 @@ define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
+#   OLS auto config.
+#
+demyx_config_auto() {
+    local DEMYX_CONFIG_AUTO="${1:-}"
+    local DEMYX_CONFIG_AUTO_CALC=
+
+    case "$DEMYX_CONFIG_AUTO" in
+        lsapi-extra-children)
+            if [[ "$DEMYX_LSAPI_AVOID_FORK" = 0 ]]; then
+                DEMYX_CONFIG_AUTO_CALC="$(( "$DEMYX_LSAPI_CHILDREN" / 3 ))"
+                echo "$DEMYX_CONFIG_AUTO_CALC" | bc
+            else
+                echo 0
+            fi
+        ;;
+        lsapi-max-idle-children)
+            if [[ "$DEMYX_LSAPI_AVOID_FORK" = 0 ]]; then
+                DEMYX_CONFIG_AUTO_CALC="$(( "$DEMYX_LSAPI_CHILDREN" / 3 ))"
+                echo "$DEMYX_CONFIG_AUTO_CALC" | bc
+            else
+                echo "$DEMYX_LSAPI_CHILDREN"
+            fi
+        ;;
+    esac
+}
+#
 #   demyx.php
 #
 demyx_config_demyx() {
@@ -335,7 +361,13 @@ accessControl {
 extProcessor lsphp {
     type                                lsapi
     address                             uds://tmp/lshttpd/lsphp.sock
-    maxConns                            $DEMYX_PHP_LSAPI_CHILDREN
+    env                                 LSAPI_AVOID_FORK=$DEMYX_LSAPI_AVOID_FORK
+    env                                 LSAPI_CHILDREN=$DEMYX_LSAPI_CHILDREN
+    env                                 LSAPI_EXTRA_CHILDREN=$(demyx_config_auto lsapi-extra-children)
+    env                                 LSAPI_MAX_IDLE=$DEMYX_LSAPI_MAX_IDLE
+    env                                 LSAPI_MAX_IDLE_CHILDREN=$(demyx_config_auto lsapi-max-idle-children)
+    env                                 LSAPI_MAX_PROCESS_TIME=$DEMYX_LSAPI_MAX_PROCESS_TIME
+    env                                 LSAPI_MAX_REQS=$DEMYX_LSAPI_MAX_REQS
     env                                 CRAWLER_LOAD_LIMIT=$DEMYX_CRAWLER_LOAD_LIMIT
     env                                 CRAWLER_USLEEP=$DEMYX_CRAWLER_USLEEP
     env                                 LSAPI_AVOID_FORK=200M
