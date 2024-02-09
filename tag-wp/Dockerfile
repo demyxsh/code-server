@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8.0-fpm-bullseye
+FROM php:8.1-fpm-bookworm
 
 LABEL sh.demyx.image                    demyx/code-server:wp
 LABEL sh.demyx.maintainer               Demyx <info@demyx.sh>
@@ -35,6 +35,7 @@ ENV DEMYX_MEMORY                        256M
 ENV DEMYX_OPCACHE                       true
 ENV DEMYX_OPCACHE_ENABLE                1
 ENV DEMYX_OPCACHE_ENABLE_CLI            1
+ENV DEMYX_PHP                           8.1
 ENV DEMYX_PM                            ondemand
 ENV DEMYX_PM_MAX_CHILDREN               25
 ENV DEMYX_PM_MAX_REQUESTS               25000

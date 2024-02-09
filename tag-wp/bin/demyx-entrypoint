@@ -18,12 +18,12 @@ demyx_entrypoint() {
     # Start crond
     sudo -E demyx-sudo cron
 
-    # Default to php version 8 if user inputs an incorrect version
+    # Set default php version
     case "$DEMYX_PHP" in
-        8|8.0)
-            DEMYX_PHP=8
+        8.2|82)
+            DEMYX_PHP=82
         ;;
-        8.1)
+        *)
             DEMYX_PHP=81
         ;;
     esac

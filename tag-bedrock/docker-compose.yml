@@ -205,6 +205,7 @@ services:
       - DEMYX_OPCACHE=true
       - DEMYX_OPCACHE_ENABLE=1
       - DEMYX_OPCACHE_ENABLE_CLI=1
+      - DEMYX_PHP=8.1
       - DEMYX_PM=ondemand
       - DEMYX_PM_MAX_CHILDREN=25
       - DEMYX_PM_MAX_REQUESTS=25000

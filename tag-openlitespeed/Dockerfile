@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8.0-cli-bullseye
+FROM php:8.1-cli-bullseye
 
 LABEL sh.demyx.image                            demyx/code-server:openlitespeed
 LABEL sh.demyx.maintainer                       Demyx <info@demyx.sh>
@@ -47,12 +47,7 @@ ENV DEMYX_LOG                                   /var/log/demyx
 ENV DEMYX_LOGROTATE                             daily
 ENV DEMYX_LOGROTATE_INTERVAL                    7
 ENV DEMYX_LOGROTATE_SIZE                        10M
-ENV DEMYX_LSPHP                                 lsphp80
-ENV DEMYX_PHP_LSAPI_CHILDREN                    2000
-ENV DEMYX_PHP_MAX_EXECUTION_TIME                300
-ENV DEMYX_PHP_MEMORY                            256M
-ENV DEMYX_PHP_OPCACHE                           true
-ENV DEMYX_PHP_UPLOAD_LIMIT                      128M
+ENV DEMYX_LSPHP                                 lsphp81
 ENV DEMYX_RECAPTCHA_CONNECTION_LIMIT            500
 ENV DEMYX_RECAPTCHA_ENABLE                      1
 ENV DEMYX_RECAPTCHA_TYPE                        2
@@ -170,11 +165,12 @@ RUN set -ex; \
         "$DEMYX_LSPHP"-intl \
         "$DEMYX_LSPHP"-mysql \
         \
-        lsphp81 \
-        lsphp81-curl \
-        lsphp81-imagick \
-        lsphp81-intl \
-        lsphp81-mysql; \
+        lsphp82 \
+        lsphp82-curl \
+        lsphp82-imagick \
+        lsphp82-intl \
+        lsphp82-mysql \
+        lsphp82-redis; \
     \
     ln -sf /usr/local/lsws/"$DEMYX_LSPHP"/bin/lsphp /usr/local/lsws/fcgi-bin/lsphp5; \
     \

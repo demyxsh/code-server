@@ -39,16 +39,13 @@ demyx_config() {
     [[ -n "${OPENLITESPEED_TUNING_SMART_KEEP_ALIVE:-}" ]] && DEMYX_TUNING_SMART_KEEP_ALIVE="$OPENLITESPEED_TUNING_SMART_KEEP_ALIVE"
     [[ -n "${OPENLITESPEED_XMLRPC:-}" ]] && DEMYX_XMLRPC="$OPENLITESPEED_XMLRPC"
 
-    # Default to lsphp80
+    # Default to lsphp81
     case "$DEMYX_LSPHP" in
-        8|8.0|lsphp80)
-            DEMYX_LSPHP=lsphp80
-        ;;
-        81|8.1|lsphp81)
-            DEMYX_LSPHP=lsphp81
+        82|8.2)
+            DEMYX_LSPHP=lsphp82
         ;;
         *)
-            DEMYX_LSPHP=lsphp80
+            DEMYX_LSPHP=lsphp81
         ;;
     esac
 
