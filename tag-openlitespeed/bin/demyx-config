@@ -226,6 +226,20 @@ define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
     " > "$DEMYX_CONFIG"/demyx.php
 }
 #
+#   Output only DEMYX_* variables to main httpd.conf.
+#
+demyx_config_env() {
+    local DEMYX_CONFIG_ENV=
+    DEMYX_CONFIG_ENV="$(printenv | grep DEMYX_)"
+    local DEMYX_CONFIG_ENV_I=
+
+    for DEMYX_CONFIG_ENV_I in $DEMYX_CONFIG_ENV; do
+        if [[ "$DEMYX_CONFIG_ENV_I" == "DEMYX_"* ]]; then
+            echo "env $DEMYX_CONFIG_ENV_I"
+        fi
+    done
+}
+#
 #   httpd_config.conf
 #
 demyx_config_httpd() {
@@ -370,8 +384,7 @@ extProcessor lsphp {
     env                                 LSAPI_MAX_REQS=$DEMYX_LSAPI_MAX_REQS
     env                                 CRAWLER_LOAD_LIMIT=$DEMYX_CRAWLER_LOAD_LIMIT
     env                                 CRAWLER_USLEEP=$DEMYX_CRAWLER_USLEEP
-    env                                 LSAPI_AVOID_FORK=200M
-    env                                 PHP_LSAPI_CHILDREN=$DEMYX_PHP_LSAPI_CHILDREN
+    $(demyx_config_env)
     initTimeout                         300
     retryTimeout                        0
     persistConn                         1
