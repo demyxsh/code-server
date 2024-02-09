@@ -159,9 +159,9 @@ RUN set -ex; \
 
 # OpenLiteSpeed
 RUN set -ex; \
-    DEMYX_OLS_VERSION="$(wget -qO- https://api.github.com/repos/litespeedtech/openlitespeed/tags 2>&1 | jq -r '.[].name' | head -n 1 | sed 's|v||g' || true)"; \
-    DEMYX_OLS_VERSION_CHECK="$(curl -s -o /dev/null -w "%{http_code}" https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz)"; \
-    if [ "$DEMYX_OLS_VERSION_CHECK" = 404 ]; then DEMYX_OLS_VERSION=1.7.17; fi; \
+    apt-get install -y --no-install-recommends tidy; \
+    \
+    DEMYX_OLS_VERSION="$(wget -qO- https://openlitespeed.org/downloads/ | tidy -i 2>&1 | grep "<h6>" | head -1 | awk -F '[V]' '{print $2}' | sed 's| ||g')"; \
     curl -sL https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -o /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
@@ -191,7 +191,10 @@ RUN set -ex; \
     # Symlink configs to lsws
     ln -sf "$DEMYX_CONFIG"/ols/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf; \
     ln -sf "$DEMYX_CONFIG"/ols/admin_config.conf /usr/local/lsws/admin/conf/admin_config.conf; \
-    ln -s "$DEMYX_CONFIG"/ols /usr/local/lsws/conf/vhosts
+    ln -s "$DEMYX_CONFIG"/ols /usr/local/lsws/conf/vhosts; \
+    \
+    # Remove one time use package
+    apt-get purge tidy -y
 
 # Composer
 RUN set -ex; \
