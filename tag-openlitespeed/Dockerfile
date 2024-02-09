@@ -82,6 +82,7 @@ ENV CODE_LOG                                    "$DEMYX_LOG"
 # Packages
 RUN set -ex; \
     apt-get update && apt-get install -y --no-install-recommends \
+        bc \
         bsdmainutils \
         ca-certificates \
         curl \
@@ -173,6 +174,7 @@ RUN set -ex; \
         "$DEMYX_LSPHP"-imagick \
         "$DEMYX_LSPHP"-intl \
         "$DEMYX_LSPHP"-mysql \
+        "$DEMYX_LSPHP"-redis \
         \
         lsphp82 \
         lsphp82-curl \
