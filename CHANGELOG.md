@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 2024-02-08
+- Merge branch 'master' of github.com:demyxsh/code-server [ecd8316](https://github.com/demyxsh/code-server/commit/ecd8316e22f10f0160bf27397b629ac17a7e1206)
+- Update description with shameless plug [e1e8537](https://github.com/demyxsh/code-server/commit/e1e85370468f5c644cd6a338e6eb3aaca646a602)
+- Misc updates [33b88a5](https://github.com/demyxsh/code-server/commit/33b88a54530b02e36820bb4d949b10de61899bd6)
+- Use tidy package to scrape the latest stable version in openlitespeed's downloads page [33a2945](https://github.com/demyxsh/code-server/commit/33a2945d6665df827113002cce791d51bd610c04)
+- Add packages [2fac1fc](https://github.com/demyxsh/code-server/commit/2fac1fcec90d5c413b1c7541af036ec2798ed98b)
+- Add missing environment variables [8c244fa](https://github.com/demyxsh/code-server/commit/8c244fafdfc5dbb8db3812931b1bb56fceef602c)
+- Update rewrite rule [5fd7a59](https://github.com/demyxsh/code-server/commit/5fd7a5983516ee4f8498244bd70ee6f3609b5d57)
+- Use new function to include all demyx environment variables  for lsphp [946eeb3](https://github.com/demyxsh/code-server/commit/946eeb3e1571fe8ec23e464920ee587af5fb3d59)
+- New function to auto calculate values for `LSAPI_EXTRA_CHILDREN` and `LSAPI_MAX_IDLE_CHILDREN` [8dfe52b](https://github.com/demyxsh/code-server/commit/8dfe52bc2c22d2d48d97c5a81f3d105de670bb56)
+- Update php versions and set default to 8.1 [51d6631](https://github.com/demyxsh/code-server/commit/51d6631d81aa0415666a3a3b74c47fb8433c2c75)
+- New function to reset permissions at container start and hourly cron [4539909](https://github.com/demyxsh/code-server/commit/4539909be5e25a5dffc282f0b6688930c3e2da25)
+- Add environment variables [2d7bf0d](https://github.com/demyxsh/code-server/commit/2d7bf0d43f527f66d3254caa0ba3823af0f6d065)
+- Double the upload limit [9674616](https://github.com/demyxsh/code-server/commit/967461655daae521e30fa00a7415f422ebaea427)
+- Remove environment variables [9424721](https://github.com/demyxsh/code-server/commit/9424721b874e4ef1cf38fe0422771b1d89ad0771)
+- Include custom volume [656addd](https://github.com/demyxsh/code-server/commit/656addd9b4d44f8006259470e906a6bd5c5a127e)
+
 ## 2023-11-14
 - Disable installation of default themes/plugins when upgrading [3b1c5df](https://github.com/demyxsh/code-server/commit/3b1c5dfd186497395a98379e2f01581b5ab079c6)
 
