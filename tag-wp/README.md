@@ -286,7 +286,12 @@ services:
       - DEMYX_PM_PROCESS_IDLE_TIMEOUT=3s
       - DEMYX_PM_START_SERVERS=5
       - DEMYX_PROCESS_CONTROL_TIMEOUT=10s
+      - DEMYX_PROTO=http
       - DEMYX_UPLOAD_LIMIT=256M
+      - DEMYX_WP_CONFIG=/demyx/wp-config.php
+      - DEMYX_WP_EMAIL=info@domain.tld
+      - DEMYX_WP_PASSWORD=demyx
+      - DEMYX_WP_USERNAME=demyx
       - TZ=America/Los_Angeles
     hostname: demyx-wp
     image: demyx/code-server:wp

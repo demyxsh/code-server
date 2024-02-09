@@ -47,7 +47,16 @@ ENV DEMYX_LOG                                   /var/log/demyx
 ENV DEMYX_LOGROTATE                             daily
 ENV DEMYX_LOGROTATE_INTERVAL                    7
 ENV DEMYX_LOGROTATE_SIZE                        10M
+ENV DEMYX_LSAPI_AVOID_FORK                      0
+ENV DEMYX_LSAPI_CHILDREN                        35
+ENV DEMYX_LSAPI_MAX_IDLE                        300
+ENV DEMYX_LSAPI_MAX_PROCESS_TIME                3600
+ENV DEMYX_LSAPI_MAX_REQS                        10000
 ENV DEMYX_LSPHP                                 lsphp81
+ENV DEMYX_MAX_EXECUTION_TIME                    300
+ENV DEMYX_MEMORY                                256M
+ENV DEMYX_OPCACHE                               true
+ENV DEMYX_PROTO                                 http
 ENV DEMYX_RECAPTCHA_CONNECTION_LIMIT            500
 ENV DEMYX_RECAPTCHA_ENABLE                      1
 ENV DEMYX_RECAPTCHA_TYPE                        2
