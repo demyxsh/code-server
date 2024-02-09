@@ -42,7 +42,7 @@ ENV DEMYX_PM_MIN_SPARE_SERVERS          5
 ENV DEMYX_PM_PROCESS_IDLE_TIMEOUT       3s
 ENV DEMYX_PM_START_SERVERS              5
 ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
-ENV DEMYX_UPLOAD_LIMIT                  128M
+ENV DEMYX_UPLOAD_LIMIT                  256M
 ENV DEMYX_WP_CONFIG                     "${DEMYX}/wp-config.php"
 ENV DEMYX_WP_EMAIL                      info@domain.tld
 ENV DEMYX_WP_PASSWORD                   demyx

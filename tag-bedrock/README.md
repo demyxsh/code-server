@@ -125,7 +125,7 @@ services:
       - DEMYX_DOMAIN=domain.tld
       - DEMYX_LOG=/var/log/demyx
       - DEMYX_RATE_LIMIT=false
-      - DEMYX_UPLOAD_LIMIT=128M
+      - DEMYX_UPLOAD_LIMIT=256M
       - DEMYX_WHITELIST=false
       - DEMYX_WHITELIST_IP=false
       - DEMYX_WHITELIST_TYPE=false
@@ -262,8 +262,7 @@ services:
       - DEMYX_PM_START_SERVERS=5
       - DEMYX_PROCESS_CONTROL_TIMEOUT=10s
       - DEMYX_PROXY=demyx_nx
-      - DEMYX_SSL=true
-      - DEMYX_UPLOAD_LIMIT=128M
+      - DEMYX_UPLOAD_LIMIT=256M
       - TZ=America/Los_Angeles
     hostname: demyx-wp
     image: demyx/code-server:bedrock

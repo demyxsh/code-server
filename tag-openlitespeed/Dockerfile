@@ -60,6 +60,7 @@ ENV DEMYX_TUNING_KEEP_ALIVE_TIMEOUT             300
 ENV DEMYX_TUNING_MAX_CONNECTIONS                20000
 ENV DEMYX_TUNING_MAX_KEEP_ALIVE                 1000
 ENV DEMYX_TUNING_SMART_KEEP_ALIVE               1000
+ENV DEMYX_UPLOAD_LIMIT                          256M
 ENV DEMYX_WP_CONFIG                             "${DEMYX}/wp-config.php"
 ENV DEMYX_WP_EMAIL                              info@domain.tld
 ENV DEMYX_WP_PASSWORD                           demyx
