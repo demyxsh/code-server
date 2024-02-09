@@ -26,10 +26,10 @@ demyx_entrypoint() {
         8.1)
             DEMYX_PHP=81
         ;;
-        *)
-            DEMYX_PHP=8
-        ;;
     esac
+
+    # Reset permissions
+    sudo -E demyx-sudo permissions
 
     # Start php-fpm in the background
     php-fpm -D

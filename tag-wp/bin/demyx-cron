@@ -22,22 +22,23 @@ demyx_cron() {
 demyx_cron_wp() {
 	local DEMYX_CRON_WP=
 	local DEMYX_CRON_WP_PATH="$DEMYX"
-	
-	if [[ "$DEMYX_CRON_TYPE" = wp-cli ]]; then
-		[[ "$DEMYX_BEDROCK" = true ]] && DEMYX_CRON_WP_PATH="$DEMYX"/web/wp
-		DEMYX_CRON_WP="$(wp core is-installed --path="$DEMYX_CRON_WP_PATH" 2>&1 || true)"
-		if [[ "$DEMYX_CRON_WP" != *"Error"* ]]; then
-			{
-				echo
-				echo "============= $(date +%F-%T) ============="
-				wp cron event run --due-now --path="$DEMYX_CRON_WP_PATH" 2>&1
-				echo "============= $(date +%F-%T) ============="
-			} | tee -a "$DEMYX_LOG"/"$DEMYX_DOMAIN".cron.log
-		fi
-	else
-		DEMYX_CRON_WP_PATH="${DEMYX_PROTO}://${DEMYX_DOMAIN}"
-		[[ "${DEMYX_BEDROCK:-false}" = true ]] && DEMYX_CRON_WP_PATH="${DEMYX_PROTO}://${DEMYX_DOMAIN}/wp"
-		wget -q -O - "${DEMYX_CRON_WP_PATH}/wp-cron.php?doing_wp_cron" >/dev/null 2>&1
+	local DEMYX_CRON_WP_RANDOM=
+	DEMYX_CRON_WP_RANDOM="$(shuf -i 1-30 -n 1)"
+	[[ "$DEMYX_BEDROCK" = true ]] && DEMYX_CRON_WP_PATH="$DEMYX"/web/wp
+	DEMYX_CRON_WP="$(wp core is-installed --path="$DEMYX_CRON_WP_PATH" 2>&1 || true)"
+
+	# Sleep between 1 to 30 seconds before executing cron
+	#
+	# Reduces server CPU when running over a dozen WP apps
+	# so they don't execute cron at the same time
+	#
+	sleep "$DEMYX_CRON_WP_RANDOM"
+
+	if [[ "$DEMYX_CRON_WP" != *"Error"* ]]; then
+		{
+			echo "[$(date +%F-%T)] ======================================="
+			wp cron event run --due-now --path="$DEMYX_CRON_WP_PATH" 2>&1
+		} | tee -a "$DEMYX_LOG"/"$DEMYX_DOMAIN".cron.log
 	fi
 }
 #

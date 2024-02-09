@@ -27,6 +27,9 @@ demyx_entrypoint() {
     # Start OLS
     sudo -E demyx-lsws
 
+    # Reset permissions
+    sudo -E demyx-sudo permissions
+
     # Create new code-server config directory
     if [[ ! -d /home/demyx/.config ]]; then
         mkdir -p /home/demyx/.config
