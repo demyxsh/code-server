@@ -158,6 +158,9 @@ services:
       - DEMYX_CODE_CONFIG=/home/demyx/.config/code-server
       - DEMYX_CODE_PASSWORD=demyx
       - DEMYX_CONFIG=/etc/demyx
+      - DEMYX_CRON=true
+      - DEMYX_CRON_LOGROTATE_INTERVAL="0 0 * * *"
+      - DEMYX_CRON_WP_INTERVAL="*/5 * * * *"
       - DEMYX_CRAWLER_LOAD_LIMIT=5.2
       - DEMYX_CRAWLER_USLEEP=1000
       - DEMYX_DB_HOST=demyx_db
@@ -166,6 +169,14 @@ services:
       - DEMYX_DB_USER=demyx
       - DEMYX_DOMAIN=domain.tld
       - DEMYX_LOG=/var/log/demyx
+      - DEMYX_LOGROTATE=daily
+      - DEMYX_LOGROTATE_INTERVAL=30
+      - DEMYX_LOGROTATE_SIZE=10M
+      - DEMYX_LSAPI_CHILDREN=2000
+      - DEMYX_MAX_EXECUTION_TIME=300
+      - DEMYX_MEMORY=256M
+      - DEMYX_OPCACHE=true
+      - DEMYX_PROTO=http
       - DEMYX_UPLOAD_LIMIT=256M
       - DEMYX_RECAPTCHA_CONNECTION_LIMIT=500
       - DEMYX_RECAPTCHA_ENABLE=1
@@ -176,6 +187,10 @@ services:
       - DEMYX_TUNING_MAX_CONNECTIONS=20000
       - DEMYX_TUNING_MAX_KEEP_ALIVE=1000
       - DEMYX_TUNING_SMART_KEEP_ALIVE=1000
+      - DEMYX_WP_CONFIG=/demyx/web/wp-config.php
+      - DEMYX_WP_EMAIL=info@domain.tld
+      - DEMYX_WP_PASSWORD=demyx
+      - DEMYX_WP_USERNAME=demyx
       - DEMYX_XMLRPC=false
       - TZ=America/Los_Angeles
     hostname: demyx-wp

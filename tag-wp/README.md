@@ -258,6 +258,9 @@ services:
       - DEMYX_CODE_CONFIG=/home/demyx/.config/code-server
       - DEMYX_CODE_PASSWORD=demyx
       - DEMYX_CONFIG=/etc/demyx
+      - DEMYX_CRON=true
+      - DEMYX_CRON_LOGROTATE_INTERVAL="0 0 * * *"
+      - DEMYX_CRON_WP_INTERVAL="*/5 * * * *"
       - DEMYX_DB_HOST=demyx_db
       - DEMYX_DB_NAME=demyx
       - DEMYX_DB_PASSWORD=demyx
@@ -266,9 +269,14 @@ services:
       - DEMYX_EMERGENCY_RESTART_INTERVAL=1m
       - DEMYX_EMERGENCY_RESTART_THRESHOLD=5
       - DEMYX_LOG=/var/log/demyx
+      - DEMYX_LOGROTATE=daily
+      - DEMYX_LOGROTATE_INTERVAL=7
+      - DEMYX_LOGROTATE_SIZE=10M
       - DEMYX_MAX_EXECUTION_TIME=300
       - DEMYX_MEMORY=256M
       - DEMYX_OPCACHE=true
+      - DEMYX_OPCACHE_ENABLE=1
+      - DEMYX_OPCACHE_ENABLE_CLI=1
       - DEMYX_PM=ondemand
       - DEMYX_PM_MAX_CHILDREN=25
       - DEMYX_PM_MAX_REQUESTS=25000

@@ -33,7 +33,8 @@ ENV DEMYX_LOGROTATE_SIZE                10M
 ENV DEMYX_MAX_EXECUTION_TIME            300
 ENV DEMYX_MEMORY                        256M
 ENV DEMYX_OPCACHE                       true
-ENV DEMYX_PHP                           8.0
+ENV DEMYX_OPCACHE_ENABLE                1
+ENV DEMYX_OPCACHE_ENABLE_CLI            1
 ENV DEMYX_PM                            ondemand
 ENV DEMYX_PM_MAX_CHILDREN               25
 ENV DEMYX_PM_MAX_REQUESTS               25000
@@ -42,6 +43,7 @@ ENV DEMYX_PM_MIN_SPARE_SERVERS          5
 ENV DEMYX_PM_PROCESS_IDLE_TIMEOUT       3s
 ENV DEMYX_PM_START_SERVERS              5
 ENV DEMYX_PROCESS_CONTROL_TIMEOUT       10s
+ENV DEMYX_PROTO                         http
 ENV DEMYX_UPLOAD_LIMIT                  256M
 ENV DEMYX_WP_CONFIG                     "${DEMYX}/wp-config.php"
 ENV DEMYX_WP_EMAIL                      info@domain.tld

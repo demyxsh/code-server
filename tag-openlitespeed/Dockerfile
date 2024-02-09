@@ -9,6 +9,7 @@ LABEL sh.demyx.registry                         https://hub.docker.com/u/demyx
 
 # Set default variables
 ENV DEMYX                                       /demyx
+ENV DEMYX_BEDROCK                               false
 ENV DEMYX_ADMIN                                 /demyx/ols
 ENV DEMYX_ADMIN_IP                              ALL
 ENV DEMYX_ADMIN_PASSWORD                        demyx
