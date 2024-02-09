@@ -172,6 +172,7 @@ services:
       - demyx
     restart: unless-stopped
     volumes:
+      - demyx_custom:/etc/demyx/custom
       - demyx_log:/var/log/demyx
       - demyx_wp:/demyx
   demyx_pma:
@@ -298,12 +299,15 @@ services:
     restart: unless-stopped
     volumes:
       - demyx_code:/home/demyx
+      - demyx_custom:/etc/demyx/custom
       - demyx_log:/var/log/demyx
       - demyx_wp:/demyx
 version: "2.4"
 volumes:
   demyx_code:
     name: demyx_code
+  demyx_custom:
+    name: demyx_custom
   demyx_db:
     name: demyx_db
   demyx_log:
