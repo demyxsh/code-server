@@ -23,7 +23,7 @@ demyx_config() {
     [[ -n "${OPENLITESPEED_CRAWLER_USLEEP:-}" ]] && DEMYX_CRAWLER_USLEEP="$OPENLITESPEED_CRAWLER_USLEEP"
     [[ -n "${OPENLITESPEED_DOMAIN:-}" ]] && DEMYX_DOMAIN="$OPENLITESPEED_DOMAIN"
     [[ -n "${OPENLITESPEED_LSPHP:-}" ]] && DEMYX_LSPHP="$OPENLITESPEED_LSPHP"
-    [[ -n "${OPENLITESPEED_PHP_LSAPI_CHILDREN:-}" ]] && DEMYX_PHP_LSAPI_CHILDREN="$OPENLITESPEED_PHP_LSAPI_CHILDREN"
+    [[ -n "${OPENLITESPEED_PHP_LSAPI_CHILDREN:-}" ]] && DEMYX_LSAPI_CHILDREN="$OPENLITESPEED_PHP_LSAPI_CHILDREN"
     [[ -n "${OPENLITESPEED_PHP_MAX_EXECUTION_TIME:-}" ]] && DEMYX_MAX_EXECUTION_TIME="$OPENLITESPEED_PHP_MAX_EXECUTION_TIME"
     [[ -n "${OPENLITESPEED_PHP_MEMORY:-}" ]] && DEMYX_MEMORY="$OPENLITESPEED_PHP_MEMORY"
     [[ -n "${OPENLITESPEED_PHP_OPCACHE:-}" ]] && DEMYX_OPCACHE="$OPENLITESPEED_PHP_OPCACHE"
@@ -535,7 +535,6 @@ demyx_config_vhconf() {
 
     # Support for bedrock tag
     if [[ "${DEMYX_BEDROCK:-}" = true ]]; then
-    DEMYX_VHCONF_BLADE="|blade.php"
     DEMYX_VHCONF_REWRITES="# Bedrock
                 RewriteRule ^app/uploads/[^/]+\.php\$ - [F,L]
                 RewriteRule (^\.)blade.php\$ - [F,L]
@@ -600,7 +599,7 @@ context / {
         X-Content-Type-Options nosniff; always
         X-Download-Options noopen
         X-Frame-Options SAMEORIGIN
-        X-Powered-By Demyx
+        X-Powered-By Demyx - https://demyx.sh
         X-XSS-Protection 1; mode=block
     END_extraHeaders
 

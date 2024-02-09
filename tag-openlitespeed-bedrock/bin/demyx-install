@@ -29,7 +29,7 @@ demyx_install_config() {
 
     if [[ -n "$(grep example.com "$DEMYX_ENV" || true)" ]]; then
         echo "[demyx] Configuring Bedrock .env file ..."
-        sed -i "s|WP_HOME=.*|WP_HOME=$DEMYX_PROTO|g" "$DEMYX_ENV"
+        sed -i "s|WP_HOME=.*|WP_HOME=${DEMYX_PROTO}://${DEMYX_DOMAIN}|g" "$DEMYX_ENV"
         sed -i "s|database_name|$DEMYX_DB_NAME|g" "$DEMYX_ENV"
         sed -i "s|database_user|$DEMYX_DB_USERNAME|g" "$DEMYX_ENV"
         sed -i "s|database_password|$DEMYX_DB_PASSWORD|g" "$DEMYX_ENV"

@@ -192,7 +192,7 @@ services:
       - DEMYX_DB_HOST=demyx_db
       - DEMYX_DB_NAME=demyx
       - DEMYX_DB_PASSWORD=demyx
-      - DEMYX_DB_USER=demyx
+      - DEMYX_DB_USERNAME=demyx
       - DEMYX_DOMAIN=domain.tld
       - DEMYX_EMERGENCY_RESTART_INTERVAL=1m
       - DEMYX_EMERGENCY_RESTART_THRESHOLD=5

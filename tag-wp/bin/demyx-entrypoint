@@ -98,8 +98,8 @@ demyx_entrypoint() {
     fi
 
     # Install demyx helper plugin
-    [[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
-    cp "$DEMYX_CONFIG"/bs.php "$DEMYX"/wp-content/mu-plugins
+    #[[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
+    #cp "$DEMYX_CONFIG"/bs.php "$DEMYX"/wp-content/mu-plugins
 
     # Configure xdebug
     if [[ ! -d "$DEMYX"/.vscode ]]; then

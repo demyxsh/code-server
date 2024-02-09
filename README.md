@@ -13,6 +13,8 @@
 [![Buy Me A Coffee](https://img.shields.io/badge/buy_me_coffee-$5-informational?style=flat&color=blue)](https://www.buymeacoffee.com/VXqkQK5tb)
 [![Become a Patron!](https://img.shields.io/badge/become%20a%20patron-$5-informational?style=flat&color=blue)](https://www.patreon.com/bePatron?u=23406156)
 
+<p align="center" style="max-width: 1024px"><img src="screenshot.png" width="100%"></p>
+
 code-server is VS Code running on a remote server, accessible through the browser.
 
 <p align="center" style="max-width: 1024px"><img src="screenshot.png" width="100%"></p>
@@ -148,6 +150,6 @@ volumes:
 ```
 
 ## Updates & Support
-* Auto built weekly on Saturdays (America/Los_Angeles)
-* Rolling release updates
-* For support: [#demyx](https://web.libera.chat/?channel=#demyx)
+- Auto built weekly on Saturdays (America/Los_Angeles)
+- Rolling release updates
+- For support: [Discord](https://demyx.sh/discord)
