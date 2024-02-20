@@ -49,6 +49,7 @@ demyx_sudo_logrotate() {
 
 	if [[ ! -f "$DEMYX_SUDO_LOGROTATE" ]]; then
 		echo "${DEMYX_LOG}/*.log {
+	create
     missingok
 	notifempty
 	$DEMYX_LOGROTATE
