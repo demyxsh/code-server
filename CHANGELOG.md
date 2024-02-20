@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 2024-02-08
+## 2024-02-20
+- Allow users to add custom cron [3f8e06a](https://github.com/demyxsh/code-server/commit/3f8e06ab726e975416d6d00332ff88b4fe2aec2b)
+- Include missing create rule [e660242](https://github.com/demyxsh/code-server/commit/e6602421af8cc7637156f90076fdd5e341488ea0)
+- 2024-02-08 [7bb136b](https://github.com/demyxsh/code-server/commit/7bb136b4291b6705e4ed5c67a84efafc358458f1)
 - Merge branch 'master' of github.com:demyxsh/code-server [ecd8316](https://github.com/demyxsh/code-server/commit/ecd8316e22f10f0160bf27397b629ac17a7e1206)
 - Update description with shameless plug [e1e8537](https://github.com/demyxsh/code-server/commit/e1e85370468f5c644cd6a338e6eb3aaca646a602)
 - Misc updates [33b88a5](https://github.com/demyxsh/code-server/commit/33b88a54530b02e36820bb4d949b10de61899bd6)
