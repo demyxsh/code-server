@@ -33,6 +33,9 @@ demyx_sudo_cron() {
 		echo "$DEMYX_CRON_WP_INTERVAL demyx-cron wp"
 		echo "$DEMYX_CRON_LOGROTATE_INTERVAL sudo -E demyx-sudo logrotate"
 		echo "0 * * * * /usr/bin/sudo -E /usr/local/bin/demyx-sudo permissions"
+
+		# User defined cron
+		[[ -f "$DEMYX_CONFIG"/custom/cron ]] && cat < "$DEMYX_CONFIG"/custom/cron
 	} | sed 's|"||g' >> "$DEMYX_SUDO_CRON_FILE"
 
 	chmod 0644 "$DEMYX_SUDO_CRON_FILE"
