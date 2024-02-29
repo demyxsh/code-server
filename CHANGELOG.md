@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 2024-02-20
+## 2024-02-28
+- Remove title from first line to prevent outputting error [e4a82e9](https://github.com/demyxsh/code-server/commit/e4a82e993fcea86d8e9bf6f9886c26c4764b0cd2)
+- Backup extensions before updating [f325d4a](https://github.com/demyxsh/code-server/commit/f325d4a372513989a67fde5f95419e78c807bde1)
+- Fix reboot container crash [615ad9c](https://github.com/demyxsh/code-server/commit/615ad9c7cbc0d96ba252072193638344e4061a2d)
+- 2024-02-20 [0a9814e](https://github.com/demyxsh/code-server/commit/0a9814ec2fb17031b95a01b3d3cff97671336b2e)
 - Allow users to add custom cron [3f8e06a](https://github.com/demyxsh/code-server/commit/3f8e06ab726e975416d6d00332ff88b4fe2aec2b)
 - Include missing create rule [e660242](https://github.com/demyxsh/code-server/commit/e6602421af8cc7637156f90076fdd5e341488ea0)
 - 2024-02-08 [7bb136b](https://github.com/demyxsh/code-server/commit/7bb136b4291b6705e4ed5c67a84efafc358458f1)
