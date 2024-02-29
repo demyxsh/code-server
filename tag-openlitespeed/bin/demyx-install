@@ -19,15 +19,15 @@ demyx_install() {
 #   Config.
 #
 demyx_install_config() {
-    local DEMYX_INSTALL_CHECK=
+    local DEMYX_INSTALL_CONFIG_CHECK=
 
     if [[ ! -d "$DEMYX"/wp-admin ]]; then
         echo "[demyx] WordPress is missing, copying files now ..."
         tar -xzf "$DEMYX_CONFIG"/wordpress.tgz -C "$DEMYX"
     fi
 
-    DEMYX_INSTALL_CHECK="$(grep "username_here" "$DEMYX_WP_CONFIG" || true)"
-    if [[ -n "$DEMYX_INSTALL_CHECK" ]]; then
+    DEMYX_INSTALL_CONFIG_CHECK="$(grep "username_here" "$DEMYX_WP_CONFIG" || true)"
+    if [[ -n "$DEMYX_INSTALL_CONFIG_CHECK" ]]; then
         # Generate wp-config.php
         wp config create \
             --dbhost="$DEMYX_DB_HOST" \
@@ -51,7 +51,28 @@ demyx_install_config() {
 
         # Update timezone
         wp option update timezone_string "$TZ"
+    else
+        demyx_install_check
     fi
+}
+#
+#   Check if DB is ready.
+#
+demyx_install_check() {
+    local DEMYX_INSTALL_CHECK_COUNT=0
+
+    until wp core is-installed 2>/dev/null; do
+        DEMYX_INSTALL_CHECK_COUNT="$((DEMYX_INSTALL_CHECK_COUNT+1))"
+
+        if [[ "$DEMYX_INSTALL_CHECK_COUNT" = 30 ]]; then
+            echo "MariaDB is not connecting for some reason, exiting ..."
+            tail "$DEMYX_LOG"/"$DEMYX_DOMAIN".mariadb.log
+            exit
+        else
+            echo "Waiting for MariaDB to be ready, attempt #${DEMYX_INSTALL_CHECK_COUNT}/30 ..."
+            sleep 1
+        fi
+    done
 }
 #
 #   Init.
