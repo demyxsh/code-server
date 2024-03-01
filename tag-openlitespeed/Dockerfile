@@ -161,7 +161,7 @@ RUN set -ex; \
 RUN set -ex; \
     apt-get install -y --no-install-recommends tidy; \
     \
-    DEMYX_OLS_VERSION="$(wget -qO- https://openlitespeed.org/downloads/ | tidy -i 2>&1 | grep "<h6>" | head -1 | awk -F '[V]' '{print $2}' | sed 's| ||g')"; \
+    DEMYX_OLS_VERSION="$(wget -qO- https://openlitespeed.org/downloads/ | tidy -i 2>&1 | grep "<h6>" | head -1 | awk -F '[V]' '{print $2}' | sed 's| ||g' | sed 's|<.*||g')"; \
     curl -sL https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -o /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
