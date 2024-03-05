@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2024-03-05
+- Remove shorthand since it was causing the container to crash [c02fbca](https://github.com/demyxsh/code-server/commit/c02fbcad6562b138edaf2a64c201a9ad0f27199e)
+
 ## 2024-02-28
 - Remove title from first line to prevent outputting error [e4a82e9](https://github.com/demyxsh/code-server/commit/e4a82e993fcea86d8e9bf6f9886c26c4764b0cd2)
 - Backup extensions before updating [f325d4a](https://github.com/demyxsh/code-server/commit/f325d4a372513989a67fde5f95419e78c807bde1)
