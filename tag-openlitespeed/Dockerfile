@@ -210,7 +210,7 @@ RUN set -ex; \
 
 # Xdebug
 RUN set -ex; \
-    DEMYX_XDEBUG_DEPS="build-essential ${DEMYX_LSPHP}-pear"; \
+    DEMYX_XDEBUG_DEPS="build-essential"; \
     \
     apt-get install -y --no-install-recommends $DEMYX_XDEBUG_DEPS; \
     \
