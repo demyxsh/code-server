@@ -2,6 +2,7 @@
 
 ## 2024-03-05
 - Remove shorthand since it was causing the container to crash [c02fbca](https://github.com/demyxsh/code-server/commit/c02fbcad6562b138edaf2a64c201a9ad0f27199e)
+- Remove missing package [58d2c3c](https://github.com/demyxsh/code-server/commit/58d2c3c5c8f10e15e6ff032db10f3e3fe57bf236)
 
 ## 2024-02-28
 - Remove title from first line to prevent outputting error [e4a82e9](https://github.com/demyxsh/code-server/commit/e4a82e993fcea86d8e9bf6f9886c26c4764b0cd2)
