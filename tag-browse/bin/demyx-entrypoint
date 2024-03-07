@@ -79,6 +79,12 @@ if [[ ! -L /home/demyx/demyx ]]; then
     ln -sf "$DEMYX" /home/demyx/demyx
 fi
 
+# Check demyx motd is in ~/.zshrc
+DEMYX_ENTRYPOINT_MOTD="$(grep "demyx motd" ~/.zshrc || true)"
+if [[ -z "$DEMYX_ENTRYPOINT_MOTD" ]]; then
+    echo "demyx motd" >> ~/.zshrc
+fi
+
 # Generate code-server yaml
 echo "auth: $DEMYX_CODE_AUTH
 bind-addr: $DEMYX_CODE_BIND_ADDR
