@@ -25,8 +25,12 @@ demyx_code() {
         fi
     fi
 
+    # Backup directory first
+    echo -e "\e[34m[INFO]\e[39m Backing up ${DEMYX_CODE_CONFIG}/extensions ..."
+    tar -czf "$DEMYX_CODE_CONFIG"/extensions.tgz -C "$DEMYX_CODE_CONFIG" extensions
+
     # Append each plugin to a new variable
-    DEMYX_CODE_PLUGIN_LIST="$(code-server --list-extensions)"
+    DEMYX_CODE_PLUGIN_LIST="$(code-server --list-extensions | tail -n +2)"
     rm -rf "$DEMYX_CODE_CONFIG"/extensions/*
     for DEMYX_CODE_PLUGIN_I in $DEMYX_CODE_PLUGIN_LIST; do
         DEMYX_CODE_PLUGIN+="--install-extension=${DEMYX_CODE_PLUGIN_I} "
