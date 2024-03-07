@@ -154,7 +154,8 @@ define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
 #   docker.conf
 #
 demyx_config_docker() {
-    [[ ! -f "$DEMYX_CONFIG"/docker.conf ]] && echo "[global]
+    if [[ ! -f "$DEMYX_CONFIG"/docker.conf ]]; then
+        echo "[global]
 error_log = /proc/self/fd/2
 
 ; https://github.com/docker-library/php/pull/725#issuecomment-443540114
@@ -169,13 +170,15 @@ clear_env = no
 ; Ensure worker stdout and stderr are sent to the main error log.
 catch_workers_output = yes
 decorate_workers_output = no
-    " > "$DEMYX_CONFIG"/docker.conf
+        " > "$DEMYX_CONFIG"/docker.conf
+    fi
 }
 #
 #   php.ini
 #
 demyx_config_php() {
-    [[ ! -f "$DEMYX_CONFIG"/php.conf ]] && echo "[Assertion]
+    if [[ ! -f "$DEMYX_CONFIG"/php.conf ]]; then
+        echo "[Assertion]
 zend.assertions = -1
 
 [CLI Server]
@@ -362,12 +365,8 @@ soap.wsdl_cache_ttl=86400
 [sqlite3]
 
 [sysvshm]
-
-[XDebug]
-xdebug.client_port = 9001
-xdebug.mode = debug
-xdebug.start_with_request = trigger
-xdebug.trigger_value = 1" > "$DEMYX_CONFIG"/php.ini
+        " > "$DEMYX_CONFIG"/php.ini
+    fi
 }
 #
 #   TEMPORARY
@@ -387,7 +386,8 @@ demyx_config_proxy() {
 #   www.conf
 #
 demyx_config_www() {
-    [[ ! -f "$DEMYX_CONFIG"/www.conf ]] && echo "[${DEMYX_DOMAIN}]
+    if [[ ! -f "$DEMYX_CONFIG"/www.conf ]]; then
+        echo "[${DEMYX_DOMAIN}]
 catch_workers_output        = yes
 chdir                       = $DEMYX
 listen                      = 9000
@@ -404,7 +404,8 @@ pm.start_servers            = $DEMYX_PM_START_SERVERS
 emergency_restart_interval  = $DEMYX_EMERGENCY_RESTART_INTERVAL
 emergency_restart_threshold = $DEMYX_EMERGENCY_RESTART_THRESHOLD
 process_control_timeout     = $DEMYX_PROCESS_CONTROL_TIMEOUT
-    " > "$DEMYX_CONFIG"/www.conf
+        " > "$DEMYX_CONFIG"/www.conf
+    fi
 }
 #
 #   Init.
