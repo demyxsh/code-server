@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2024-03-07
+- Fix container crashes [93d2749](https://github.com/demyxsh/code-server/commit/93d2749b35321868a143a7dea336138cd2b8d6af)
+- The demyx container will handle this [adf3f57](https://github.com/demyxsh/code-server/commit/adf3f5708a17b62b7ef3084ebe73ba0956c56fd9)
+- Backup extensions before updating [2b51b50](https://github.com/demyxsh/code-server/commit/2b51b506488058ee8128a2db0c366365b5841c9e)
+- Execute `demyx motd` when the terminal starts [b075b9e](https://github.com/demyxsh/code-server/commit/b075b9e213de0bdb63ccd7ea74794069e3a7e0e6)
+
 ## 2024-03-05
 - Remove shorthand since it was causing the container to crash [c02fbca](https://github.com/demyxsh/code-server/commit/c02fbcad6562b138edaf2a64c201a9ad0f27199e)
 - Remove missing package [58d2c3c](https://github.com/demyxsh/code-server/commit/58d2c3c5c8f10e15e6ff032db10f3e3fe57bf236)
