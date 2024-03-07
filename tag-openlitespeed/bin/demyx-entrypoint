@@ -99,9 +99,6 @@ demyx_entrypoint() {
         cp "$DEMYX_CONFIG"/launch.json "$DEMYX"/.vscode
     fi
 
-    # Set wp-config.php to debug mode
-    sed -i "s|'WP_DEBUG', false|'WP_DEBUG', true|g" "$DEMYX_WP_CONFIG"
-
     # Check for wp-cli login package
     if [[ ! -d "$HOME"/.wp-cli/packages/vendor/aaemnnosttv ]]; then
         wp package install aaemnnosttv/wp-cli-login-command &
