@@ -1,5 +1,4 @@
 FROM quay.io/vektorlab/ctop as demyx_ctop
-FROM docker as demyx_docker
 FROM koalaman/shellcheck as demyx_shellcheck
 FROM debian:bookworm-slim
 
@@ -51,6 +50,18 @@ RUN set -ex; \
     wget \
     zsh
 
+# Install Docker
+RUN set -ex; \
+    install -m 0755 -d /etc/apt/keyrings; \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc; \
+    chmod a+r /etc/apt/keyrings/docker.asc; \
+    echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null; \
+        apt-get update; \
+        apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
 # Configure Demyx
 RUN set -ex; \
     # Create demyx user
@@ -77,7 +88,6 @@ RUN set -ex; \
 
 # Imports
 COPY --from=demyx_ctop /ctop /usr/local/bin/ctop
-COPY --from=demyx_docker /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=demyx_shellcheck /bin/shellcheck /usr/local/bin/shellcheck
 COPY --chown=root:root bin /usr/local/bin
 COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
