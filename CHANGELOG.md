@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2024-03-25
+- Install latest version of Docker through package manager [8ee678b](https://github.com/demyxsh/code-server/commit/8ee678b3f475eee9b8f4f49a2fe4c3fba99d0c2e)
+- Remove docker-compose package since the latest version of Docker now has compose installed as a plugin [d7400a8](https://github.com/demyxsh/code-server/commit/d7400a88c930f2fe95eb25ea875d2079253dd057)
+
 ## 2024-03-07
 - Fix container crashes [93d2749](https://github.com/demyxsh/code-server/commit/93d2749b35321868a143a7dea336138cd2b8d6af)
 - The demyx container will handle this [adf3f57](https://github.com/demyxsh/code-server/commit/adf3f5708a17b62b7ef3084ebe73ba0956c56fd9)
