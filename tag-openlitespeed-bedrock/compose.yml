@@ -17,42 +17,22 @@ services:
       - demyx_traefik
     environment:
       - DEMYX=/demyx
-      - DEMYX_CHARACTER_SET_SERVER=utf8
-      - DEMYX_COLLATION_SERVER=utf8_general_ci
       - DEMYX_CONFIG=/etc/demyx
       - DEMYX_DATABASE=demyx
-      - DEMYX_DEFAULT_CHARACTER_SET=utf8
       - DEMYX_DOMAIN=domain.tld
-      - DEMYX_INNODB_BUFFER_POOL_SIZE=16M
-      - DEMYX_INNODB_DATA_FILE_PATH=ibdata1:10M:autoextend
-      - DEMYX_INNODB_FILE_PER_TABLE=1
-      - DEMYX_INNODB_FLUSH_LOG_AT_TRX_COMMIT=1
-      - DEMYX_INNODB_LOCK_WAIT_TIMEOUT=50
-      - DEMYX_INNODB_LOG_BUFFER_SIZE=8M
-      - DEMYX_INNODB_LOG_FILE_SIZE=5M
-      - DEMYX_INNODB_USE_NATIVE_AIO=1
-      - DEMYX_KEY_BUFFER_SIZE=20M
+      - DEMYX_INNODB_BUFFER_POOL_SIZE=128M
+      - DEMYX_INNODB_LOG_BUFFER_SIZE=64M
       - DEMYX_LOG=/var/log/demyx
-      - DEMYX_MAX_ALLOWED_PACKET=16M
-      - DEMYX_MAX_CONNECTIONS=1000
-      - DEMYX_MYISAM_SORT_BUFFER_SIZE=8M
-      - DEMYX_NET_BUFFER_SIZE=8K
       - DEMYX_PASSWORD=demyx
-      - DEMYX_READ_BUFFER=2M
-      - DEMYX_READ_BUFFER_SIZE=256K
-      - DEMYX_READ_RND_BUFFER_SIZE=512K
       - DEMYX_ROOT_PASSWORD=demyx_root  # Mandatory
-      - DEMYX_SERVER_ID=1
-      - DEMYX_SORT_BUFFER_SIZE=20M
-      - DEMYX_TABLE_OPEN_CACHE=64
       - DEMYX_USERNAME=demyx
-      - DEMYX_WRITE_BUFFER=2M
       - TZ=America/Los_Angeles
     image: demyx/mariadb
     networks:
       - demyx
     restart: unless-stopped
     volumes:
+      - demyx_custom:/etc/demyx/custom
       - demyx_db:/demyx
       - demyx_log:/var/log/demyx
   demyx_pma:
@@ -121,8 +101,10 @@ services:
       - demyx
       - demyx_socket
     ports:
-      - 80:8081
-      - 443:8082
+      - 80:80/tcp
+      - 80:80/udp
+      - 443:443/tcp
+      - 443:443/udp
     restart: unless-stopped
     volumes:
       - demyx_log:/var/log/demyx
@@ -142,7 +124,6 @@ services:
       - DEMYX_BASIC_AUTH_USERNAME=demyx
       - DEMYX_BASIC_AUTH_WP=false
       - DEMYX_BEDROCK=true
-      - DEMYX_BEDROCK_MODE=development
       - DEMYX_CACHE=false
       - DEMYX_CLIENT_THROTTLE_BANDWIDTH_IN=0
       - DEMYX_CLIENT_THROTTLE_BANDWIDTH_OUT=0
@@ -170,10 +151,14 @@ services:
       - DEMYX_DOMAIN=domain.tld
       - DEMYX_LOG=/var/log/demyx
       - DEMYX_LOGROTATE=daily
-      - DEMYX_LOGROTATE_INTERVAL=30
+      - DEMYX_LOGROTATE_INTERVAL=7
       - DEMYX_LOGROTATE_SIZE=10M
-      - DEMYX_LSPHP=81
-      - DEMYX_LSAPI_CHILDREN=2000
+      - DEMYX_LSAPI_AVOID_FORK=0
+      - DEMYX_LSAPI_CHILDREN=35
+      - DEMYX_LSAPI_MAX_IDLE=300
+      - DEMYX_LSAPI_MAX_PROCESS_TIME=3600
+      - DEMYX_LSAPI_MAX_REQS=10000
+      - DEMYX_LSPHP=lsphp82
       - DEMYX_MAX_EXECUTION_TIME=300
       - DEMYX_MEMORY=256M
       - DEMYX_OPCACHE=true
@@ -264,7 +249,6 @@ services:
       - demyx_custom:/etc/demyx/custom
       - demyx_log:/var/log/demyx
       - demyx_wp:/demyx
-version: "2.4"
 volumes:
   demyx_code:
     name: demyx_code

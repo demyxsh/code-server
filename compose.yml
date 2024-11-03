@@ -55,8 +55,10 @@ services:
       - demyx
       - demyx_socket
     ports:
-      - 80:8081
-      - 443:8082
+      - 80:80/tcp
+      - 80:80/udp
+      - 443:443/tcp
+      - 443:443/udp
     restart: unless-stopped
     volumes:
       - demyx_log:/var/log/demyx
@@ -94,7 +96,6 @@ services:
     restart: unless-stopped
     volumes:
       - demyx_code:/home/demyx
-version: "2.4"
 volumes:
   demyx_code:
     name: demyx_code

@@ -74,10 +74,6 @@ ENV DEMYX_XMLRPC                                false
 ENV PATH                                        "${PATH}:/usr/local/lsws/${DEMYX_LSPHP}/bin"
 ENV TERM                                        xterm-256color
 ENV TZ                                          America/Los_Angeles
-# Support for old variables
-ENV CODE_ROOT                                   "$DEMYX"
-ENV CODE_CONFIG                                 "$DEMYX_CONFIG"
-ENV CODE_LOG                                    "$DEMYX_LOG"
 
 # Packages
 RUN set -ex; \
