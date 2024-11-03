@@ -51,10 +51,6 @@ ENV DEMYX_WP_PASSWORD                   demyx
 ENV DEMYX_WP_USERNAME                   demyx
 ENV TERM                                xterm-256color
 ENV TZ                                  America/Los_Angeles
-# Support for old variables
-ENV CODE_ROOT                           "$DEMYX"
-ENV CODE_CONFIG                         "$DEMYX_CONFIG"
-ENV CODE_LOG                            "$DEMYX_LOG"
 
 # Packages
 RUN set -ex; \

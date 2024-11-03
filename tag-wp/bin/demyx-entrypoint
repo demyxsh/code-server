@@ -6,9 +6,6 @@ set -eEuo pipefail
 #   Main.
 #
 demyx_entrypoint() {
-    # Support for old password variable
-    [[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
-
     # Generate config
     demyx-config
 

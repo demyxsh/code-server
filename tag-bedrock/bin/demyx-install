@@ -6,14 +6,6 @@ set -eEuo pipefail
 #   Main.
 #
 demyx_install() {
-    # Support for old variables
-    [[ -n "${WORDPRESS_DB_HOST:-}" ]] && DEMYX_DB_HOST="$WORDPRESS_DB_HOST"
-    [[ -n "${WORDPRESS_DB_NAME:-}" ]] && DEMYX_DB_NAME="$WORDPRESS_DB_NAME"
-    [[ -n "${WORDPRESS_DB_PASSWORD:-}" ]] && DEMYX_DB_PASSWORD="$WORDPRESS_DB_PASSWORD"
-    [[ -n "${WORDPRESS_DB_USER:-}" ]] && DEMYX_DB_USERNAME="$WORDPRESS_DB_USER"
-    [[ -n "${WORDPRESS_DOMAIN:-}" ]] && DEMYX_DOMAIN="$WORDPRESS_DOMAIN"
-    [[ -n "${WORDPRESS_SSL:-}" ]] && DEMYX_SSL="$WORDPRESS_SSL"
-
     # Define variables
     DEMYX_ENV="$DEMYX"/.env
     DEMYX_PROTO="http://$DEMYX_DOMAIN"

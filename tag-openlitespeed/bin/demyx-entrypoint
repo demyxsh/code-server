@@ -6,8 +6,8 @@ set -eEuo pipefail
 #   Main.
 #
 demyx_entrypoint() {
-    # Support for old password variable
-    [[ -n "${PASSWORD:-}" ]] && DEMYX_CODE_PASSWORD="$PASSWORD"
+    # Install WordPress
+    demyx-install
 
     # Generate config
     sudo -E demyx-config
