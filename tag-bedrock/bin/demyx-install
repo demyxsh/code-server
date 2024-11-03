@@ -30,7 +30,7 @@ demyx_install_config() {
         sed -i "s|database_password|$DEMYX_DB_PASSWORD|g" "$DEMYX_ENV"
         sed -i "s|# DB_HOST='localhost'|DB_HOST='$DEMYX_DB_HOST'|g" "$DEMYX_ENV"
         sed -i "s|WP_ENV=.*|WP_ENV=production|g" "$DEMYX_ENV"
-        SALT="$(wget -qO- https://api.wordpress.org/secret-key/1.1/salt/ | sed "s|define('||g" | sed "s|',|=|g" | sed "s| ||g" | sed "s|);||g")"
+        SALT="$(demyx_install_salt)"
         printf '%s\n' "g/generateme/d" a "$SALT" . w | ed -s "$DEMYX_ENV"
 
         # Configure wp-config.php
@@ -48,28 +48,43 @@ demyx_install_config() {
 
         # Update timezone
         wp option update timezone_string "$TZ"
-    else
-        demyx_install_check
     fi
 }
 #
-#   Check if DB is ready.
+#   Salts.
 #
-demyx_install_check() {
-    local DEMYX_INSTALL_CHECK_COUNT=0
+demyx_install_salt() {
+    # Declare an array with the key names
+    local DEMYX_INSTALL_SALT_KEYS=(
+        'AUTH_KEY'
+        'SECURE_AUTH_KEY'
+        'LOGGED_IN_KEY'
+        'NONCE_KEY'
+        'AUTH_SALT'
+        'SECURE_AUTH_SALT'
+        'LOGGED_IN_SALT'
+        'NONCE_SALT'
+    )
+    local DEMYX_INSTALL_SALT_I=
 
-    until wp core is-installed 2>/dev/null; do
-        DEMYX_INSTALL_CHECK_COUNT="$((DEMYX_INSTALL_CHECK_COUNT+1))"
-
-        if [[ "$DEMYX_INSTALL_CHECK_COUNT" = 30 ]]; then
-            echo "MariaDB is not connecting for some reason, exiting ..."
-            tail "$DEMYX_LOG"/"$DEMYX_DOMAIN".mariadb.log
-            exit
-        else
-            echo "Waiting for MariaDB to be ready, attempt #${DEMYX_INSTALL_CHECK_COUNT}/30 ..."
-            sleep 1
-        fi
+    # Loop through the keys and output the salts
+    for DEMYX_INSTALL_SALT_I in "${DEMYX_INSTALL_SALT_KEYS[@]}"; do
+        echo "${DEMYX_INSTALL_SALT_I}='$(demyx_install_random)'"
     done
+}
+#
+#   Random.
+#
+demyx_install_random() {
+    local DEMYX_INSTALL_RANDOM='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_[]{}<>~`+=,.;:/?|'
+    local DEMYX_INSTALL_RANDOM_OUTPUT=
+    local DEMYX_INSTALL_RANDOM_I=
+
+    for ((DEMYX_INSTALL_RANDOM_I=0; DEMYX_INSTALL_RANDOM_I<64; DEMYX_INSTALL_RANDOM_I++)); do
+        DEMYX_INSTALL_RANDOM_OUTPUT+="${DEMYX_INSTALL_RANDOM:RANDOM%${#DEMYX_INSTALL_RANDOM}:1}"
+    done
+
+    echo "${DEMYX_INSTALL_RANDOM_OUTPUT}"
 }
 #
 #   Init.

@@ -144,15 +144,6 @@ RUN set -ex; \
 
 # WordPress
 RUN set -ex; \
-    su -c "wget https://wordpress.org/latest.tar.gz -qO /tmp/latest.tar.gz; \
-    \
-    tar -xzf /tmp/latest.tar.gz -C /tmp; \
-    \
-    mv /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php; \
-    \
-    cp -r /tmp/wordpress/* ${DEMYX}; \
-    \
-    tar -czf ${DEMYX_CONFIG}/wordpress.tgz -C /tmp/wordpress ." -s /bin/sh demyx; \
     \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -qO /usr/local/bin/wp; \
     chmod +x /usr/local/bin/wp; \
