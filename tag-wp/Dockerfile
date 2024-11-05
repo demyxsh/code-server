@@ -231,7 +231,7 @@ RUN set -ex; \
     # Use our php-fpm configs
     ln -sf "${DEMYX_CONFIG}"/demyx.ini /usr/local/etc/php/php.ini; \
     ln -sf "${DEMYX_CONFIG}"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
-    ln -s "$DEMYX_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
+    echo "[XDebug]\nzend_extension = xdebug.so\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     \
     # Configure sudo
     echo "demyx ALL=(ALL) NOPASSWD:SETENV: /usr/local/bin/demyx-sudo" > /etc/sudoers.d/demyx; \
