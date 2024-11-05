@@ -21,7 +21,7 @@ demyx_entrypoint() {
     # OpenLiteSpeed htpasswd
     sudo -E demyx-htpasswd
 
-    if [[ -n "$(pgrep lshttpd || true)" ]]; then
+    if [[ -n "$(pgrep lsphp || true)" ]]; then
         sudo -E demyx-lsws restart
     else
         # Start OLS
