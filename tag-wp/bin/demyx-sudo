@@ -12,11 +12,17 @@ demyx_sudo() {
 		cron)
 			demyx_sudo_cron
 		;;
-		logrotate)
-			demyx_sudo_logrotate
+		permission)
+			demyx_sudo_permission
 		;;
-		permissions)
-			demyx_sudo_permissions
+		php)
+			demyx_sudo_php
+		;;
+		*)
+			# Execute all sudo functions
+			demyx_sudo_cron
+			demyx_sudo_permission
+			demyx_sudo_php
 		;;
 	esac
 }
@@ -26,24 +32,28 @@ demyx_sudo() {
 demyx_sudo_cron() {
 	local DEMYX_SUDO_CRON=
 	DEMYX_SUDO_CRON="$(pgrep cron || true)"
-	local DEMYX_SUDO_CRON_FILE=/etc/cron.d/demyx
 
 	{
-		printenv | sed 's/^\(.*\)$/\1/g'
-		echo "$DEMYX_CRON_WP_INTERVAL demyx-cron wp"
-		echo "$DEMYX_CRON_LOGROTATE_INTERVAL sudo -E demyx-sudo logrotate"
+		if [[ "${DEMYX_BEDROCK}" = true ]]; then
+			echo "${DEMYX_CRON_WP_INTERVAL} /usr/local/bin/php ${DEMYX}/web/wp/wp-cron.php"
+		else
+			echo "${DEMYX_CRON_WP_INTERVAL} /usr/local/bin/php ${DEMYX}/wp-cron.php"
+		fi
+
+		echo "$DEMYX_CRON_LOGROTATE_INTERVAL /usr/bin/sudo -E /usr/local/bin/demyx-sudo logrotate"
 		echo "0 * * * * /usr/bin/sudo -E /usr/local/bin/demyx-sudo permissions"
 
 		# User defined cron
 		if [[ -f "$DEMYX_CONFIG"/custom/cron ]]; then
 			cat < "$DEMYX_CONFIG"/custom/cron
 		fi
-	} | sed 's|"||g' >> "$DEMYX_SUDO_CRON_FILE"
+	} | sed 's|"||g' > /etc/crontab
 
-	chmod 0644 "$DEMYX_SUDO_CRON_FILE"
-	crontab -u demyx "$DEMYX_SUDO_CRON_FILE"
+	crontab -u demyx /etc/crontab
 
-	[[ "$DEMYX_CRON" = true && -z "$DEMYX_SUDO_CRON" ]] && cron
+	if [[ "$DEMYX_CRON" = true && -z "$DEMYX_SUDO_CRON" ]]; then
+		cron
+	fi
 }
 #
 #	Logs.
@@ -62,6 +72,9 @@ demyx_sudo_logrotate() {
 	compress
 	delaycompress
 	size $DEMYX_LOGROTATE_SIZE
+	postrotate
+        sudo demyx-lsws restart
+    endscript
 }
     	" > "$DEMYX_SUDO_LOGROTATE"
 		chown root:root "$DEMYX_SUDO_LOGROTATE"

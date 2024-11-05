@@ -35,10 +35,7 @@ RUN set -ex; \
 COPY bin /usr/local/bin
 
 # Finalize
-RUN set -ex; \
-    # sudoers
-    echo "demyx ALL=(ALL) NOPASSWD:SETENV: /usr/local/lsws/bin/lswsctrl, /usr/local/bin/demyx-admin, /usr/local/bin/demyx-config, /usr/local/bin/demyx-htpasswd, /usr/local/bin/demyx-lsws, /usr/local/bin/demyx-sudo" > /etc/sudoers.d/demyx; \
-    \
+RUN set -ex;\
     # Set ownership
     chown -R root:root /usr/local/bin; \
     \
