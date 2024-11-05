@@ -12,62 +12,26 @@ demyx_config() {
     demyx_config_www
 }
 #
-#   Configure Bedrock.
-#
-demyx_config_bedrock() {
-    local DEMYX_CONFIG_BEDROCK_CONFIG_RC=
-    DEMYX_CONFIG_BEDROCK_CONFIG_RC="$(grep "demyx.php" "$DEMYX_WP_CONFIG" || true)"
-    local DEMYX_CONFIG_BEDROCK_ENV="$DEMYX"/.env
-    local DEMYX_CONFIG_BEDROCK_HOME="${DEMYX_PROTO}://$DEMYX_DOMAIN"
-    [[ -f "$DEMYX_CONFIG_BEDROCK_ENV" ]] && sed -i "s|WP_HOME=.*|WP_HOME=$DEMYX_CONFIG_BEDROCK_HOME|g" "$DEMYX_CONFIG_BEDROCK_ENV"
-    [[ ! -f "$DEMYX"/web/app/mu-plugins/wp-cli-login-server.php ]] && ln -s "$DEMYX_CONFIG"/wp-cli-login-server.php "$DEMYX"/web/app/mu-plugins/wp-cli-login-server.php
-
-    if [[ -z "$DEMYX_CONFIG_BEDROCK_CONFIG_RC" ]]; then
-        sed -i "s|<?php.*|<?php\n\
-// Demyx\n\
-// https://demyx.sh\n\
-if ( file_exists( getenv( 'DEMYX_CONFIG' ) . '/demyx.php' ) ) {\n\
-    include_once getenv( 'DEMYX_CONFIG' ) . '/demyx.php';\n\
-}\n\
-\n|g" "$DEMYX_WP_CONFIG"
-    fi
-
-    echo "<?php
-/**
-Demyx customizations for wp-config.php.
-
-@package  Demyx
-@version  1.1.0
-@author   Demyx <info@demyx.sh>
-@link     https://demyx.sh
- */
-
-// Redis Cache - https://wordpress.org/plugins/redis-cache/
-define( 'WP_REDIS_HOST', '${DEMYX_DB_HOST/db/rd}' );
-define( 'WP_REDIS_PORT', 6379 );
-define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
-define( 'WP_REDIS_DATABASE', 0 );
-define( 'WP_REDIS_TIMEOUT', 1 );
-define( 'WP_REDIS_READ_TIMEOUT', 1 );
-
-// Disable installation of default themes/plugins when upgrading
-define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
-
-    " > "$DEMYX_CONFIG"/demyx.php
-}
-#
 #   demyx.php
 #
-demyx_config_demyx() {
-    local DEMYX_CONFIG_RC=
-    DEMYX_CONFIG_RC="$(grep "demyx.php" "$DEMYX_WP_CONFIG" || true)"
+demyx_config_include() {
+    local DEMYX_CONFIG_INCLUDE=
+    local DEMYX_CONFIG_INCLUDE_ENV="${DEMYX}"/.env
+    local DEMYX_CONFIG_INCLUDE_HOME="${DEMYX_PROTO}://${DEMYX_DOMAIN}"
+    DEMYX_CONFIG_INCLUDE="$(grep "demyx.php" "${DEMYX_WP_CONFIG}" || true)"
 
-    if [[ ! -f "$DEMYX"/wp-content/mu-plugins/wp-cli-login-server.php ]]; then
-        [[ ! -d "$DEMYX"/wp-content/mu-plugins ]] && mkdir -p "$DEMYX"/wp-content/mu-plugins
-        ln -s "$DEMYX_CONFIG"/wp-cli-login-server.php "$DEMYX"/wp-content/mu-plugins
+    if [[ "${DEMYX_BEDROCK}" = true ]]; then
+        [[ -f "${DEMYX_CONFIG_INCLUDE_ENV}" ]] && sed -i "s|WP_HOME=.*|WP_HOME=${DEMYX_CONFIG_INCLUDE_HOME}|g" "${DEMYX_CONFIG_INCLUDE_ENV}"
+        [[ ! -f "${DEMYX}/web/app/mu-plugins/wp-cli-login-server.php" ]] && ln -s "${DEMYX_CONFIG}/wp-cli-login-server.php" "${DEMYX}/web/app/mu-plugins/wp-cli-login-server.php"
+    else
+        if [[ ! -f "${DEMYX}/wp-content/mu-plugins/wp-cli-login-server.php" ]]; then
+            [[ ! -d "${DEMYX}/wp-content/mu-plugins" ]] && mkdir -p "${DEMYX}/wp-content/mu-plugins"
+            ln -s "${DEMYX_CONFIG}/wp-cli-login-server.php" "${DEMYX}/wp-content/mu-plugins"
+        fi
     fi
 
-    if [[ -z "$DEMYX_CONFIG_RC" ]]; then
+    # Include demyx.php
+    if [[ -z "${DEMYX_CONFIG_INCLUDE}" ]]; then
         sed -i "s|<?php.*|<?php\n\
 // Demyx\n\
 // https://demyx.sh\n\
@@ -77,17 +41,23 @@ if ( file_exists( getenv( 'DEMYX_CONFIG' ) . '/demyx.php' ) ) {\n\
 \n|g" "$DEMYX_WP_CONFIG"
     fi
 
-    echo "<?php
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/demyx.php" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/demyx.php" "${DEMYX_CONFIG}/demyx.php"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/demyx.php" ]]; then
+        {
+            echo "<?php
 /**
-Demyx customizations for wp-config.php.
+Demyx customizations.
 
 @package  Demyx
 @version  1.2.0
 @author   Demyx <info@demyx.sh>
 @link     https://demyx.sh
  */
+ "
 
-// If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact.
+        if [[ "${DEMYX_BEDROCK}" = false ]]; then
+            echo "// If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact.
 // See also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy.
 if ( isset( \$_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === \$_SERVER['HTTP_X_FORWARDED_PROTO'] ) {
 	\$_SERVER['HTTPS'] = 'on';
@@ -107,8 +77,10 @@ define( 'WP_SITEURL', \$demyx_url );
 
 // Disable WordPress cron.
 define( 'DISABLE_WP_CRON', true );
+            "
+        fi
 
-// Redis Cache - https://wordpress.org/plugins/redis-cache/
+        echo "// Redis Cache - https://wordpress.org/plugins/redis-cache/
 define( 'WP_REDIS_HOST', '${DEMYX_DB_HOST/db/rd}' );
 define( 'WP_REDIS_PORT', 6379 );
 define( 'WP_REDIS_PREFIX', '${DEMYX_DOMAIN}' );
@@ -119,29 +91,11 @@ define( 'WP_REDIS_READ_TIMEOUT', 1 );
 // Disable installation of default themes/plugins when upgrading
 define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
 
-    " > "$DEMYX_CONFIG"/demyx.php
-}
-#
-#   docker.conf
-#
-demyx_config_docker() {
-    if [[ ! -f "$DEMYX_CONFIG"/docker.conf ]]; then
-        echo "[global]
-error_log = /proc/self/fd/2
+// Mitigate DoS attack CVE with WordPress script concatenation
+define( 'CONCATENATE_SCRIPTS', false );
+        "
 
-; https://github.com/docker-library/php/pull/725#issuecomment-443540114
-log_limit = 8192
-
-[${DEMYX_DOMAIN}]
-; if we send this to /proc/self/fd/1, it never appears
-access.log = /proc/self/fd/2
-
-clear_env = no
-
-; Ensure worker stdout and stderr are sent to the main error log.
-catch_workers_output = yes
-decorate_workers_output = no
-        " > "$DEMYX_CONFIG"/docker.conf
+        } > "${DEMYX_CONFIG}/demyx.php"
     fi
 }
 #
