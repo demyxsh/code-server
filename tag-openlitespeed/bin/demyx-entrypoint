@@ -12,11 +12,8 @@ demyx_entrypoint() {
     # Generate config
     sudo -E demyx-config
 
-    # Auto install WordPress if it's not installed already
-    demyx-install
-
     # Start crond
-    sudo -E demyx-sudo cron
+    sudo -E demyx-sudo
 
     # OpenLiteSpeed admin
     sudo -E demyx-admin
@@ -24,11 +21,12 @@ demyx_entrypoint() {
     # OpenLiteSpeed htpasswd
     sudo -E demyx-htpasswd
 
-    # Start OLS
-    sudo -E demyx-lsws
-
-    # Reset permissions
-    sudo -E demyx-sudo permissions
+    if [[ -n "$(pgrep lshttpd || true)" ]]; then
+        sudo -E demyx-lsws restart
+    else
+        # Start OLS
+        sudo -E demyx-lsws
+    fi
 
     # Create new code-server config directory
     if [[ ! -d /home/demyx/.config ]]; then
@@ -115,11 +113,15 @@ demyx_entrypoint() {
     extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
     password: $DEMYX_CODE_PASSWORD
     user-data-dir: ${DEMYX_CODE_CONFIG}/data" | sed 's|    ||g' > "$DEMYX_CODE_CONFIG"/config.yaml
-
-    # Start code-server
-    code-server "$DEMYX"
 }
 #
 #   Init.
 #
 demyx_entrypoint
+#
+#   Exec.
+#
+# shellcheck disable=SC2009
+if [[ "$(ps -o cmd fp 1)" != *"/usr/local/lib/code-server"* ]]; then
+    exec "$@"
+fi

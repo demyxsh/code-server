@@ -13,23 +13,14 @@ demyx_entrypoint() {
     demyx-install
 
     # Start crond
-    sudo -E demyx-sudo cron
-
-    # Set default php version
-    case "$DEMYX_PHP" in
-        8.2|82)
-            DEMYX_PHP=82
-        ;;
-        *)
-            DEMYX_PHP=81
-        ;;
-    esac
-
-    # Reset permissions
-    sudo -E demyx-sudo permissions
+    sudo -E demyx-sudo
 
     # Start php-fpm in the background
-    php-fpm -D
+    if [[ -n "$(pgrep php-fpm || true)" ]]; then
+        pkill -USR2 php-fpm
+    else
+        php-fpm -D
+    fi
 
     # Create new code-server config directory
     if [[ ! -d /home/demyx/.config ]]; then
@@ -120,11 +111,15 @@ demyx_entrypoint() {
     extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
     password: $DEMYX_CODE_PASSWORD
     user-data-dir: ${DEMYX_CODE_CONFIG}/data" | sed 's|    ||g' > "$DEMYX_CODE_CONFIG"/config.yaml
-
-    # Start code-server
-    code-server "$DEMYX"
 }
 #
 #   Init.
 #
 demyx_entrypoint
+#
+#   Exec.
+#
+# shellcheck disable=SC2009
+if [[ "$(ps -o cmd fp 1)" != *"/usr/local/lib/code-server"* ]]; then
+    exec "$@"
+fi

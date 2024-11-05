@@ -310,9 +310,7 @@ RUN set -ex; \
     rm -rf /tmp/*
 
 EXPOSE 80 8080 8081 9000 9001
-
 WORKDIR "$DEMYX"
-
 USER demyx
-
 ENTRYPOINT ["demyx-entrypoint"]
+CMD [ "code-server", "/demyx" ]
