@@ -39,8 +39,7 @@ RUN set -ex;\
     # Set ownership
     chown -R root:root /usr/local/bin; \
     \
-    # Cleanup
-    rm -rf /var/lib/apt/lists/*; \
+    # Clear /tmp
     rm -rf /tmp/*
 
 USER demyx

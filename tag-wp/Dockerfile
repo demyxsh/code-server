@@ -225,6 +225,7 @@ RUN set -ex; \
 
 # Finalize
 RUN set -ex; \
+    \
     # Remove php-fpm configs
     rm -f /usr/local/etc/php-fpm.d/*; \
     \
