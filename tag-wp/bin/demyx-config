@@ -156,12 +156,44 @@ demyx_config_www() {
     if [[ -f "${DEMYX_CONFIG}/custom/wordpress/www.conf" ]]; then
         ln -sf "${DEMYX_CONFIG}/custom/wordpress/www.conf" "${DEMYX_CONFIG}/www.conf"
     elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/www.conf" ]]; then
+        # Auto calc
+        local DEMYX_CONFIG_WWW_BUFFER=
+        local DEMYX_CONFIG_WWW_MAX_MEMORY=
+        local DEMYX_CONFIG_WWW_RAM=
+        local DEMYX_CONFIG_WWW_MAX_CHILDREN=
+        local DEMYX_CONFIG_WWW_MAX_SPARE_SERVERS
+
+        DEMYX_CONFIG_WWW_MAX_MEMORY="$(free | grep Mem | awk -F ' ' '{print $2}')"
+        DEMYX_CONFIG_WWW_BUFFER="$(( "${DEMYX_CONFIG_WWW_MAX_MEMORY}" * 10 /100 ))"
+        DEMYX_CONFIG_WWW_RAM="$(( "${DEMYX_CONFIG_WWW_MAX_MEMORY}" - "${DEMYX_CONFIG_WWW_BUFFER}" - "${DEMYX_CONFIG_WWW_BUFFER}" ))"
+        DEMYX_CONFIG_WWW_MAX_CHILDREN="$(( "${DEMYX_CONFIG_WWW_RAM}" / "${DEMYX_PM_AVERAGE}" ))" # Average maybe
+        DEMYX_CONFIG_WWW_START_SERVERS="$(( "${DEMYX_CONFIG_WWW_MAX_CHILDREN}" * 25 / 100 ))"
+        DEMYX_CONFIG_WWW_MIN_SPARE_SERVERS="${DEMYX_CONFIG_WWW_START_SERVERS}"
+        DEMYX_CONFIG_WWW_MAX_SPARE_SERVERS="$(( "${DEMYX_CONFIG_WWW_MAX_CHILDREN}" * 75 / 100 ))"
+
+        cat << EOF > "${DEMYX_CONFIG}/www.conf"
+[${DEMYX_DOMAIN}]
+catch_workers_output                = yes
+decorate_workers_output             = no
+chdir                               = ${DEMYX}
+listen                              = 9000
+php_admin_value[error_log]          = ${DEMYX_LOG}/${DEMYX_DOMAIN}.error.log
+pm                                  = dynamic
+pm.max_children                     = ${DEMYX_CONFIG_WWW_MAX_CHILDREN}
+pm.max_requests                     = ${DEMYX_PM_MAX_REQUESTS}
+pm.max_spare_servers                = ${DEMYX_CONFIG_WWW_MAX_SPARE_SERVERS}
+pm.min_spare_servers                = ${DEMYX_CONFIG_WWW_MIN_SPARE_SERVERS}
+pm.start_servers                    = ${DEMYX_CONFIG_WWW_START_SERVERS}
+access.log                          = /proc/self/fd/2
+clear_env                           = no
 
 [global]
-emergency_restart_interval  = $DEMYX_EMERGENCY_RESTART_INTERVAL
-emergency_restart_threshold = $DEMYX_EMERGENCY_RESTART_THRESHOLD
-process_control_timeout     = $DEMYX_PROCESS_CONTROL_TIMEOUT
-        " > "$DEMYX_CONFIG"/www.conf
+emergency_restart_interval          = ${DEMYX_EMERGENCY_RESTART_INTERVAL}
+emergency_restart_threshold         = ${DEMYX_EMERGENCY_RESTART_THRESHOLD}
+process_control_timeout             = ${DEMYX_PROCESS_CONTROL_TIMEOUT}
+error_log                           = /proc/self/fd/2
+log_limit                           = 8192
+EOF
     fi
 }
 #
