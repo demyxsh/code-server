@@ -98,10 +98,12 @@ RUN set -ex; \
         libmagickwand-dev \
         libmagickcore-dev \
         logrotate \
+        mariadb-client \
         nano \
         net-tools \
         openssh-client \
         procps \
+        ruby \
         sudo \
         tzdata \
         unzip \
@@ -206,7 +208,7 @@ RUN set -ex; \
 
 # Xdebug
 RUN set -ex; \
-    DEMYX_XDEBUG_DEPS="build-essential"; \
+    DEMYX_XDEBUG_DEPS="build-essential autoconf"; \
     \
     apt-get install -y --no-install-recommends $DEMYX_XDEBUG_DEPS; \
     \

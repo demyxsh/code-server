@@ -51,6 +51,7 @@ RUN set -ex; \
         build-essential \
         bsdmainutils \
         ca-certificates \
+        cron \
         curl \
         default-mysql-client \
         dnsutils \
