@@ -229,8 +229,8 @@ RUN set -ex; \
     rm -f /usr/local/etc/php-fpm.d/*; \
     \
     # Use our php-fpm configs
-    ln -s "$DEMYX_CONFIG"/php.ini /usr/local/etc/php/php.ini; \
-    ln -s "$DEMYX_CONFIG"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
+    ln -sf "${DEMYX_CONFIG}"/demyx.ini /usr/local/etc/php/php.ini; \
+    ln -sf "${DEMYX_CONFIG}"/www.conf /usr/local/etc/php-fpm.d/www.conf; \
     ln -s "$DEMYX_CONFIG"/docker.conf /usr/local/etc/php-fpm.d/docker.conf; \
     \
     # Configure sudo
