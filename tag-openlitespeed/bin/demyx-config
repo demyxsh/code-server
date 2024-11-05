@@ -8,11 +8,11 @@ set -eEuo pipefail
 demyx_config() {
     # Default to lsphp81
     case "$DEMYX_LSPHP" in
-        82|8.2)
-            DEMYX_LSPHP=lsphp82
+        83|8.3)
+            DEMYX_LSPHP=lsphp83
         ;;
         *)
-            DEMYX_LSPHP=lsphp81
+            DEMYX_LSPHP=lsphp82
         ;;
     esac
 

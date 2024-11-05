@@ -82,7 +82,7 @@ if ( file_exists( getenv( 'DEMYX_CONFIG' ) . '/demyx.php' ) ) {\n\
 Demyx customizations for wp-config.php.
 
 @package  Demyx
-@version  1.1.0
+@version  1.2.0
 @author   Demyx <info@demyx.sh>
 @link     https://demyx.sh
  */

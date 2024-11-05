@@ -72,8 +72,24 @@ demyx_sudo_logrotate() {
 #
 #	Permissions.
 #
-demyx_sudo_permissions() {
-	chown -R demyx:demyx "$DEMYX" "$DEMYX_CONFIG" "$DEMYX_LOG"
+demyx_sudo_permission() {
+	chown -R demyx:demyx "${DEMYX}" "${DEMYX_CONFIG}" "${DEMYX_LOG}" &
+}
+#
+#	PHP.
+#
+demyx_sudo_php() {
+	case "$DEMYX_PHP" in
+        8.3|83)
+            DEMYX_PHP=83
+        ;;
+        *)
+            DEMYX_PHP=82
+        ;;
+    esac
+
+	ln -sf /usr/bin/php"${DEMYX_PHP}" /usr/bin/php
+	ln -sf /usr/sbin/php-fpm"${DEMYX_PHP}" /usr/sbin/php-fpm
 }
 #
 #	Init.
