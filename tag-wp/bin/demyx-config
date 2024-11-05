@@ -99,18 +99,12 @@ define( 'CONCATENATE_SCRIPTS', false );
     fi
 }
 #
-#   php.ini
+#   demyx.ini
 #
 demyx_config_php() {
-    if [[ ! -f "$DEMYX_CONFIG"/php.conf ]]; then
-        echo "[Assertion]
-zend.assertions = -1
-
-[CLI Server]
-cli_server.color = On
-
-[COM]
-
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/demyx.ini" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/demyx.ini" "${DEMYX_CONFIG}/demyx.ini"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/demyx.ini" ]]; then
 [Date]
 date.timezone = $TZ
 
@@ -311,19 +305,9 @@ demyx_config_proxy() {
 #   www.conf
 #
 demyx_config_www() {
-    if [[ ! -f "$DEMYX_CONFIG"/www.conf ]]; then
-        echo "[${DEMYX_DOMAIN}]
-catch_workers_output        = yes
-chdir                       = $DEMYX
-listen                      = 9000
-php_admin_value[error_log]  = ${DEMYX_LOG}/${DEMYX_DOMAIN}.error.log
-pm                          = $DEMYX_PM
-pm.max_children             = $DEMYX_PM_MAX_CHILDREN
-pm.max_requests             = $DEMYX_PM_MAX_REQUESTS
-pm.max_spare_servers        = $DEMYX_PM_MAX_SPARE_SERVERS
-pm.min_spare_servers        = $DEMYX_PM_MIN_SPARE_SERVERS
-pm.process_idle_timeout     = $DEMYX_PM_PROCESS_IDLE_TIMEOUT
-pm.start_servers            = $DEMYX_PM_START_SERVERS
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/www.conf" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/www.conf" "${DEMYX_CONFIG}/www.conf"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/www.conf" ]]; then
 
 [global]
 emergency_restart_interval  = $DEMYX_EMERGENCY_RESTART_INTERVAL

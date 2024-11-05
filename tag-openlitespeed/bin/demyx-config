@@ -33,7 +33,11 @@ demyx_config_admin_config() {
         DEMYX_ADMIN_IP_DENY=ALL
     fi
 
-    echo "# Demyx
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/admin_config.conf" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/admin_config.conf" "${DEMYX_CONFIG}/ols/admin_config.conf"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/admin_config.conf" ]]; then
+        cat << EOF > "${DEMYX_CONFIG}/ols/admin_config.conf"
+# Demyx
 # https://demyx.sh
 
 enableCoreDump                          1
@@ -58,7 +62,7 @@ accessControl {
   deny                                  ${DEMYX_ADMIN_IP_DENY:-}
 }
 
-listener adminListener{
+listener adminListener {
   address                               *:8081
   secure                                0
 }
@@ -109,7 +113,11 @@ demyx_config_env() {
 #   httpd_config.conf
 #
 demyx_config_httpd() {
-    echo "# Demyx
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/httpd_config.conf" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/httpd_config.conf" "${DEMYX_CONFIG}/ols/httpd_config.conf"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/httpd_config.conf" ]]; then
+        cat << EOF > "${DEMYX_CONFIG}/ols/httpd_config.conf"
+# Demyx
 # https://demyx.sh
 
 serverName                              Demyx
@@ -513,7 +521,11 @@ demyx_config_vhconf() {
                 RewriteRule ^wp-includes/[^/]+\.xml\$ - [F,L]"
     fi
 
-    echo "# Demyx
+    if [[ -f "${DEMYX_CONFIG}/custom/wordpress/vhconf.conf" ]]; then
+        ln -sf "${DEMYX_CONFIG}/custom/wordpress/vhconf.conf" "${DEMYX_CONFIG}/ols/vhconf.conf"
+    elif [[ ! -f "${DEMYX_CONFIG}/custom/wordpress/vhconf.conf" ]]; then
+        cat << EOF > "${DEMYX_CONFIG}/ols/vhconf.conf"
+# Demyx
 # https://demyx.sh
 
 docRoot                                 $DEMYX_CONFIG_VHCONF
@@ -686,7 +698,9 @@ module cache {
     enablePrivateCache                  0
     privateExpireInSeconds              3600
     ls_enabled                          ${DEMYX_CACHE_ENABLE:-0}
-}" > "$DEMYX_CONFIG"/ols/vhconf.conf
+}"
+EOF
+    fi
 }
 #
 #   Init.
