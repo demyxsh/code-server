@@ -71,7 +71,6 @@ ENV DEMYX_WP_EMAIL                              info@domain.tld
 ENV DEMYX_WP_PASSWORD                           demyx
 ENV DEMYX_WP_USERNAME                           demyx
 ENV DEMYX_XMLRPC                                false
-ENV PATH                                        "${PATH}:/usr/local/lsws/${DEMYX_LSPHP}/bin"
 ENV TERM                                        xterm-256color
 ENV TZ                                          America/Los_Angeles
 
@@ -226,29 +225,32 @@ RUN set -ex; \
 
 # Xdebug
 RUN set -ex; \
-    DEMYX_XDEBUG_DEPS="build-essential autoconf"; \
+    DEMYX_XDEBUG_DEPS="build-essential ${DEMYX_LSPHP}-dev lsphp83-dev"; \
+    DEMYX_XDEBUG_VERSION=3.3.2; \
+    DEMYX_XDEBUG_INI="$(find /usr/local/lsws/lsphp8* -name 'php.ini')"; \
     \
     apt-get install -y --no-install-recommends $DEMYX_XDEBUG_DEPS; \
     \
     ln -s /bin/sed /usr/bin/sed; \
     \
-    pecl install xdebug; \
+    cd /tmp && wget "https://github.com/xdebug/xdebug/archive/refs/tags/${DEMYX_XDEBUG_VERSION}.tar.gz" && tar -xzf "${DEMYX_XDEBUG_VERSION}.tar.gz"; \
     \
-    apt-get purge -y build-essential $DEMYX_XDEBUG_DEPS; \
+    cd /tmp/xdebug-"${DEMYX_XDEBUG_VERSION}" && /usr/local/lsws/"${DEMYX_LSPHP}"/bin/phpize; \
+    ./configure --enable-xdebug --with-php-config=/usr/local/lsws/"${DEMYX_LSPHP}"/bin/php-config; \
+    make && make install; \
+    \
+    rm -rf /tmp/*; \
+    cd /tmp && wget "https://github.com/xdebug/xdebug/archive/refs/tags/${DEMYX_XDEBUG_VERSION}.tar.gz" && tar -xzf "${DEMYX_XDEBUG_VERSION}.tar.gz"; \
+    cd /tmp/xdebug-"${DEMYX_XDEBUG_VERSION}" && /usr/local/lsws/lsphp83/bin/phpize; \
+    ./configure --enable-xdebug --with-php-config=/usr/local/lsws/lsphp83/bin/php-config; \
+    make && make install; \
+    \
+    for i in $DEMYX_XDEBUG_INI; do echo "[XDebug]\nzend_extension = xdebug\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1" >> "${i}"; done; \
+    \
+    rm -rf /tmp/xdebug*; \
+    rm -rf "/tmp/${DEMYX_XDEBUG_VERSION}"; \
+    apt-get purge -y $DEMYX_XDEBUG_DEPS; \
     apt-get autoremove -y
-
-# Configure Xdebug
-RUN set -ex; \
-    DEMYX_FIND_XDEBUG="$(find /usr/local/lib/php/extensions -name 'xdebug.so')"; \
-    DEMYX_FIND_SO="$(find /usr/local/lsws/lsphp* -name 'opcache.so' 2>/dev/null)"; \
-    DEMYX_FIND_INI="$(find /usr/local/lsws/lsphp* -name 'php.ini' 2>/dev/null)"; \
-    DEMYX_FIND_MODS="$(find /usr/local/lsws/lsphp*/etc/php/*/mods-available -name 'opcache.ini' 2>/dev/null)"; \
-    \
-    DEMYX_ECHO_XDEBUG="[XDebug]\nzend_extension = ${DEMYX_FIND_XDEBUG}\nxdebug.client_port = 9001\nxdebug.mode = debug\nxdebug.start_with_request = trigger\nxdebug.trigger_value = 1"; \
-    \
-    for i in $DEMYX_FIND_SO; do DEMYX_SED="$(echo "$i" | sed 's|opcache.so||g')" && cp "$DEMYX_FIND_XDEBUG" "$DEMYX_SED"; done; \
-    for i in $DEMYX_FIND_INI; do echo "$DEMYX_ECHO_XDEBUG" >> "$i"; done; \
-    for i in $DEMYX_FIND_MODS; do DEMYX_SED="$(echo "$i" | sed 's|opcache.ini||g')" && echo "zend_extension=xdebug" > "$DEMYX_SED"/xdebug.ini; done
 
 # WordPress
 RUN set -ex; \
