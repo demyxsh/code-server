@@ -89,10 +89,16 @@ define( 'WP_REDIS_TIMEOUT', 1 );
 define( 'WP_REDIS_READ_TIMEOUT', 1 );
 
 // Disable installation of default themes/plugins when upgrading
-define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
+define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );"
 
+        # Add CONCATENATE_SCRIPTS only if not using Bedrock to avoid redefinition
+        if [[ "${DEMYX_BEDROCK}" = false ]]; then
+            echo "
 // Mitigate DoS attack CVE with WordPress script concatenation
-define( 'CONCATENATE_SCRIPTS', false );
+define( 'CONCATENATE_SCRIPTS', false );"
+        fi
+
+        echo "
         "
 
         } > "${DEMYX_CONFIG}/demyx.php"

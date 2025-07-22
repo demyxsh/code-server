@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8.3-cli-bullseye
+FROM php:8.3-fpm-bullseye
 
 LABEL sh.demyx.image                            demyx/code-server:openlitespeed
 LABEL sh.demyx.maintainer                       Demyx <info@demyx.sh>
@@ -52,7 +52,7 @@ ENV DEMYX_LSAPI_CHILDREN                        35
 ENV DEMYX_LSAPI_MAX_IDLE                        300
 ENV DEMYX_LSAPI_MAX_PROCESS_TIME                3600
 ENV DEMYX_LSAPI_MAX_REQS                        10000
-ENV DEMYX_LSPHP                                 lsphp82
+ENV DEMYX_LSPHP                                 lsphp83
 ENV DEMYX_MAX_EXECUTION_TIME                    300
 ENV DEMYX_MEMORY                                256M
 ENV DEMYX_OPCACHE                               true
@@ -164,7 +164,6 @@ RUN set -ex; \
     \
     # Oh-My-Zsh
     su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
-    su -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k" -s /bin/sh demyx; \
     su -c "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
     su -c "git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate" -s /bin/sh demyx; \
     sed -i 's|source $ZSH/oh-my-zsh.sh|source "$DEMYX_CONFIG"/.demyxrc\nsource $ZSH/oh-my-zsh.sh|g' /home/demyx/.zshrc; \
@@ -176,7 +175,18 @@ RUN set -ex; \
 RUN set -ex; \
     apt-get install -y --no-install-recommends tidy; \
     \
-    DEMYX_OLS_VERSION="$(wget -qO- https://openlitespeed.org/downloads/ | tidy -i 2>&1 | grep "<h6>" | head -1 | awk -F '[V]' '{print $2}' | sed 's| ||g' | sed 's|<.*||g')"; \
+    # OpenLiteSpeed version detection with fallback to known working version
+    DEMYX_OLS_VERSION="$(wget -qO- https://openlitespeed.org/downloads/ | grep -oE 'openlitespeed-[0-9]+\.[0-9]+\.[0-9]+' | sed 's/openlitespeed-//' | head -1 || \
+        wget -qO- https://openlitespeed.org/downloads/ | grep -oE 'V[0-9]+\.[0-9]+\.[0-9]+' | sed 's/V//' | head -1 || \
+        echo '1.8.2')"; \
+    \
+    # Validate version format  
+    if ! echo "$DEMYX_OLS_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then \
+        echo "Warning: Invalid version format '$DEMYX_OLS_VERSION', using fallback version 1.8.2" >&2; \
+        DEMYX_OLS_VERSION="1.8.2"; \
+    fi; \
+    \
+    echo "Installing OpenLiteSpeed version: $DEMYX_OLS_VERSION"; \
     curl -sL https://openlitespeed.org/packages/openlitespeed-"$DEMYX_OLS_VERSION".tgz -o /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz; \
     tar -xzf /tmp/openlitespeed-"$DEMYX_OLS_VERSION".tgz -C /tmp; \
     cd /tmp/openlitespeed && ./install.sh; \
@@ -191,12 +201,12 @@ RUN set -ex; \
         "$DEMYX_LSPHP"-mysql \
         "$DEMYX_LSPHP"-redis \
         \
-        lsphp83 \
-        lsphp83-curl \
-        lsphp83-imagick \
-        lsphp83-intl \
-        lsphp83-mysql \
-        lsphp83-redis; \
+        lsphp82 \
+        lsphp82-curl \
+        lsphp82-imagick \
+        lsphp82-intl \
+        lsphp82-mysql \
+        lsphp82-redis; \
     \
     ln -sf /usr/local/lsws/"$DEMYX_LSPHP"/bin/lsphp /usr/local/lsws/fcgi-bin/lsphp5; \
     \
@@ -255,7 +265,12 @@ RUN set -ex; \
 # WordPress
 RUN set -ex; \
     \
-    wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -qO /usr/local/bin/wp; \
+    # Install wp-cli with memory-aware wrapper
+    wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -qO /home/demyx/wp; \
+    chmod +x /home/demyx/wp; \
+    \
+    # Create memory-aware wp wrapper script
+    echo "#!/bin/bash\nexec php -d memory_limit=\"\${DEMYX_MEMORY}\" /home/demyx/wp \"\$@\"" > /usr/local/bin/wp; \
     chmod +x /usr/local/bin/wp; \
     \
     su -c "wp package install aaemnnosttv/wp-cli-login-command; \
@@ -287,32 +302,12 @@ RUN set -ex; \
     \
     # Install default extensions
     code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
-        --install-extension=equinusocio.vsc-material-theme \
-        --install-extension=pkief.material-icon-theme \
+        --install-extension=catppuccin.catppuccin-vsc \
+        --install-extension=catppuccin.catppuccin-vsc-icons \
+        --install-extension=shevaua.phpcs \
+        --install-extension=felixfbecker.php-debug \
         --install-extension=remisa.shellman \
         --install-extension=timonwong.shellcheck; \
-    \
-    # Tag specifc extensions
-    code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
-        --install-extension="$DEMYX_CONFIG"/shevaua.phpcs-1.0.8.vsix \
-        --install-extension=felixfbecker.php-debug; \
-    \
-    # Custom fonts
-    cd /usr/local/lib/code-server/src/browser/pages; \
-    curl -O "https://demyx.sh/fonts/{meslolgs-nf-regular.woff,meslolgs-nf-bold.woff,meslolgs-nf-italic.woff,meslolgs-nf-bold-italic.woff}"; \
-    \
-    CODE_WORKBENCH="$(find /usr/local/lib/code-server -name "*workbench.html")"; \
-    sed -i "s|</head>|\
-    <style> \n\
-        @font-face { \n\
-        font-family: 'MesloLGS NF'; \n\
-        font-style: normal; \n\
-        src: url('_static/src/browser/pages/meslolgs-nf-regular.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-bold.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-italic.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-bold-italic.woff') format('woff'); \n\
-    } \n\
-    \n\</style></head>|g" "$CODE_WORKBENCH"; \
     \
     # Finalize code-server
     chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \

@@ -67,7 +67,6 @@ RUN set -ex; \
     \
     # Oh-My-Zsh
     su -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" -s /bin/sh demyx; \
-    su -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k" -s /bin/sh demyx; \
     su -c "git clone https://github.com/zsh-users/zsh-autosuggestions.git /home/demyx/.oh-my-zsh/custom/plugins/zsh-autosuggestions" -s /bin/sh demyx; \
     su -c "git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate" -s /bin/sh demyx; \
     sed -i 's|source $ZSH/oh-my-zsh.sh|source "$DEMYX_CONFIG"/.demyxrc\nsource $ZSH/oh-my-zsh.sh|g' /home/demyx/.zshrc; \
@@ -103,27 +102,12 @@ RUN set -ex; \
     \
     # Install default extensions
     code-server --extensions-dir="$DEMYX_CODE_CONFIG"/extensions \
-        --install-extension=equinusocio.vsc-material-theme \
-        --install-extension=pkief.material-icon-theme \
+        --install-extension=catppuccin.catppuccin-vsc \
+        --install-extension=catppuccin.catppuccin-vsc-icons \
+        --install-extension=shevaua.phpcs \
+        --install-extension=felixfbecker.php-debug \
         --install-extension=remisa.shellman \
         --install-extension=timonwong.shellcheck; \
-    \
-    # Custom fonts
-    cd /usr/local/lib/code-server/src/browser/pages; \
-    curl -O "https://demyx.sh/fonts/{meslolgs-nf-regular.woff,meslolgs-nf-bold.woff,meslolgs-nf-italic.woff,meslolgs-nf-bold-italic.woff}"; \
-    \
-    CODE_WORKBENCH="$(find /usr/local/lib/code-server -name "*workbench.html")"; \
-    sed -i "s|</head>|\
-    <style> \n\
-        @font-face { \n\
-        font-family: 'MesloLGS NF'; \n\
-        font-style: normal; \n\
-        src: url('_static/src/browser/pages/meslolgs-nf-regular.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-bold.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-italic.woff') format('woff'), \n\
-        url('_static/src/browser/pages/meslolgs-nf-bold-italic.woff') format('woff'); \n\
-    } \n\
-    \n\</style></head>|g" "$CODE_WORKBENCH"; \
     \
     # Finalize code-server
     chown -R demyx:demyx "$DEMYX_CODE_CONFIG"; \

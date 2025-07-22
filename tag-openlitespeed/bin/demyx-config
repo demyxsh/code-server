@@ -465,10 +465,15 @@ define( 'WP_REDIS_READ_TIMEOUT', 1 );
 
 // Disable installation of default themes/plugins when upgrading
 define( 'CORE_UPGRADE_SKIP_NEW_BUNDLED', true );
+        "
 
+        # Add conditional CONCATENATE_SCRIPTS logic (Bedrock-aware)
+        if [[ "${DEMYX_BEDROCK}" != true ]]; then
+            echo "
 // Mitigate DoS attack CVE with WordPress script concatenation
 define( 'CONCATENATE_SCRIPTS', false );
-        "
+            "
+        fi
 
         } > "${DEMYX_CONFIG}/demyx.php"
     fi

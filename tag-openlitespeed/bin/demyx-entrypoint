@@ -78,19 +78,6 @@ demyx_entrypoint() {
         git clone https://github.com/TamCore/autoupdate-oh-my-zsh-plugins.git /home/demyx/.oh-my-zsh/custom/plugins/autoupdate
     fi
 
-    # Double check powerlevel10k theme
-    if [[ ! -d /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k ]]; then
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/demyx/.oh-my-zsh/custom/themes/powerlevel10k
-    fi
-
-    # Check for font-family
-    DEMYX_SETTINGS_CHECK="$(cat < "$DEMYX_CODE_CONFIG"/data/User/settings.json)"
-    if [[ "$DEMYX_SETTINGS_CHECK" != *"MesloLGS NF"* ]]; then
-        sed -i "s|\"editor.quickSuggestions\": true,|\
-        \"editor.fontFamily\": \"'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace\",\n\
-        \"editor.quickSuggestions\": true,|g" "$DEMYX_CODE_CONFIG"/data/User/settings.json
-    fi
-
     # Configure xdebug
     if [[ ! -d "$DEMYX"/.vscode ]]; then
         install -d -m 0755 -o demyx -g demyx "$DEMYX"/.vscode
@@ -102,17 +89,21 @@ demyx_entrypoint() {
         wp package install aaemnnosttv/wp-cli-login-command &
     fi
 
-    # TEMPORARY - Fixes WPCS
+    # TEMPORARY
     composer global require --dev wp-coding-standards/wpcs:"^3.0" &
+    DEMYX_ENTRYPOINT_THEME="$(find "${DEMYX_CODE_CONFIG}"/extensions -name "equinusocio*")"
+    if [[ -n "${DEMYX_ENTRYPOINT_THEME}" ]]; then
+        rm -rf "${DEMYX_CODE_CONFIG}"/extensions/equinusocio*
+    fi
 
     # Generate code-server yaml
-    echo "auth: $DEMYX_CODE_AUTH
-    bind-addr: $DEMYX_CODE_BIND_ADDR
+    echo "auth: \"$DEMYX_CODE_AUTH\"
+    bind-addr: \"$DEMYX_CODE_BIND_ADDR\"
     cert: false
     disable-telemetry: true
-    extensions-dir: ${DEMYX_CODE_CONFIG}/extensions
-    password: $DEMYX_CODE_PASSWORD
-    user-data-dir: ${DEMYX_CODE_CONFIG}/data" | sed 's|    ||g' > "$DEMYX_CODE_CONFIG"/config.yaml
+    extensions-dir: \"${DEMYX_CODE_CONFIG}/extensions\"
+    password: \"$DEMYX_CODE_PASSWORD\"
+    user-data-dir: \"${DEMYX_CODE_CONFIG}/data\"" | sed 's|    ||g' > "$DEMYX_CODE_CONFIG"/config.yaml
 }
 #
 #   Init.

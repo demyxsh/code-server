@@ -37,7 +37,7 @@ demyx_cron_wp() {
 	if [[ "$DEMYX_CRON_WP" != *"Error"* ]]; then
 		{
 			echo "[$(date +%F-%T)] ======================================="
-			wp cron event run --due-now --path="$DEMYX_CRON_WP_PATH" 2>&1
+			php -d memory_limit="${DEMYX_MEMORY}" "${DEMYX_CRON_WP_PATH}/wp-cron.php"
 		} | tee -a "$DEMYX_LOG"/"$DEMYX_DOMAIN".cron.log
 	fi
 }

@@ -1,0 +1,50 @@
+#!/bin/bash
+# Demyx
+# https://demyx.sh
+set -eEuo pipefail
+#
+#
+#
+demyx_ssh() {
+    local DEMYX_SSH_HOME=/home/demyx
+
+    # Prevents ssh errors from local machine
+    if [[ -f "${DEMYX_SSH_HOME}"/.ssh/ssh_host_rsa_key ]]; then
+        if [[ ! -f /etc/ssh/ssh_host_rsa_key ]]; then
+            cp "${DEMYX_SSH_HOME}"/.ssh/ssh_host_rsa_key /etc/ssh
+        fi
+        if [[ ! -f /etc/ssh/ssh_host_rsa_key.pub ]]; then
+            cp "${DEMYX_SSH_HOME}"/.ssh/ssh_host_rsa_key.pub /etc/ssh
+        fi
+    else
+        if [[ ! -f /etc/ssh/ssh_host_rsa_key ]]; then
+            ssh-keygen -A >/dev/null
+        fi
+        if [[ ! -f "${DEMYX_SSH_HOME}"/.ssh/ssh_host_rsa_key ]]; then
+            cp /etc/ssh/ssh_host_rsa_key "${DEMYX_SSH_HOME}"/.ssh
+        fi
+        if [[ ! -f "${DEMYX_SSH_HOME}"/.ssh/ssh_host_rsa_key.pub ]]; then
+            cp /etc/ssh/ssh_host_rsa_key.pub "${DEMYX_SSH_HOME}"/.ssh
+        fi
+    fi
+
+    touch /run/sshd.pid
+    chown demyx:demyx /run/sshd.pid
+    chmod 700 "${DEMYX_SSH_HOME}"/.ssh
+    chmod 600 /etc/ssh/ssh_host_rsa_key
+    chown demyx:demyx /etc/ssh/ssh_host_rsa_key
+    chown demyx:demyx /etc/ssh/ssh_host_rsa_key.pub
+    chown -R demyx:demyx "${DEMYX_SSH_HOME}"
+
+    sed -e "s|#PermitRootLogin prohibit-password|PermitRootLogin no|g" \
+        -e "s|#PubkeyAuthentication|PubkeyAuthentication|g" \
+        -e "s|#PasswordAuthentication yes|PasswordAuthentication no|g" \
+        -e "s|#PermitEmptyPasswords no|PermitEmptyPasswords no|g" \
+        -i /etc/ssh/sshd_config
+
+    su -c "/usr/sbin/sshd -E ${DEMYX_LOG}/ssh.log" -s /bin/bash demyx
+}
+#
+#
+#
+demyx_ssh
