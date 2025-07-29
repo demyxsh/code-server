@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 2025-07-28
+- Include subshells for error checking [0e34ca9](https://github.com/demyxsh/code-server/commit/0e34ca9f0b9a77e0c1a8dd42e924ff30529891c1)
+- Remove unused variables [f2fd300](https://github.com/demyxsh/code-server/commit/f2fd300a6e4a9d1c52bea345c1da0ae95df04313)
+- Rename/delete files/variables [961b095](https://github.com/demyxsh/code-server/commit/961b0959a1f7a02fa47c3e195eeb17b55d1380c1)
+- Fix WordPress URL error [290f512](https://github.com/demyxsh/code-server/commit/290f512fca80e0f4e9be6a05182799b824bc144d)
+- Update versions [cbe1dd9](https://github.com/demyxsh/code-server/commit/cbe1dd92e1c4e87640963acaa6c4731ebef80d1f)
+- Combine functions [71b3b9a](https://github.com/demyxsh/code-server/commit/71b3b9adbf19658389bc121c881b1fd8c7c9bbbd)
+- Allow config override [3d52810](https://github.com/demyxsh/code-server/commit/3d5281024cb36d518cb7da5d68034ff4df5d4e3f)
+- Update entrypoint so code-server is pid 1 [5a0d0b3](https://github.com/demyxsh/code-server/commit/5a0d0b327f3ba32a223e0af02d4f0f336f3898bd)
+- Update sudo [135edb5](https://github.com/demyxsh/code-server/commit/135edb559fc3ca2c05fa3f56263177bde72b2e79)
+- Update packages [683a473](https://github.com/demyxsh/code-server/commit/683a473cd55feaa00457444de38a0b711eea6fbb)
+- Fix imagick install error [9ec922e](https://github.com/demyxsh/code-server/commit/9ec922e1bc32e1aafb173196e86a22f08327c23e)
+- Simplify `demyx_config_php` [da3a0f1](https://github.com/demyxsh/code-server/commit/da3a0f108b48f7f2d6d8e12516589b682ebb601e)
+- `demyx_config_www()` is now fully automated [bc13ef8](https://github.com/demyxsh/code-server/commit/bc13ef8fcda60bb728ee5a0f23c6460381f7899d)
+- New variables [e50e326](https://github.com/demyxsh/code-server/commit/e50e32623d640c0eeeffda66f0b0b6c57e5f8e29)
+- Force symlink [b6f43b4](https://github.com/demyxsh/code-server/commit/b6f43b45539b36fb91ddf215ea9527d1396daadf)
+- Create missing xdebug.ini [242f80b](https://github.com/demyxsh/code-server/commit/242f80b9f174b5a41da0d4341d65dbfaf23022e3)
+- Direct people to demyx [51277f5](https://github.com/demyxsh/code-server/commit/51277f5f18004093818ba022fa6a06aa975a9214)
+- Misc update [c508668](https://github.com/demyxsh/code-server/commit/c508668739c672e0244b1d1afbbabd4a7d045830)
+- Add symlink to switch lsphp version [be83373](https://github.com/demyxsh/code-server/commit/be833733cae8f6242d3f159ba31011e8e30f36de)
+- Compile xdebug so there is no version mismatch [f01050d](https://github.com/demyxsh/code-server/commit/f01050daedd36fd04cfc2b3c730895d9b1394466)
+- Change pgrep string [0f0cf7e](https://github.com/demyxsh/code-server/commit/0f0cf7e5d318e2b0abe71935fc3ed8b073b8163b)
+- Refactor Dockerfile and entrypoint scripts to remove powerlevel10k theme, update VS Code extensions, and enhance SSH setup. Adjust settings for editor and improve configuration handling in demyx scripts. [a0fd27a](https://github.com/demyxsh/code-server/commit/a0fd27a66c83ce848a99e96846974b0f29d88134)
+- Update GitHub Actions workflow to use run ID in commit message for scheduled builds [d85d5c6](https://github.com/demyxsh/code-server/commit/d85d5c6ca471285639f9ffe9e9cb04cbfa546826)
+
 ## 2024-03-25
 - Install latest version of Docker through package manager [8ee678b](https://github.com/demyxsh/code-server/commit/8ee678b3f475eee9b8f4f49a2fe4c3fba99d0c2e)
 - Remove docker-compose package since the latest version of Docker now has compose installed as a plugin [d7400a8](https://github.com/demyxsh/code-server/commit/d7400a88c930f2fe95eb25ea875d2079253dd057)
