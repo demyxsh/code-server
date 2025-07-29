@@ -120,7 +120,7 @@ RUN set -ex; \
     cp "$DEMYX_CONFIG"/ctop /home/demyx/.ctop; \
     \
     # sudo
-    echo "demyx ALL=(ALL) NOPASSWD: /usr/bin/apt" > /etc/sudoers.d/demyx; \
+    echo "demyx ALL=(ALL) NOPASSWD:SETENV: /usr/bin/apt, /usr/local/bin/demyx-ssh" > /etc/sudoers.d/demyx; \
     \
     # Set ownership
     chown -R root:root /usr/local/bin; \

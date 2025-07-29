@@ -1,6 +1,10 @@
 {
-    "editor.fontFamily": "'MesloLGS NF', Menlo, Monaco, 'Courier New', monospace",
-    "editor.quickSuggestions": true,
+    "editor.insertSpaces": false,
+    "editor.quickSuggestions": {
+        "comments": "on",
+        "strings": "on",
+        "other": "on"
+    },
     "files.autoSave": "onFocusChange",
     "files.exclude": {
         "**/.git": true,
@@ -22,16 +26,11 @@
         "**/node_modules/**": true,
         "**/tmp/**": true
     },
-    "material-icon-theme.showReloadMessage": false,
-    "material-icon-theme.showUpdateMessage": false,
-    "material-icon-theme.showWelcomeMessage": false,
-    "materialTheme.accent": "Teal",
     "shellcheck.enableQuickFix": true,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.cursorBlinking": true,
     "terminal.integrated.cursorStyle": "line",
 	"terminal.integrated.gpuAcceleration": "canvas",
-    "terminal.integrated.shell.linux": "/bin/zsh",
-    "workbench.colorTheme": "Material Theme Darker High Contrast",
-    "workbench.iconTheme": "material-icon-theme"
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.iconTheme": "catppuccin-mocha"
 }
