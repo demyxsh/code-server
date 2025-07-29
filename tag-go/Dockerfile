@@ -2,7 +2,7 @@ FROM quay.io/vektorlab/ctop as demyx_ctop
 FROM docker as demyx_docker
 FROM golang:buster as demyx_go
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 LABEL sh.demyx.image        demyx/code-server:go
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
