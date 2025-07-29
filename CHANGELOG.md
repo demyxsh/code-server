@@ -24,6 +24,7 @@
 - Change pgrep string [0f0cf7e](https://github.com/demyxsh/code-server/commit/0f0cf7e5d318e2b0abe71935fc3ed8b073b8163b)
 - Refactor Dockerfile and entrypoint scripts to remove powerlevel10k theme, update VS Code extensions, and enhance SSH setup. Adjust settings for editor and improve configuration handling in demyx scripts. [a0fd27a](https://github.com/demyxsh/code-server/commit/a0fd27a66c83ce848a99e96846974b0f29d88134)
 - Update GitHub Actions workflow to use run ID in commit message for scheduled builds [d85d5c6](https://github.com/demyxsh/code-server/commit/d85d5c6ca471285639f9ffe9e9cb04cbfa546826)
+- Update Dockerfile to use debian:bookworm-slim as the base image [369824a](https://github.com/demyxsh/code-server/commit/369824a0864683d0e4052be73b1660c9da46018f)
 
 ## 2024-03-25
 - Install latest version of Docker through package manager [8ee678b](https://github.com/demyxsh/code-server/commit/8ee678b3f475eee9b8f4f49a2fe4c3fba99d0c2e)
