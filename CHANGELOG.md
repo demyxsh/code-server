@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2025-08-19
+- Enhance demyx-entrypoint script to install Catppuccin theme if not already present, ensuring a consistent theme experience across environments. [7d8f7dc](https://github.com/demyxsh/code-server/commit/7d8f7dc8f65d6c6917175438fd6baa46d6436477)
+
 ## 2025-07-28
 - Include subshells for error checking [0e34ca9](https://github.com/demyxsh/code-server/commit/0e34ca9f0b9a77e0c1a8dd42e924ff30529891c1)
 - Remove unused variables [f2fd300](https://github.com/demyxsh/code-server/commit/f2fd300a6e4a9d1c52bea345c1da0ae95df04313)
