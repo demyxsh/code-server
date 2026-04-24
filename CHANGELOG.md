@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2026-04-24
+- Fix repo url [247f569](https://github.com/demyxsh/code-server/commit/247f569d4f3a4e6e35caa3e0efe9d6c21c5e4783)
+
 ## 2025-08-19
 - Enhance demyx-entrypoint script to install Catppuccin theme if not already present, ensuring a consistent theme experience across environments. [7d8f7dc](https://github.com/demyxsh/code-server/commit/7d8f7dc8f65d6c6917175438fd6baa46d6436477)
 
