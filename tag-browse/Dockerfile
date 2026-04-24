@@ -1,6 +1,6 @@
 FROM quay.io/vektorlab/ctop as demyx_ctop
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM debian:bookworm-slim
+FROM debian:stable-slim
 
 LABEL sh.demyx.image        demyx/code-server:browse
 LABEL sh.demyx.maintainer   Demyx <info@demyx.sh>
@@ -94,9 +94,10 @@ COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 # Configure code-server
 RUN set -ex; \
     # Get code-server
-    CODE_VERSION="$(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest | jq -r .tag_name)"; \
+    CODE_VERSION="$(curl -fsSL https://api.github.com/repos/coder/code-server/releases/latest | jq -r .tag_name)"; \
+    test -n "$CODE_VERSION" && test "$CODE_VERSION" != "null"; \
     CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
-    curl -sL https://github.com/cdr/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
+    curl -fsSL https://github.com/coder/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
     tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
     mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
     \
