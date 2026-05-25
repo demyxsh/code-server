@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-05-25
+### Added
+- None.
+### Changed
+- Updated GitHub Actions Docker workflow to publish all moving variant tags plus versioned tags derived from `DEMYX_VERSION` from the `demyx` orchestrator using the `<version>-<variant>` convention.
+### Fixed
+- None.
+### Removed
+- None.
+### Security
+- None.
 ## 2026-04-24
 ### Changed
 - Fix repo url
