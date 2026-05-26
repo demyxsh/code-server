@@ -7,6 +7,8 @@ LABEL sh.demyx.url                              https://demyx.sh
 LABEL sh.demyx.github                           https://github.com/demyxsh
 LABEL sh.demyx.registry                         https://hub.docker.com/u/demyx
 
+ARG CODE_SERVER_VERSION=v4.121.0
+
 # Set default variables
 ENV DEMYX                                       /demyx
 ENV DEMYX_BEDROCK                               false
@@ -283,12 +285,10 @@ COPY --chown=demyx:demyx config "$DEMYX_CONFIG"
 
 # Configure code-server
 RUN set -ex; \
-    # Get code-server
-    CODE_VERSION="$(curl -fsSL https://api.github.com/repos/coder/code-server/releases/latest | jq -r .tag_name)"; \
-    test -n "$CODE_VERSION" && test "$CODE_VERSION" != "null"; \
-    CODE_VERSION_NUMBER="$(echo "$CODE_VERSION" | sed 's|v||g')"; \
-    curl -fsSL https://github.com/coder/code-server/releases/download/"$CODE_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz; \
-    tar -xzf /tmp/code-server-"$CODE_VERSION"-linux-amd64.tar.gz -C /tmp; \
+    # Pin version for reproducible CI builds and to avoid GitHub API rate limits.
+    CODE_VERSION_NUMBER="$(echo "$CODE_SERVER_VERSION" | sed 's|^v||')"; \
+    curl -fsSL https://github.com/coder/code-server/releases/download/"$CODE_SERVER_VERSION"/code-server-"$CODE_VERSION_NUMBER"-linux-amd64.tar.gz -o /tmp/code-server-"$CODE_SERVER_VERSION"-linux-amd64.tar.gz; \
+    tar -xzf /tmp/code-server-"$CODE_SERVER_VERSION"-linux-amd64.tar.gz -C /tmp; \
     mv /tmp/code-server-"$CODE_VERSION_NUMBER"-linux-amd64 /usr/local/lib/code-server; \
     \
     # Create code-server directories

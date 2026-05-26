@@ -5,8 +5,9 @@
 - None.
 ### Changed
 - Updated GitHub Actions Docker workflow to publish all moving variant tags plus versioned tags derived from `DEMYX_VERSION` from the `demyx` orchestrator using the `<version>-<variant>` convention.
+- Updated GitHub Actions workflow to resolve `CODE_SERVER_VERSION` once per run and pass it to all Docker builds via `--build-arg`.
 ### Fixed
-- None.
+- Removed per-image runtime dependency on GitHub `releases/latest` API for `code-server`, preventing CI `403` rate-limit failures that cascaded into bad download URLs.
 ### Removed
 - None.
 ### Security
