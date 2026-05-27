@@ -12,25 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEMYX_REPOSITORY: code-server
+      DEMYX_VERSION: 1.10.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Login
-        uses: docker/login-action@v1
+        uses: docker/login-action@v4
         with:
           username: demyx
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Resolve DEMYX version tag
-        run: |
-          DEMYX_VERSION_FILE="$(curl -fsSL https://raw.githubusercontent.com/demyxsh/demyx/refs/heads/master/VERSION)"
-          DEMYX_VERSION_TAG="$(printf '%s\n' "$DEMYX_VERSION_FILE" | sed -n 's/^DEMYX_VERSION=//p' | head -n 1 | tr -d '[:space:]')"
-
-          if [[ -z "$DEMYX_VERSION_TAG" ]]; then
-            echo "Failed to resolve DEMYX_VERSION from remote VERSION file." >&2
-            exit 1
-          fi
-
-          echo "DEMYX_VERSION_TAG=$DEMYX_VERSION_TAG" >> "$GITHUB_ENV"
       - name: Resolve code-server version tag
         run: |
           CODE_SERVER_VERSION="$(
@@ -53,13 +43,13 @@ jobs:
           docker pull koalaman/shellcheck
           docker pull php:7-fpm-buster
           docker pull quay.io/vektorlab/ctop
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-bedrock tag-bedrock
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:browse -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-browse tag-browse
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:go -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-go tag-go
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:latest -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }} tag-latest
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-openlitespeed tag-openlitespeed
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-openlitespeed-bedrock tag-openlitespeed-bedrock
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:wp -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-wp tag-wp
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-bedrock tag-bedrock
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:browse -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-browse -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-browse tag-browse
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:go -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-go -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-go tag-go
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:latest -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:v1 tag-latest
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed tag-openlitespeed
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed-bedrock tag-openlitespeed-bedrock
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:wp -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-wp -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-wp tag-wp
       - name: Test
         id: test
         shell: 'script -q -e -c "bash {0}"'
@@ -106,10 +96,17 @@ jobs:
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock
           docker push demyx/${{ env.DEMYX_REPOSITORY }}:wp
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-bedrock
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-browse
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-go
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-openlitespeed
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-openlitespeed-bedrock
-          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION_TAG }}-wp
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-bedrock
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-browse
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-go
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed-bedrock
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-wp
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-bedrock
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-browse
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-go
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed-bedrock
+          docker push demyx/${{ env.DEMYX_REPOSITORY }}:v1-wp
