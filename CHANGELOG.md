@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2026-05-29
+### Added
+- None.
+### Changed
+- Bump `DEMYX_VERSION` to `1.11.0` in GitHub Actions Docker workflow.
+### Fixed
+- None.
+### Removed
+- None.
+### Security
+- None.
+
 ## 2026-05-27
 ### Added
 - None.

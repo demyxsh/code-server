@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEMYX_REPOSITORY: code-server
-      DEMYX_VERSION: 1.10.0
+      DEMYX_VERSION: 1.11.0
     steps:
       - name: Checkout
         uses: actions/checkout@v6
