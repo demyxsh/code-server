@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2026-10-21
+### Added
+- Add PHP security profile unit and image smoke tests for WordPress and OpenLiteSpeed variants.
+### Changed
+- Pin WordPress and OpenLiteSpeed PHP CLI/FPM to PHP 8.3.36 on Debian Bookworm.
+- Install fixed LiteSpeed PHP 8.2.35 and 8.3.36 branches and repoint OpenLiteSpeed admin/LSAPI launchers to 8.3.36.
+### Fixed
+- Fail builds when required PHP CLI, FPM, LSAPI, or admin binaries do not meet their branch, SAPI, and patch minimums.
+### Removed
+- Disable the OpenLiteSpeed installer's automatic PHP 7.4 installation.
+### Security
+- Address CVE-2026-109618 and CVE-2026-109619 across WordPress and OpenLiteSpeed PHP runtimes.
+
 ## 2026-05-29
 ### Added
 - None.

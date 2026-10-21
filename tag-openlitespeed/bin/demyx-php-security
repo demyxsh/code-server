@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'Usage: %s wp|ols\n' "${0##*/}" >&2
+    exit 2
+fi
+
+profile="$1"
+if [[ "$profile" != wp && "$profile" != ols ]]; then
+    printf 'Unsupported PHP security profile: %s\n' "$profile" >&2
+    exit 2
+fi
+
+demyx_php_security_check() {
+    local binary="$1"
+    local expected_minor="$2"
+    local minimum_patch="$3"
+    local expected_sapi="$4"
+    local version_output
+    local version_line
+    local regex='^PHP[[:space:]]+8\.([0-9]+)\.([0-9]+)[[:space:]]+\(([[:alnum:]_-]+)\)([[:space:]]|$)'
+    local actual_minor
+    local actual_patch
+    local actual_sapi
+
+    if [[ ! -x "$binary" ]]; then
+        printf 'Missing or non-executable PHP interpreter: %s\n' "$binary" >&2
+        return 1
+    fi
+    if ! version_output=$("$binary" -v 2>&1); then
+        printf 'Failed to run PHP version check: %s -v\n' "$binary" >&2
+        return 1
+    fi
+
+    version_line=${version_output%%$'\n'*}
+    if [[ ! "$version_line" =~ $regex ]]; then
+        printf 'Malformed or unsupported PHP version from %s: %s\n' "$binary" "$version_line" >&2
+        return 1
+    fi
+
+    actual_minor=${BASH_REMATCH[1]}
+    actual_patch=${BASH_REMATCH[2]}
+    actual_sapi=${BASH_REMATCH[3]}
+
+    if (( 10#$actual_minor != 10#$expected_minor )); then
+        printf 'Wrong PHP branch from %s: expected 8.%s, got %s\n' "$binary" "$expected_minor" "$version_line" >&2
+        return 1
+    fi
+    if (( 10#$actual_patch < 10#$minimum_patch )); then
+        printf 'PHP version below security minimum from %s: require 8.%s.%s or newer, got %s\n' "$binary" "$expected_minor" "$minimum_patch" "$version_line" >&2
+        return 1
+    fi
+    if [[ "$actual_sapi" != "$expected_sapi" ]]; then
+        printf 'Wrong PHP SAPI from %s: expected %s, got %s\n' "$binary" "$expected_sapi" "$version_line" >&2
+        return 1
+    fi
+
+    printf 'PHP interpreter ok: %s reports %s\n' "$binary" "$version_line"
+}
+
+demyx_php_security_check /usr/local/bin/php 3 36 cli
+demyx_php_security_check /usr/local/sbin/php-fpm 3 36 fpm-fcgi
+
+if [[ "$profile" == wp ]]; then
+    exit 0
+fi
+
+demyx_php_security_check /usr/local/lsws/lsphp82/bin/php 2 35 cli
+demyx_php_security_check /usr/local/lsws/lsphp82/bin/lsphp 2 35 litespeed
+demyx_php_security_check /usr/local/lsws/lsphp83/bin/php 3 36 cli
+demyx_php_security_check /usr/local/lsws/lsphp83/bin/lsphp 3 36 litespeed
+demyx_php_security_check /usr/local/lsws/admin/fcgi-bin/admin_php 3 36 litespeed
+demyx_php_security_check /usr/local/lsws/fcgi-bin/lsphp 3 36 litespeed
+demyx_php_security_check /usr/local/lsws/fcgi-bin/lsphp5 3 36 litespeed
+
+for binary in \
+    /usr/local/lsws/fcgi-bin/lsphp7 \
+    /usr/local/lsws/admin/fcgi-bin/admin_php5 \
+    /usr/local/lsws/admin/fcgi-bin/admin_php.bak; do
+    if [[ -e "$binary" || -L "$binary" ]]; then
+        demyx_php_security_check "$binary" 3 36 litespeed
+    fi
+done

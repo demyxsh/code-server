@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: PHP Security Unit
+        run: bash tests/php-security-unit.sh
       - name: Login
         uses: docker/login-action@v4
         with:
@@ -41,15 +43,27 @@ jobs:
           docker pull docker
           docker pull golang:buster
           docker pull koalaman/shellcheck
-          docker pull php:7-fpm-buster
+          docker pull php:8.3.36-fpm-bookworm
           docker pull quay.io/vektorlab/ctop
+          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:wp -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-wp -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-wp tag-wp
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-bedrock tag-bedrock
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:browse -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-browse -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-browse tag-browse
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:go -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-go -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-go tag-go
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:latest -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:v1 tag-latest
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed tag-openlitespeed
           docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed-bedrock -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-openlitespeed-bedrock tag-openlitespeed-bedrock
-          docker build --no-cache --build-arg CODE_SERVER_VERSION=${{ env.CODE_SERVER_VERSION }} -t demyx/${{ env.DEMYX_REPOSITORY }}:wp -t demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-wp -t demyx/${{ env.DEMYX_REPOSITORY }}:v1-wp tag-wp
+      - name: PHP Security
+        run: |
+          bash tests/php-security.sh wp \
+            demyx/${{ env.DEMYX_REPOSITORY }}:wp \
+            demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-wp \
+            demyx/${{ env.DEMYX_REPOSITORY }}:bedrock \
+            demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-bedrock
+          bash tests/php-security.sh ols \
+            demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed \
+            demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed \
+            demyx/${{ env.DEMYX_REPOSITORY }}:openlitespeed-bedrock \
+            demyx/${{ env.DEMYX_REPOSITORY }}:${{ env.DEMYX_VERSION }}-openlitespeed-bedrock
       - name: Test
         id: test
         shell: 'script -q -e -c "bash {0}"'

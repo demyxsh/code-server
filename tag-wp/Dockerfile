@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck as demyx_shellcheck
-FROM php:8.3-fpm-bookworm
+FROM php:8.3.36-fpm-bookworm
 
 LABEL sh.demyx.image                    demyx/code-server:wp
 LABEL sh.demyx.maintainer               Demyx <info@demyx.sh>
@@ -48,6 +48,8 @@ ENV DEMYX_WP_PASSWORD                   demyx
 ENV DEMYX_WP_USERNAME                   demyx
 ENV TERM                                xterm-256color
 ENV TZ                                  America/Los_Angeles
+
+RUN php -r 'if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 3 || version_compare(PHP_VERSION, "8.3.36", "<")) { fwrite(STDERR, "PHP 8.3.36 or newer is required\n"); exit(1); }'
 
 # Packages
 RUN set -ex; \
@@ -121,6 +123,9 @@ RUN apt-get -q update && \
 # Enable extensions
 RUN set -ex; \
     docker-php-ext-enable imagick xdebug ssh2
+
+COPY bin/demyx-php-security /usr/local/bin/demyx-php-security
+RUN chmod +x /usr/local/bin/demyx-php-security && /usr/local/bin/demyx-php-security wp
 
 # Configure Demyx
 RUN set -ex; \
