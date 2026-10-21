@@ -8,6 +8,7 @@
 - Install fixed LiteSpeed PHP 8.2.35 and 8.3.36 branches and repoint OpenLiteSpeed admin/LSAPI launchers to 8.3.36.
 ### Fixed
 - Fail builds when required PHP CLI, FPM, LSAPI, or admin binaries do not meet their branch, SAPI, and patch minimums.
+- Enable Xdebug before removing readelf with the PHP build dependencies.
 ### Removed
 - Disable the OpenLiteSpeed installer's automatic PHP 7.4 installation.
 ### Security

@@ -191,6 +191,12 @@ write_profile_fixtures wp
 write_fixture /usr/local/bin/php 8.4.27RC1 cli
 expect_failure wp 'prerelease version' 'Malformed or unsupported PHP version'
 write_fixture /usr/local/bin/php 8.3.36 cli
+cat > "$fixture_root/usr/local/bin/php" <<'EOF'
+#!/usr/bin/env bash
+printf '\nPHP Warning: Failed loading Xdebug\nPHP 8.3.36 (cli)\n'
+EOF
+chmod +x "$fixture_root/usr/local/bin/php"
+expect_failure wp 'leading Xdebug startup warning' 'Malformed or unsupported PHP version'
 printf '#!/usr/bin/env bash\nprintf "not a PHP version\\\\n"\n' > "$fixture_root/usr/local/bin/php"
 chmod +x "$fixture_root/usr/local/bin/php"
 expect_failure wp 'malformed version output' 'Malformed or unsupported PHP version'

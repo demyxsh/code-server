@@ -98,9 +98,10 @@ RUN set -ex; \
         sockets \
         zip
 
-# PECL
+# Enable Xdebug before PHPIZE_DEPS cleanup removes readelf.
 RUN set -ex; \
-    pecl install ssh2 xdebug
+    pecl install ssh2 xdebug && \
+    docker-php-ext-enable xdebug ssh2
 
 # Temporary imagick fix for imagick
 ARG IMAGICK_PHP83_FIX_COMMIT=9df92616f577e38625b96b7b903582a46c064739
@@ -119,10 +120,6 @@ RUN apt-get -q update && \
     apt-get clean all && \
     rm -Rf /tmp/* && \
     echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini
-
-# Enable extensions
-RUN set -ex; \
-    docker-php-ext-enable imagick xdebug ssh2
 
 COPY bin/demyx-php-security /usr/local/bin/demyx-php-security
 RUN chmod +x /usr/local/bin/demyx-php-security && /usr/local/bin/demyx-php-security wp

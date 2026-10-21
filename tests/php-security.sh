@@ -21,7 +21,7 @@ assert_extensions() {
 $required = explode(",", getenv("PHP_TEST_REQUIRED_EXTENSIONS"));
 $missing = array_filter($required, static fn($extension) => !extension_loaded($extension));
 echo implode(",", $missing);
-'); then
+' 2>&1); then
         printf "Failed to inspect extensions with %s\n" "$binary" >&2
         exit 1
     fi
@@ -41,6 +41,20 @@ command -v code-server >/dev/null
 assert_extensions /usr/local/bin/php exif,gd,mysqli,"Zend OPcache",pdo_mysql,sockets,zip,ssh2,imagick
 if [ "$PHP_SECURITY_PROFILE" = wp ]; then
     assert_extensions /usr/local/bin/php xdebug
+    if ! zend_extension=$(/usr/local/bin/php -r '
+if (!in_array("Xdebug", get_loaded_extensions(true), true)) {
+    fwrite(STDERR, "Xdebug is not loaded as a Zend extension\n");
+    exit(1);
+}
+' 2>&1); then
+        printf "Failed to verify Xdebug Zend extension: %s\n" "$zend_extension" >&2
+        exit 1
+    fi
+    if [ -n "$zend_extension" ]; then
+        printf "Unexpected PHP output while verifying Xdebug Zend extension: %s\n" "$zend_extension" >&2
+        exit 1
+    fi
+    printf "Xdebug is loaded as a Zend extension\n"
 fi
 if [ "$PHP_SECURITY_PROFILE" = ols ]; then
     assert_extensions /usr/local/lsws/lsphp82/bin/php curl,imagick,intl,mysqli,redis
