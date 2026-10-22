@@ -32,6 +32,25 @@ echo implode(",", $missing);
     printf "Extensions present in %s: %s\n" "$binary" "$required"
 }
 
+assert_xdebug() {
+    php_binary="$1"
+    assert_extensions "$php_binary" xdebug
+    if ! zend_extension=$("$php_binary" -r '
+if (!in_array("Xdebug", get_loaded_extensions(true), true)) {
+    fwrite(STDERR, "Xdebug is not loaded as a Zend extension\n");
+    exit(1);
+}
+' 2>&1); then
+        printf "Failed to verify Xdebug Zend extension with %s: %s\n" "$php_binary" "$zend_extension" >&2
+        exit 1
+    fi
+    if [ -n "$zend_extension" ]; then
+        printf "Unexpected PHP output from %s while verifying Xdebug Zend extension: %s\n" "$php_binary" "$zend_extension" >&2
+        exit 1
+    fi
+    printf "Xdebug is loaded as a Zend extension in %s\n" "$php_binary"
+}
+
 if [ "$(id -u)" -ne 1000 ]; then
     printf "Expected UID 1000, got %s\n" "$(id -u)" >&2
     exit 1
@@ -40,25 +59,13 @@ command -v code-server >/dev/null
 
 assert_extensions /usr/local/bin/php exif,gd,mysqli,"Zend OPcache",pdo_mysql,sockets,zip,ssh2,imagick
 if [ "$PHP_SECURITY_PROFILE" = wp ]; then
-    assert_extensions /usr/local/bin/php xdebug
-    if ! zend_extension=$(/usr/local/bin/php -r '
-if (!in_array("Xdebug", get_loaded_extensions(true), true)) {
-    fwrite(STDERR, "Xdebug is not loaded as a Zend extension\n");
-    exit(1);
-}
-' 2>&1); then
-        printf "Failed to verify Xdebug Zend extension: %s\n" "$zend_extension" >&2
-        exit 1
-    fi
-    if [ -n "$zend_extension" ]; then
-        printf "Unexpected PHP output while verifying Xdebug Zend extension: %s\n" "$zend_extension" >&2
-        exit 1
-    fi
-    printf "Xdebug is loaded as a Zend extension\n"
+    assert_xdebug /usr/local/bin/php
 fi
 if [ "$PHP_SECURITY_PROFILE" = ols ]; then
     assert_extensions /usr/local/lsws/lsphp82/bin/php curl,imagick,intl,mysqli,redis
     assert_extensions /usr/local/lsws/lsphp83/bin/php curl,imagick,intl,mysqli,redis
+    assert_xdebug /usr/local/lsws/lsphp82/bin/php
+    assert_xdebug /usr/local/lsws/lsphp83/bin/php
 fi
 EOF
 )

@@ -9,6 +9,7 @@
 ### Fixed
 - Fail builds when required PHP CLI, FPM, LSAPI, or admin binaries do not meet their branch, SAPI, and patch minimums.
 - Enable Xdebug before removing readelf with the PHP build dependencies.
+- Remove the obsolete `/usr/bin/sed` symlink and build Xdebug for PHP 8.2 and 8.3 separately.
 ### Removed
 - Disable the OpenLiteSpeed installer's automatic PHP 7.4 installation.
 ### Security

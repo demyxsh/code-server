@@ -259,18 +259,16 @@ RUN set -ex; \
 
 # Xdebug
 RUN set -ex; \
-    DEMYX_XDEBUG_DEPS="build-essential ${DEMYX_LSPHP}-dev lsphp83-dev"; \
+    DEMYX_XDEBUG_DEPS="build-essential lsphp82-dev lsphp83-dev"; \
     DEMYX_XDEBUG_VERSION=3.3.2; \
     DEMYX_XDEBUG_INI="$(find /usr/local/lsws/lsphp8* -name 'php.ini')"; \
     \
     apt-get install -y --no-install-recommends $DEMYX_XDEBUG_DEPS; \
     \
-    ln -s /bin/sed /usr/bin/sed; \
-    \
     cd /tmp && wget "https://github.com/xdebug/xdebug/archive/refs/tags/${DEMYX_XDEBUG_VERSION}.tar.gz" && tar -xzf "${DEMYX_XDEBUG_VERSION}.tar.gz"; \
     \
-    cd /tmp/xdebug-"${DEMYX_XDEBUG_VERSION}" && /usr/local/lsws/"${DEMYX_LSPHP}"/bin/phpize; \
-    ./configure --enable-xdebug --with-php-config=/usr/local/lsws/"${DEMYX_LSPHP}"/bin/php-config; \
+    cd /tmp/xdebug-"${DEMYX_XDEBUG_VERSION}" && /usr/local/lsws/lsphp82/bin/phpize; \
+    ./configure --enable-xdebug --with-php-config=/usr/local/lsws/lsphp82/bin/php-config; \
     make && make install; \
     \
     rm -rf /tmp/*; \
