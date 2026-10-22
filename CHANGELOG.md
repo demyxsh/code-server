@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-10-22
+### Fixed
+- Provide writable temporary storage to PHP smoke checks running with a read-only root.
+- Include captured interpreter diagnostics when PHP version checks fail.
+
 ## 2026-10-21
 ### Added
 - Add PHP security profile unit and image smoke tests for WordPress and OpenLiteSpeed variants.

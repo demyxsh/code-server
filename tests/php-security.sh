@@ -72,6 +72,7 @@ EOF
 
 for image in "$@"; do
     printf 'Checking PHP security profile %s in %s\n' "$profile" "$image"
-    docker run --rm --network none --read-only --entrypoint /usr/local/bin/demyx-php-security "$image" "$profile"
-    docker run --rm --network none --read-only -e PHP_SECURITY_PROFILE="$profile" --entrypoint /bin/sh "$image" -ec "$container_test"
+    # LSAPI needs writable temporary lock files with a read-only root.
+    docker run --rm --network none --read-only --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777 --entrypoint /usr/local/bin/demyx-php-security "$image" "$profile"
+    docker run --rm --network none --read-only --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777 -e PHP_SECURITY_PROFILE="$profile" --entrypoint /bin/sh "$image" -ec "$container_test"
 done

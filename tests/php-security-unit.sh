@@ -49,6 +49,19 @@ EOF
     chmod +x "$binary"
 }
 
+write_failing_fixture() {
+    local path="$1"
+    local binary="$fixture_root$path"
+
+    mkdir -p "$(dirname "$binary")"
+    cat > "$binary" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' 'Fatal Error Unable to create lock file: Read-only file system (30)' >&2
+exit 23
+EOF
+    chmod +x "$binary"
+}
+
 write_profile_fixtures() {
     local profile="$1"
     local spec path minor sapi minimum below newer
@@ -68,6 +81,63 @@ write_profile_fixtures() {
     for spec in "${ols_optional_specs[@]}"; do
         IFS='|' read -r path minimum below newer <<< "$spec"
         write_fixture "$path" "$minimum" litespeed
+    done
+}
+
+test_php_security_docker_contract() {
+    local mock_bin="$tmp_dir/mock-bin"
+    local docker_log="$tmp_dir/docker-contract.log"
+    local expected_log="$tmp_dir/docker-contract.expected"
+    local profile
+
+    mkdir -p "$mock_bin"
+    cat > "$mock_bin/docker" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+[[ "$1" == run ]] || exit 1
+shift
+read_only=false
+network_none=false
+tmpfs=false
+entrypoint=
+while (($#)); do
+    case "$1" in
+        --read-only) read_only=true; shift ;;
+        --network)
+            [[ "${2:-}" == none ]] || exit 1
+            network_none=true
+            shift 2
+            ;;
+        --tmpfs)
+            [[ "${2:-}" == /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777 ]] || exit 1
+            tmpfs=true
+            shift 2
+            ;;
+        --entrypoint) entrypoint="${2:-}"; shift 2 ;;
+        *) shift ;;
+    esac
+done
+if [[ "$read_only" != true || "$network_none" != true || "$tmpfs" != true ]]; then
+    printf 'Missing required Docker isolation flags\n' >&2
+    exit 1
+fi
+printf '%s\n' "$entrypoint" >> "$DOCKER_CALL_LOG"
+EOF
+    chmod +x "$mock_bin/docker"
+
+    printf '%s\n' \
+        /usr/local/bin/demyx-php-security /bin/sh \
+        /usr/local/bin/demyx-php-security /bin/sh > "$expected_log"
+    for profile in wp ols; do
+        : > "$docker_log"
+        PATH="$mock_bin:$PATH" DOCKER_CALL_LOG="$docker_log" bash "$root_dir/tests/php-security.sh" \
+            "$profile" mock-image-one mock-image-two > /dev/null 2>&1
+        if ! cmp -s "$expected_log" "$docker_log"; then
+            printf 'FAIL %s Docker invocations did not match the expected contract\n' "$profile" >&2
+            cat "$docker_log" >&2
+            exit 1
+        fi
+        printf 'PASS %s smoke-test Docker isolation and entrypoints\n' "$profile"
     done
 }
 
@@ -200,8 +270,14 @@ expect_failure wp 'leading Xdebug startup warning' 'Malformed or unsupported PHP
 printf '#!/usr/bin/env bash\nprintf "not a PHP version\\\\n"\n' > "$fixture_root/usr/local/bin/php"
 chmod +x "$fixture_root/usr/local/bin/php"
 expect_failure wp 'malformed version output' 'Malformed or unsupported PHP version'
-printf '#!/usr/bin/env bash\nexit 23\n' > "$fixture_root/usr/local/bin/php"
-chmod +x "$fixture_root/usr/local/bin/php"
+write_failing_fixture /usr/local/bin/php
 expect_failure wp 'version command failure' 'Failed to run PHP version check'
+expect_failure wp 'version command stderr diagnostic' 'Fatal Error Unable to create lock file: Read-only file system (30)'
 
+write_profile_fixtures ols
+write_failing_fixture /usr/local/lsws/lsphp82/bin/lsphp
+expect_failure ols 'OLS LSAPI version command failure' 'Failed to run PHP version check'
+expect_failure ols 'OLS LSAPI version stderr diagnostic' 'Fatal Error Unable to create lock file: Read-only file system (30)'
+
+test_php_security_docker_contract
 printf 'PHP security profile unit checks passed\n'

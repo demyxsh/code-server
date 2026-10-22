@@ -29,7 +29,7 @@ demyx_php_security_check() {
         return 1
     fi
     if ! version_output=$("$binary" -v 2>&1); then
-        printf 'Failed to run PHP version check: %s -v\n' "$binary" >&2
+        printf 'Failed to run PHP version check: %s -v\n%s\n' "$binary" "$version_output" >&2
         return 1
     fi
 
